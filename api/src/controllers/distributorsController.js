@@ -38,9 +38,10 @@ const getDistributorByReference = async (req, res) => {
 const confirmationDistributor = async (req, res) => {
   try {
     const { id, estatus, reference } = req.params;
+    const roles = '{2001,2002,2003,2004,2000}'
     const referenceExist = await pool.query('SELECT * FROM "providersProfile" WHERE "referenceCode" = $1', [reference]);
     if (!referenceExist.rows[0]) return res.status(400).json({ error: 'El codigo de referencia no existe' });
-    await pool.query('UPDATE "Permissions" SET "estatus" = $1 WHERE "userId" = $2 AND "reference" = $3', [estatus, id, reference]);
+    await pool.query('UPDATE "Permissions" SET "estatus" = $1 AND "permission" = $2 WHERE "userId" = $3 AND "reference" = $4', [estatus, roles, id, reference]);
     return res.status(200).json({ message: 'Estatus del distribuidor actualizado' });
   } catch (error) {
     throw new Error('Error al obtener el usuario por nombre de usuario');

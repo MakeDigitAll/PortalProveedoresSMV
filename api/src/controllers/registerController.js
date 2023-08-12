@@ -36,7 +36,7 @@ const handleNewUser = async (req, res) => {
 
             //---------------------------------------------------------------------------------------- Asignacion de permisos
 
-            const role = '{2000}'
+            const role = '{0,0,0,0,2000}'
 
             await pool.query('INSERT INTO "Permissions" ("userId", "permission", "reference", "estatus") VALUES ($1, $2, $3, $4)', [result.rows[0].id, role, reference, 'Pendiente']);
 
