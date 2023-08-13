@@ -31,10 +31,6 @@ const DistributorsPermissions = () => {
 
     const [loading, setLoading] = useState(false);
     const [permisos, setPermisos] = useState([]);
-    const [pedidos, setPedidos] = useState(false);
-    const [finanzas, setFinanzas] = useState(false);
-    const [productos, setProductos] = useState(false);
-    const [facturacion, setFacturacion] = useState(false);
 
     const fetchData = async () => {
 
@@ -66,35 +62,8 @@ const DistributorsPermissions = () => {
     }
         , []);
 
-    useEffect(() => {
-        if (permisos.length > 0) {
-            if (permisos[0]['pedidos'] === '2001') {
-                setPedidos(true);
-            } else {
-                setPedidos(false);
-            }
-            if (permisos[0]['finanzas'] === '2002') {
-                setFinanzas(true);
-            } else {
-                setFinanzas(false);
-            }
-            if (permisos[0]['productos'] === '2003') {
-                setProductos(true);
-            } else {
-                setProductos(false);
-            }
-
-            if (permisos[0]['facturacion'] === '2004') {
-                setFacturacion(true);
-            } else {
-                setFacturacion(false);
-            }
-        }
-    }, [permisos]);
-
 
     console.log(permisos);
-    console.log(pedidos, finanzas, productos, facturacion);
 
     //los objetos pedidos, finanzas, productos, facturacion cambian de estado al cambiar el valor de permisos a uno no valido
     //entonces quiero cambiar el valor de permisos[0] a uno valido al marcar la casilla de verificacion
@@ -104,7 +73,7 @@ const DistributorsPermissions = () => {
         const updatedPermisos = { ...permisos[0] };
 
         if (permiso === 'pedidos') {
-            updatedPermisos[pedidos] = updatedPermisos[permiso] === '2001' ? '0' : '2001';
+            updatedPermisos[permiso] = updatedPermisos[permiso] === '2001' ? '0' : '2001';
         }
 
         if (permiso === 'finanzas') {
@@ -131,7 +100,7 @@ const DistributorsPermissions = () => {
                     <Row justify="center">
                         <Checkbox
                             name={2001}
-                            isSelected={pedidos}
+                            isSelected={permisos[0]['pedidos'] === '2001'}
                             onChange={() => handleCheckboxChange('pedidos')}
                         />
                     </Row>
@@ -141,7 +110,7 @@ const DistributorsPermissions = () => {
                     <Row justify="center">
                         <Checkbox
                             name={2002}
-                            isSelected={finanzas}
+                            isSelected={permisos[0]['finanzas'] === '2002'}
                             onChange={() => handleCheckboxChange('finanzas')}
                         />
                     </Row>
@@ -151,7 +120,7 @@ const DistributorsPermissions = () => {
                     <Row justify="center">
                         <Checkbox
                             name={2003}
-                            isSelected={productos}
+                            isSelected={permisos[0]['productos'] === '2003'}
                             onChange={() => handleCheckboxChange('productos')}
                         />
                     </Row>
@@ -161,7 +130,7 @@ const DistributorsPermissions = () => {
                     <Row justify="center">
                         <Checkbox
                             name={2004}
-                            isSelected={facturacion}
+                            isSelected={permisos[0]['facturacion'] === '2004'}
                             onChange={() => handleCheckboxChange('facturacion')}
                         />
                     </Row>
@@ -186,6 +155,7 @@ const DistributorsPermissions = () => {
         });
         if (result.status === 200) {
             alert('Permisos actualizados');
+            navigate('/distributors', { replace: true });
         }
     };
 
