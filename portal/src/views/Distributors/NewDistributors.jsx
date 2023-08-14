@@ -219,6 +219,7 @@ const NewDistributors = () => {
                     color='secundary'
                     selectionMode='single'
                     selectedKeys={value}
+                    isVirtualized={true}
                     onSelectionChange={selected => handleCountryChange(selected)}
                 >
                     {Object.keys(orderCountries).map((country) => (
@@ -243,6 +244,7 @@ const NewDistributors = () => {
                     color='secundary'
                     selectionMode='single'
                     selectedKeys={value}
+                    isVirtualized={true}
                     onSelectionChange={selected => { name = 'state'; value = selected.currentKey; setDistributor({ ...distributor, [name]: value }); }}
                 >
                     {countriesWithStates[country].map((state) => (

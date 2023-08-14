@@ -29,7 +29,6 @@ const Distributors = () => {
     ];
 
     const [data, setData] = useState([]);
-    const [nav, setNav] = useState({});
     const [dataWaiting, setDataWaiting] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchName, setSearchName] = useState('');
@@ -49,30 +48,11 @@ const Distributors = () => {
 
     useEffect(() => {
         fetchData();
-
     }, []);
 
 
-    useEffect(() => {
-        if (nav.length !== 0 || nav !== undefined || nav !== null) {
-            if (nav.value === 'View') {
-                navigate(`/distributors/View/${nav.id}`);
-                console.log(nav.id);
-            }
-            if (nav.value === 'Edit') {
-                navigate(`/distributors/Edit/${nav.id}`);
-            }
-            if (nav.value === 'Delete') {
-                handlerDel(nav.id);
-            }
-            if (nav.value === 'Permissions') {
-                navigate(`/distributors/Permissions/${nav.id}`);
-            }
-        }
-    }, [nav]);
-
     const handleDelete = async (id) => {
-        await axios.delete(`/distributors/delete/${id}`);
+        await axios.delete(`/distributors/decline/${id}/${auth.referenceCode}`);
         setData(data.filter((item) => item.id !== id));
     }
 
@@ -97,7 +77,7 @@ const Distributors = () => {
 
     //--------------------Eliminar--------------------
     const handlerDel = (id) => {
-        setDelItem({ id, userName: data.find((item) => item.id === id).userName });
+        setDelItem({ id, userName: data.find((item) => item.id === id).distributorName });
         setOpenDel(true);
     };
 
@@ -146,12 +126,13 @@ const Distributors = () => {
                                     <MdSettings size={20} fill="#979797" />
                                 </Dropdown.Button>
                                 <Dropdown.Menu
+                                    aria-label='Dropdown menu'
                                     css={{ minWidth: '150px' }}
                                     align='center'
                                     color='primary'
                                     selectionMode='single'
-                                    selectedKeys={nav.id}
-                                    onAction={(item) => setNav({ id: item.id, value: item.key })}
+                                    closeOnSelect
+                                    onAction={(selected) => handleOptions(selected, item.id)}
                                 >
                                     <Dropdown.Item key='View' icon={<MdOutlineVisibility size={20} fill="#979797" />}>
                                         Ver
@@ -162,7 +143,7 @@ const Distributors = () => {
                                     <Dropdown.Item key='Permissions' icon={<MdOutlineCheck size={20} fill="#979797" />}>
                                         Permisos
                                     </Dropdown.Item>
-                                    <Dropdown.Item key='Delete' color='error' icon={<MdDelete size={20} fill="#979797" />}>
+                                    <Dropdown.Item withDivider key='Delete' color='error' icon={<MdDelete size={20} fill="#979797" />}>
                                         Eliminar
                                     </Dropdown.Item>
                                 </Dropdown.Menu>
@@ -174,6 +155,27 @@ const Distributors = () => {
                 return cellValue;
         }
     };
+
+    const handleOptions = (selected, id) => {
+        switch (selected) {
+            case 'View':
+                navigate(`/distributors/View/${id}`);
+                break;
+            case 'Edit':
+                navigate(`/distributors/Edit/${id}`);
+                break;
+            case 'Permissions':
+                navigate(`/distributors/Permissions/${id}`);
+                break;
+            case 'Delete':
+                handlerDel(id);
+                break;
+            default:
+                break;
+        }
+    };
+
+        
 
 
     //--------------------Distribuidores Pendientes--------------------
@@ -354,7 +356,9 @@ const Distributors = () => {
                             </Text>
                         </Modal.Header>
                         <Modal.Body>
-                            <Text b size={16}>¿Está seguro que desea eliminar el distribuidor {DelItem?.userName}?</Text>
+                            <Text b size={16} align='center'>¿Está seguro que desea eliminar el distribuidor</Text>
+                            <Text size={18} align='center'> {DelItem?.userName}?</Text>
+                            <Text size={14} align='center'>Esta acción no se puede deshacer.</Text>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button

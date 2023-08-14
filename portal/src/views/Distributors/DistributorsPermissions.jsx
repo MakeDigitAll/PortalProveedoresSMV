@@ -215,18 +215,27 @@ const DistributorsPermissions = () => {
                                 </Table.Body>
                             </Table>
                         )}
-
                     </Col>
                 </Row>
                 <Spacer y={2} />
                 <Row>
-                    <Col>
+                    <Col css={{height: '100px' }}>
                         <Button
                             color="primary"
                             variant="contained"
                             onClick={handleSave}
                         >
                             Guardar
+                        </Button>
+                        </Col>
+                        <Spacer x={1} />
+                        <Col css={{ width: '1000000px' }}>
+                        <Button
+                            color="secondary"
+                            variant="contained"
+                            onClick={() => navigate('/distributors', { replace: true })}
+                        >
+                         Atras 
                         </Button>
                     </Col>
                 </Row>

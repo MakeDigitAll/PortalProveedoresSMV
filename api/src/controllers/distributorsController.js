@@ -49,11 +49,13 @@ const confirmationDistributor = async (req, res) => {
 }
 //----------------------------------------------------------------------------------------
 //Para rechazar un distribuidor de parte del proveedor
-const deleteDistributor = async (req, res) => {
+const declineDistributor = async (req, res) => {
   try {
     const { id, reference } = req.params;
     const referenceExist = await pool.query('SELECT * FROM "providersProfile" WHERE "referenceCode" = $1', [reference]);
     if (!referenceExist.rows[0]) return res.status(400).json({ error: 'El codigo de referencia no existe' });
+
+
     await pool.query('UPDATE "Permissions" SET "estatus" = $1 WHERE "userId" = $2 AND "reference" = $3', ['Eliminado', id, reference]);
     return res.status(200).json({ message: 'Distribuidor eliminado' });
   } catch (error) {
@@ -133,7 +135,7 @@ const createDistributor = async (req, res) => {
 //----------------------------------------------------------------------------------------
 
 const updateDistributor = async (req, res) => {
-  try {
+ // try {
     const { id, reference } = req.params;
     const { distributorName, address, col, city, state, postalCode, country, contact, phone, email } = req.body;
     const date = new Date();
@@ -144,31 +146,13 @@ const updateDistributor = async (req, res) => {
     if (distributorExist.rows[0]) return res.status(400).json({ error: 'El correo ya esta registrado' });
 
 
-    await pool.query('UPDATE "userAuth" SET "userName" = $1 "updatedAt" = $2 WHERE "id" = $3', [email, date, id]);
-    await pool.query('UPDATE "distributorsProfile" SET "distributorName" = $1, "address" = $2, "col" = $3, "city" = $4, "state" = $5, "postalCode" = $6, "country" = $7, "contact" = $8, "phone" = $9, "email" = $10, "updatedAt" = $11 WHERE "distributorId" = $12', [distributorName, address, col, city, state, postalCode, country, contact, phone, email, date, id]);
+    await pool.query('UPDATE "userAuth" SET "userName" = $1, "updated_At" = $2 WHERE "id" = $3', [email, date, id]);
+    await pool.query('UPDATE "distributorsProfile" SET "distributorName" = $1, "address" = $2, "col" = $3, "city" = $4, "state" = $5, "postalCode" = $6, "country" = $7, "contact" = $8, "phone" = $9, "email" = $10, "updated_At" = $11 WHERE "distributorId" = $12', [distributorName, address, col, city, state, postalCode, country, contact, phone, email, date, id]);
     return res.status(200).json({ message: 'Distribuidor actualizado' });
-  } catch (error) {
+ // } catch (error) {
     throw new Error('Error al actualizar el usuario');
   }
-}
-
-//----------------------------------------------------------------------------------------'
-
-const deleteDistributorAdmin = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await pool.query('UPDATE "Permissions" SET "estatus" = $1 WHERE "userId" = $2', ['Eliminado', id]);
-    await pool.query('UPDATE "userAuth" SET "isDeleted" = $1 WHERE "id" = $2', [true, id]);
-    await pool.query('UPDATE "distributorsProfile" SET "isDeleted" = $1 WHERE "distributorId" = $2', [true, id]);
-    return res.status(200).json({ message: 'Distribuidor eliminado' });
-  } catch (error) {
-    res.status(400).json({ error: 'Error al eliminar el distribuidor' });
-  }
-}
-
-
-
-
+//}
 
 
 
@@ -219,10 +203,9 @@ module.exports = {
   getWaitingDistributors,
   getDistributorByReference,
   confirmationDistributor,
-  deleteDistributor,
+  declineDistributor,
   createDistributor,
   updateDistributor,
-  deleteDistributorAdmin,
   getPermissionsById,
   updatePermissions
 }
