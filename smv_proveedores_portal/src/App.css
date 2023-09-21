@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.container {
+  display: flex;
+  padding: 10px;
+  margin-top: 3%;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  height: 100vh;
+}
+
+
+.forms {
+
+  display: flex;
+  grid:
+    "img inputs" auto
+    / 50% 50%;
+  gap: 8px;
+}
+
+.img { 
+  grid-area: sidebar;
+  margin-left: 15%;
+}
+.inputs { 
+  grid-area: body;
+  margin-left: 15%;
+}
+
+.alert {
+  padding: 15px;
+  border-radius: 10px; /* Para hacer los bordes redondeados */
+  background-color: #f2f2f2; /* Color de fondo */
+  border: 1px solid #ccc; /* Borde con un color suave */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  margin-bottom: 20px; /* Espacio entre alertas */
+}
+
+
+[data-theme='dark'] {
+    --background: rgb(196, 54, 54);
+    --foreground: white;
+  }
