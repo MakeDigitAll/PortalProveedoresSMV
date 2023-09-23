@@ -23,7 +23,20 @@ import useAuth from '../../hooks/useAuth';
 import '../../App.css';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import { parse } from 'postcss';
+
+const almacenes = [
+    { value: 'Almacen 1', label: 'Almacen 1' },
+    { value: 'Almacen 2', label: 'Almacen 2' },
+    { value: 'Almacen 3', label: 'Almacen 3' },
+    { value: 'Almacen 4', label: 'Almacen 4' },
+    { value: 'Almacen 5', label: 'Almacen 5' },
+    { value: 'Almacen 6', label: 'Almacen 6' },
+    { value: 'Almacen 7', label: 'Almacen 7' },
+    { value: 'Almacen 8', label: 'Almacen 8' },
+    { value: 'Almacen 9', label: 'Almacen 9' },
+    { value: 'Almacen 10', label: 'Almacen 10' }
+];
+
 
 const NewOrders = () => {
     const navigate = useNavigate();
@@ -39,7 +52,7 @@ const NewOrders = () => {
     const [order, setOrder] = useState({
         distributorId: ID,
         distributorName: distributorName,
-        costumer: "" || "--nombre del cliente--",
+        costumer: "" || "",
         orderDate: "" || new Date().toISOString().split('T')[0],
         orderType: "",
         // orderDetails
@@ -285,8 +298,8 @@ const NewOrders = () => {
                         <Input
                             className="w-1/2 text-center"
                             type="number"
-                           // defaultValue={4}
-                       //     max={products.existence}
+                            // defaultValue={4}
+                            //     max={products.existence}
                             value={quantity}
                             onChange={(event) => {
                                 setQuantity(event.target.value);
@@ -560,16 +573,32 @@ const NewOrders = () => {
             </Modal>
 
 
-            <div className="flex flex-col m-10 pr-20 lg:flex-row w-full h-full">
-                <Input className='w-full lg:w-1/2 px-10 mb-5' placeholder="Cliente" label="Cliente" labelPlacement="outside" value={order.costumer} onChange={handleOrderChange} name="costumer" isDisabled={isInputDisabled} />
-                <Textarea className='w-full lg:w-1/2 px-10' placeholder="Informacion del cliente" label="Informacion del cliente" labelPlacement="outside" maxRows={3} />
+            <div className="flex flex-col mx-10 mt-10 mb-1 pr-20 lg:flex-row w-full h-full">
+                <Input className='w-full lg:w-1/2 px-10' placeholder="Distribuidor" label="Responsable" labelPlacement="outside" value={order.distributorName} onChange={handleOrderChange} name="distributor" isDisabled={true} />
+                <Dropdown>
+                    <DropdownTrigger>
+                        <Input className='w-full lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione un almacen"} name="costumer" isDisabled={isInputDisabled} />
+                    </DropdownTrigger>
+                    <DropdownMenu>
+                        {almacenes.map((almacen) => (
+                            <DropdownItem
+                                key={almacen.value}
+                                onClick={() => setOrder({ ...order, costumer: almacen.value })}
+                            >
+                                {almacen.label}
+                            </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
+            <div className="flex flex-col mx-10 pr-20 lg:flex-row w-full h-full justify-end">
+                <Textarea className='w-full lg:w-1/2 px-10' placeholder="Informacion de envio" maxRows={4} value={order.deliveryData} onChange={handleOrderChange} name="deliveryData" isDisabled={true} />
             </div>
 
-            <div className="flex flex-col mx-10 mb-5 pr-20 lg:flex-row w-full h-full">
-                <Input className='w-full lg:w-1/2 px-10' placeholder="Distribuidor" label="Distribuidor" labelPlacement="outside" value={order.distributorName} onChange={handleOrderChange} name="distributor" isDisabled={true} />
+            <div className="flex flex-col mx-10 mb-5 pr-10 lg:flex-row w-full h-full">
             </div>
 
-            <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-20 w-full h-full">
+            <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-10 w-full h-full">
                 <div className="flex flex-row w-full lg:w-1/2 mt-10">
                     <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de pedido" label="Fecha de pedido" labelPlacement="outside" value={order.orderDate} onChange={handleOrderChange} name="orderDate" isDisabled={true} />
                     <Dropdown>
@@ -599,9 +628,9 @@ const NewOrders = () => {
                     </Button>
                 </div>
                 <div className="flex w-full lg:w-1/2 mt-10 items-center justify-end">
-                    <div className="flex flex-row">
+                        <div>
                         <Checkbox
-                            className='w-full px-12'
+                            className='w-full px-12 mt-3'
                             checked={order.fulfilled}
                             onChange={(event) => {
                                 setOrder({ ...order, fulfilled: event.target.checked });
@@ -609,11 +638,11 @@ const NewOrders = () => {
                         >
                             Es recurrente
                         </Checkbox>
-                    </div>
-                    <div className="flex flex-row">
+                        </div>
+                        <div>
                         <Dropdown>
                             <DropdownTrigger>
-                                <Input className='w-full px-14' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
+                                <Input className='w-full px-14 mt-5' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem
@@ -633,20 +662,19 @@ const NewOrders = () => {
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
-                    </div>
-                    <div className="flex flex-row">
+                        </div>
+                        <div>
+                            <label className="text-sm text-gray-500 hidden lg:flex">Descuento</label>
                         <Input
-                            className='w-full px-14'
+                            className='w-full pr-20'
                             endContent="%"
-                            label="Agregar descuento"
-                            labelPlacement="outside-left"
                             defaultValue={0}
                             value={order.discount}
                             onChange={handleOrderChange}
                             name="discount"
                             isDisabled={isInputDisabled}
                         />
-                    </div>
+                        </div>
                 </div>
             </div>
             <div className="flex flex-col mx-10 mb-5 pl-10 lg:flex-row w-full h-full">

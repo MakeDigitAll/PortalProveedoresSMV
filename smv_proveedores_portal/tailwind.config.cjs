@@ -53,7 +53,7 @@ export default {
           divider: "#C8C8C8",
           overlay: "#0A0A0A",
           focus: "#000000",
-          content1: "#272727",
+          content1: "#212121",
           content2: "#000000",
           content3: "#000000",
           content4: "#000000",

@@ -3,7 +3,9 @@ import Header from "../../components/header/headerC/Header";
 import { useNavigate, useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Input, Link, Button, CircularProgress } from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
+import { Input, Link, Button, ButtonGroup, CircularProgress } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { MdShoppingCart } from "react-icons/md";
 import { MdArrowBack, MdSettings, MdSave } from 'react-icons/md';
 import { RiDashboard2Fill } from "react-icons/ri";
@@ -13,6 +15,40 @@ import '../../App.css';
 import ba from '../../../public/Blank-Avatar.png';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+
+const productsBrands = {
+    "brands": [
+        {
+            "value": "Acer",
+            "label": "Acer"
+        },
+        {
+            "value": "Apple",
+            "label": "Apple"
+        },
+        {
+            "value": "Asus",
+            "label": "Asus"
+        },
+        {
+            "value": "Dell",
+            "label": "Dell"
+        },
+        {
+            "value": "HP",
+            "label": "HP"
+        },
+        {
+            "value": "Huawei",
+            "label": "Huawei"
+        },
+        {
+            "value": "Lenovo",
+            "label": "Lenovo"
+        },
+    ]
+}
+
 
 const NewProducts = () => {
     const navigate = useNavigate();
@@ -25,16 +61,88 @@ const NewProducts = () => {
         companyCode: "",
         brand: "",
         model: "",
-        retailPrice: "",
-        wholesalePrice: "",
+        price1: "",
+        price2: "",
+        price3: "",
+        price4: "",
+        rate1: "",
+        rate2: "",
+        rate3: "",
         satProductCode: "",
         satUnitCode: "",
         unitMeasurement: ""
     });
 
+    const productUnits = {
+        "units": [
+            {
+                "value": "H87",
+                "label": "Pieza"
+            },
+            {
+                "value": "EA",
+                "label": "Elemento"
+            },
+            {
+                "value": "E48",
+                "label": "Unidad de servicio"
+            },
+            {
+                "value": "ACT",
+                "label": "Actividad"
+            },
+            {
+                "value": "KGM",
+                "label": "Kilogramo"
+            },
+            {
+                "value": "E51",
+                "label": "Trabajo"
+            },
+            {
+                "value": "A9",
+                "label": "Tafira"
+            },
+            {
+                "value": "MTR",
+                "label": "Metro"
+            },
+            {
+                "value": "AB",
+                "label": "Paquete de granel"
+            },
+            {
+                "value": "LTR",
+                "label": "Litro"
+            },
+            {
+                "value": "MLT",
+                "label": "Miligramo"
+            },
+            {
+                "value": "GRM",
+                "label": "Gramo"
+            },
+            {
+                "value": "DCP",
+                "label": "Docena de piezas"
+            },
+            {
+                "value": "XUN",
+                "label": "Unidad"
+            },
+            {
+                "value": "MLT",
+                "label": "Mililitro"
+            },
+        ]
+    }
+
     const [variable, setVariable] = useState('Nuevo producto');
+    const [CardType, setCardType] = useState('general');
     const imageProd = React.useRef(null);
     const [image, setImage] = useState(null);
+    const [techinicalSheet, setTechinicalSheet] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [editing, setEditing] = useState(false);
@@ -42,16 +150,18 @@ const NewProducts = () => {
     const params = useParams();
 
     const handleInputChange = (event) => {
+        if (event.target.name === 'satUnitCode') {
+            const selectedUnit = unitMap.find((item) => item.code === satUnitCode);
+            setProduct({ ...product, unitMeasurement: selectedUnit.name });
+        }
         setProduct({
             ...product,
             [event.target.name]: event.target.value
         });
     }
 
-    const handleImageChange = (e) => {
-        setImagePreview(URL.createObjectURL(e.target.files[0]));
-        setImage(e.target.files[0]);
-    }
+
+
     const prod = {
         productName: product.productName,
         manofacturerCode: product.manofacturerCode,
@@ -397,35 +507,35 @@ const NewProducts = () => {
                             navigate('/products');
                         }
 
-                        }
+                    }
                     ).catch((error) => {
-                            if (error.response.status === 400) {
-                                toast.error('Error al crear el producto', {
-                                    position: "bottom-right",
-                                    hideProgressBar: false,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                    progress: undefined,
-                                    autoClose: 5000,
-                                    theme: "colored",
-                                });
-                                setLoading(false);
-                            }
-                            if (error.response.status === 500) {
-                                toast.error('Error del servidor', {
-                                    position: "bottom-right",
-                                    hideProgressBar: false,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                    progress: undefined,
-                                    autoClose: 5000,
-                                    theme: "colored",
-                                });
-                                setLoading(false);
-                            }
-                        });
+                        if (error.response.status === 400) {
+                            toast.error('Error al crear el producto', {
+                                position: "bottom-right",
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                autoClose: 5000,
+                                theme: "colored",
+                            });
+                            setLoading(false);
+                        }
+                        if (error.response.status === 500) {
+                            toast.error('Error del servidor', {
+                                position: "bottom-right",
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                autoClose: 5000,
+                                theme: "colored",
+                            });
+                            setLoading(false);
+                        }
+                    });
             } catch (error) {
                 console.log(error);
                 setLoading(false);
@@ -462,6 +572,25 @@ const NewProducts = () => {
             console.log('no se selecciono imagen');
         }
     }
+
+
+    const handleImageChange = (e) => {
+        setImagePreview(URL.createObjectURL(e.target.files[0]));
+        setImage(e.target.files[0]);
+    }
+
+    const handleTecnicalSheet = async (event) => {
+        setTechinicalSheet(event.target.files[0]);
+        console.log('ficha tecnica', techinicalSheet);
+        try {
+            const formData = new FormData();
+            formData.append('techinicalSheet', techinicalSheet);
+            console.log('ficha tecnica', techinicalSheet);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     const getImage = async () => {
         await axios.get(`/products/image/${params.id}`, {
@@ -511,12 +640,15 @@ const NewProducts = () => {
     };
 
     useEffect(() => {
+        setTimeout(() => {
+            setCardType({ ...CardType, CardType: "general" })
+        }, 1);
         if (params.id) {
             loadProduct(params.id);
         } else {
             setEditing(false);
         }
-    }, [params.id]);
+    }, []);
 
     return (
         <div className="flex flex-col w-full h-full">
@@ -562,177 +694,386 @@ const NewProducts = () => {
                     <CircularProgress color="primary" />
                 </div>
             ) : (
-                <div className='flex flex-col justify-center text-center items-center w-full h-full lg:flex-row'>
-                    <div className="lg:mt-10 lg:mb-10 lg:mr-10 mb-10 mt-10 flex flex-col justify-center items-center w-2/4 h-full lg:ml-10">
+                <div className='flex flex-col justify-center text-center items-center w-full lg:flex-row'>
+                    <div className="lg:mb-10 mb-10 flex flex-col items-center w-1/2 h-full">
                         <img
-                            className="w-96 h-96 rounded-full object-cover mt-4"
+                            className="w-96 h-96 lg:rounded-full rounded-sm object-cover mt-4"
                             src={imagePreview || image || ba}
                             alt="Imagen del producto"
                             ref={imageProd}
                         />
                         {!isInputDisabled && (
-                            <input
-                                className="w-96 bg-transparent p-2 rounded"
-                                type="file"
-                                name="image"
-                                ref={imageProd}
-                                onChange={handleImageChange}
-                                disabled={isInputDisabled}
-                            />
-                        )}
-                    </div>
-                    <div className='flex flex-col justify-center items-center w-2/4 h-full mr-10'>
-                        <div className="flex text-center justify-center my-5">
-                            <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label='Nombre del producto'
-                                labelPlacement='outside'
-                                placeholder='Nombre del producto'
-                                name="productName"
-                                value={product.productName}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label='Código de la empresa'
-                                labelPlacement='outside'
-                                placeholder='Código de la empresa'
-                                name="companyCode"
-                                value={product.companyCode}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label='Código del fabricante'
-                                labelPlacement='outside'
-                                placeholder='Código del fabricante'
-                                name="manofacturerCode"
-                                value={product.manofacturerCode}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label='Marca'
-                                labelPlacement='outside'
-                                placeholder='Marca'
-                                name="brand"
-                                value={product.brand}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mr-4 mt-4 inline-flex"
-                                label='Modelo'
-                                labelPlacement='outside'
-                                placeholder='Modelo'
-                                name="model"
-                                value={product.model}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex align-middle justify-center">
-                            <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Precios</label>
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                type='number'
-                                label='Precio al público'
-                                labelPlacement='outside'
-                                placeholder='Precio al público'
-                                name="retailPrice"
-                                value={product.retailPrice}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label='Precio al mayoreo'
-                                type='number'
-                                labelPlacement='outside'
-                                name="wholesalePrice"
-                                placeholder='Precio al mayoreo'
-                                value={product.wholesalePrice}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex align-middle justify-center">
-                            <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Regulaciones</label>
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label='Código SAT del producto'
-                                labelPlacement='outside'
-                                name="satProductCode"
-                                placeholder='Código SAT del producto'
-                                value={product.satProductCode}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label='Código SAT de unidad'
-                                labelPlacement='outside'
-                                placeholder='Código SAT de unidad'
-                                name="satUnitCode"
-                                value={product.satUnitCode}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label='Unidad de medida'
-                                labelPlacement='outside'
-                                name="unitMeasurement"
-                                placeholder='Unidad de medida'
-                                value={product.unitMeasurement}
-                                onChange={handleInputChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        {!isInputDisabled && (
-                            <div className="flex justify-center mt-4">
-                                <Button
-                                    auto
-                                    startContent={<MdSave />}
-                                    variant="success"
-                                    className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
-                                    size="sm"
-                                    onClick={handleSubmit}
-                                    disabled={loading}
-                                >
-                                    Guardar
-                                </Button>
+                            <div>
+                                <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Imagen del producto</label>
+                                <br />
+                                <input
+                                    className="w-96 bg-transparent p-2 rounded-lg justify-center"
+                                    type='file'
+                                    name="image"
+                                    ref={imageProd}
+                                    onChange={handleImageChange}
+                                    disabled={isInputDisabled}
+                                />
                             </div>
                         )}
-                        {isInputDisabled && (
-                            <Button
-                                auto
-                                startContent={<MdArrowBack />}
-                                variant="success"
-                                className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
-                                size="sm"
-                                onClick={() => navigate('/products')}
-                                disabled={loading}
-                            >
-                                Volver
-                            </Button>
+                        {!isInputDisabled && (
+                            <div>
+                                <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Ficha técnica</label>
+                                <br />
+                                <input
+                                    className="w-96 bg-transparent p-2 rounded-lg justify-center"
+                                    type='file'
+                                    name="techinicalSheet"
+                                    ref={imageProd}
+                                    onChange={handleTecnicalSheet}
+                                    disabled={isInputDisabled}
+                                />
+                            </div>
                         )}
                     </div>
+                    <Card className="flex flex-col justify-center items-center lg:w-1/3 w-1/2 h-[720px]">
+                        <CardHeader className="flex justify-center items-center text-center">
+                            <ButtonGroup className="flex justify-center items-center w-full h-12 p-3">
+                                {CardType.CardType === "general" ? (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "general" })}
+                                        disabled={loading}
+                                    >
+                                        Datos generales
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-transparent hover:bg-[#3B3B3B] text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "general" })}
+                                        disabled={loading}
+                                    >
+                                        Datos generales
+                                    </Button>
+                                )}
+                                {CardType.CardType === "prices" ? (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "prices" })}
+                                        disabled={loading}
+                                    >
+                                        Precios
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-transparent hover:bg-[#3B3B3B]  text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "prices" })}
+                                        disabled={loading}
+                                    >
+                                        Precios
+                                    </Button>
+                                )}
+                                {CardType.CardType === "regulations" ? (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "regulations" })}
+                                        disabled={loading}
+                                    >
+                                        Regulaciones
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-transparent hover:bg-[#3B3B3B] text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "regulations" })}
+                                        disabled={loading}
+                                    >
+                                        Regulaciones
+                                    </Button>
+                                )}
+                            </ButtonGroup>
+                        </CardHeader>
+                        <CardBody className="flex flex-col justify-center items-center w-full">
+                            {CardType.CardType === "general" && (
+                                <div>
+                                    <div className="flex text-center justify-center items-center">
+                                        <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            label='Nombre del producto'
+                                            labelPlacement='outside'
+                                            placeholder='Nombre del producto'
+                                            name="productName"
+                                            value={product.productName}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            label='Código de la empresa'
+                                            labelPlacement='outside'
+                                            placeholder='Código de la empresa'
+                                            name="companyCode"
+                                            value={product.companyCode}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex items-start">
+                                        <Input
+                                            className="w-full mr-4 mt-4"
+                                            label='Código del fabricante'
+                                            labelPlacement='outside'
+                                            placeholder='Código del fabricante'
+                                            name="manofacturerCode"
+                                            value={product.manofacturerCode}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Dropdown>
+                                            <DropdownTrigger>
+                                                <Input
+                                                    className="w-1/2 mr-4 mt-4"
+                                                    label='Marca'
+                                                    labelPlacement='outside'
+                                                    placeholder='Marca'
+                                                    name="brand"
+                                                    value={product.brand || "selecciona una marca"}
+                                                    onChange={handleInputChange}
+                                                    disabled={isInputDisabled}
+                                                />
+                                            </DropdownTrigger>
+                                            <DropdownMenu>
+                                                <DropdownSection>
+                                                    {productsBrands.brands.map((brand) => (
+                                                        <DropdownItem
+                                                            key={brand.value}
+                                                            onClick={() => setProduct({ ...product, brand: brand.value })}
+                                                        >
+                                                            {brand.label}
+                                                        </DropdownItem>
+                                                    ))}
+                                                </DropdownSection>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4 inline-flex"
+                                            label='Modelo'
+                                            labelPlacement='outside'
+                                            placeholder='Modelo'
+                                            name="model"
+                                            value={product.model}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            {CardType.CardType === "prices" && (
+                                <div>
+                                    <div className="flex justify-center items-center text-center">
+                                        <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Precios</label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Precio 1'
+                                            labelPlacement='outside'
+                                            placeholder='Precio 1'
+                                            name="price1"
+                                            value={product.price1}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Precio 2'
+                                            labelPlacement='outside'
+                                            placeholder='Precio 2'
+                                            name="price2"
+                                            value={product.price2}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Precio 3'
+                                            labelPlacement='outside'
+                                            placeholder='Precio 3'
+                                            name="price3"
+                                            value={product.price3}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Precio 4'
+                                            labelPlacement='outside'
+                                            placeholder='Precio 4'
+                                            name="price4"
+                                            value={product.price4}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex justify-center items-center text-center">
+                                        <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Tarifas</label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Tarifa 1'
+                                            labelPlacement='outside'
+                                            placeholder='Tarifa 1'
+                                            name="rate1"
+                                            value={product.rate1}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Tarifa 2'
+                                            labelPlacement='outside'
+                                            placeholder='Tarifa 2'
+                                            name="rate2"
+                                            value={product.rate2}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-full mr-4 mt-4"
+                                            type='number'
+                                            label='Tarifa 3'
+                                            labelPlacement='outside'
+                                            placeholder='Tarifa 3'
+                                            name="rate3"
+                                            value={product.rate3}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            {CardType.CardType === "regulations" && (
+                                <div>
+                                    <div className="flex align-middle justify-center">
+                                        <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Regulaciones</label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/3 mr-4 mt-4"
+                                            label='Código SAT del producto'
+                                            labelPlacement='outside'
+                                            name="satProductCode"
+                                            placeholder='Código SAT del producto'
+                                            value={product.satProductCode}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Dropdown
+                                            backdrop='blur'
+                                        >
+                                            <DropdownTrigger>
+                                                <Input
+                                                    className="w-1/3 mr-4 mt-4"
+                                                    label='Código de unidad SAT'
+                                                    labelPlacement='outside'
+                                                    selectionMode="single"
+                                                    name="satUnitCode"
+                                                    placeholder='Código de unidad SAT'
+                                                    value={product.satUnitCode || "selecciona un código"}
+                                                    onChange={handleInputChange}
+                                                    isDisabled={isInputDisabled}
+                                                />
+                                            </DropdownTrigger>
+                                            <DropdownMenu>
+                                                <DropdownSection>
+                                                    {productUnits.units.map((unit) => (
+                                                        <DropdownItem
+                                                            key={unit.value}
+                                                            onClick={() => setProduct({ ...product, satUnitCode: unit.value, unitMeasurement: unit.label })}
+                                                        >
+                                                            {unit.label}
+                                                        </DropdownItem>
+                                                    ))}
+                                                </DropdownSection>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <Input
+                                            className="w-1/3 mr-4 mt-4"
+                                            label='Unidad de medida'
+                                            labelPlacement='outside'
+                                            name="unitMeasurement"
+                                            placeholder='Unidad de medida'
+                                            value={product.unitMeasurement}
+                                            onChange={handleInputChange}
+                                            disabled={true}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </CardBody>
+                        <CardFooter className="flex justify-center items-center text-center">
+                            {!isInputDisabled && (
+                                <div className="flex justify-center mt-4">
+                                    <Button
+                                        auto
+                                        startContent={<MdSave />}
+                                        variant="success"
+                                        className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-full h-12 mt-10 mb-10"
+                                        size="sm"
+                                        onClick={handleSubmit}
+                                        disabled={loading}
+                                    >
+                                        Guardar
+                                    </Button>
+                                </div>
+                            )}
+                            {isInputDisabled && (
+                                <Button
+                                    auto
+                                    startContent={<MdArrowBack />}
+                                    variant="success"
+                                    className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-full h-12 mt-10 mb-10"
+                                    size="sm"
+                                    onClick={() => navigate('/products')}
+                                    disabled={loading}
+                                >
+                                    Volver
+                                </Button>
+                            )}
+                        </CardFooter>
+                    </Card>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     )
 }
 
