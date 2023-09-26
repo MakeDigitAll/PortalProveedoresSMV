@@ -144,8 +144,11 @@ const NewProducts = () => {
     //const technicalSheetPreview = React.useRef(null);
     const [images, setImages] = useState([]);
     const [image1, setImage1] = useState(null);
-    const [imagePreview, setImagePreview] = useState([]);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [image2, setImage2] = useState(null);
+    const [image3, setImage3] = useState(null);
+    const [image4, setImage4] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(0);
     const [technicalSheet, setTechnicalSheet] = useState(null);
     const [nameTS, setNameTS] = useState(null);
     const [typeTS, setTypeTS] = useState(null);
@@ -644,12 +647,27 @@ const NewProducts = () => {
     // como maximum 4 images
     const handleImageUpload = (e) => {
         const selectedImages = Array.from(e.target.files);
-        console.log(images.length);
+        switch (images.length) {
+            case 0:
+                setImage1(URL.createObjectURL(selectedImages[0]));
+                break;
+            case 1:
+                setImage2(URL.createObjectURL(selectedImages[0]));
+                break;
+            case 2:
+                setImage3(URL.createObjectURL(selectedImages[0]));
+                break;
+            case 3:
+                setImage4(URL.createObjectURL(selectedImages[0]));
+                break;
+            default:
+                break;
+        }
 
         // Verifica si se ha alcanzado el número máximo de imágenes (4 en este caso)
         if (images.length + selectedImages.length <= 4) {
             setImages((prevImages) => [...prevImages, ...selectedImages]);
-            console.log(images);
+
         }
     };
 
@@ -671,9 +689,7 @@ const NewProducts = () => {
                 images.forEach((image, index) => {
                     formData.append(`image${index}`, image);
                 });
-
-                console.log('images',images);
-                console.log('formData',formData.get('image'));
+                
                 await axios.put(`/products/images/${idpd}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -806,18 +822,49 @@ const NewProducts = () => {
     };
 
     useEffect(() => {
+        switch (selectedImage) {
+            case 0:
+                setImagePreview(image1);
+                break;
+            case 1:
+                setImagePreview(image2);
+                break;
+            case 2:
+                setImagePreview(image3);
+                break;
+            case 3:
+                setImagePreview(image4);
+                break;
+            default:
+                break;
+        }
+
         if (!images || images === null || images.length === 0)
             return;
-        //convertir el array de imagenes a un blob
-        //hacer un blob por cada imagen en images
-        // y luego convertirlo a un url y meterlo en el array de imagePreview
+        const blob = new Blob([new Uint8Array(images[0]?.data)], { type: 'image/jpeg' });
+        if (blob && blob.size > 0) {
+            const url = URL.createObjectURL(blob);
+            setImage1(url);
+        }
 
-        const blob = new Blob([new Uint8Array(images[0].data)], { type: 'image/jpeg' });
-        const url = URL.createObjectURL(blob);
-        setImage1(url);
+        const blob2 = new Blob([new Uint8Array(images[1]?.data)], { type: 'image/jpeg' });
+        if (blob2 && blob2.size > 0) {
+            const url2 = URL.createObjectURL(blob2);
+            setImage2(url2);
+        }
 
+        const blob3 = new Blob([new Uint8Array(images[2]?.data)], { type: 'image/jpeg' });
+        if (blob3 && blob3.size > 0) {
+            const url3 = URL.createObjectURL(blob3);
+            setImage3(url3);
+        }
 
-    }, [images]);
+        const blob4 = new Blob([new Uint8Array(images[3]?.data)], { type: 'image/jpeg' });
+        if (blob4 && blob4.size > 0) {
+            const url4 = URL.createObjectURL(blob4);
+            setImage4(url4);
+        }
+    }, [images, selectedImage]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -877,416 +924,428 @@ const NewProducts = () => {
             ) : (
                 <div className='flex flex-col justify-center text-center items-center w-full lg:flex-row'>
                     <div className="lg:mb-10 mb-10 flex flex-col items-center w-1/2 h-full">
+                    <div className="flex flex-row justify-center items-center w-full">
+                        <img
+                            className="w-96 h-96 lg:rounded-full rounded-sm object-cover mt-4"
+                            src={imagePreview || ba}
+                            alt={`Imagen ${0}`}
+                            ref={imageProd}
+                        />
+                    </div>
                         <div className="flex flex-row justify-center items-center w-full">
-                                    <img
-                                        className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                        src={image1 || ba}
-                                        alt={`Imagen ${0}`}
-                                        ref={imageProd}
-                                    />
-                                    <img
-                                        className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                        src={ba}
-                                        alt={`Imagen ${1}`}
-                                        ref={imageProd}
-                                    />
-                                    <img
-                                        className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                        src={ba}
-                                        alt={`Imagen ${2}`}
-                                        ref={imageProd}
-                                    />
-                                    <img
-                                        className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                        src={ba}
-                                        alt={`Imagen ${3}`}
-                                        ref={imageProd}
-                                    />
-                                </div>
-                        {!isInputDisabled && (
-                                <div>
-                                    <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Imagen del producto</label>
-                                    <br />
-                                    <input
-                                        className="w-96 bg-transparent p-2 rounded-lg justify-center"
-                                        type='file'
-                                        name="image"
-                                        accept="image/jpeg, image/png, image/jpg"
-                                        ref={imageProd}
-                                        multiple
-                                        onChange={handleImageUpload}
-                                        disabled={isInputDisabled}
-                                    />
-                                </div>
-                            )}
-                            {technicalSheet && (
-                                <div className="flex flex-col justify-center items-center">
-                                    <p> Nombre del Archivo: {technicalSheet.name}</p>
-                                    <a href={URL.createObjectURL(technicalSheet)} download={technicalSheet.name}>
-                                        <Button>Descargar</Button>
-                                    </a>
-                                </div>
-                            )}
-                            {!isInputDisabled && (
-                                <div>
-                                    <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Ficha técnica</label>
-                                    <br />
-                                    <input
-                                        className="w-96 bg-transparent p-2 rounded-lg justify-center"
-                                        type='file'
-                                        accept=".pdf"
-                                        name="technicalSheet"
-                                        src={technicalSheet}
-                                        onChange={handleTechnicalSheet}
-                                        disabled={isInputDisabled}
-                                    />
-                                </div>
-                            )}
+                            <img
+                                className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
+                                src={image1 || ba}
+                                alt={`Imagen ${0}`}
+                                ref={imageProd}
+                                onClick={() => setSelectedImage(0)}
+                            />
+                            <img
+                                className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
+                                src={image2 || ba}
+                                alt={`Imagen ${1}`}
+                                ref={imageProd}
+                                onClick={() => setSelectedImage(1)}
+                            />
+                            <img
+                                className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
+                                src={image3 || ba}
+                                alt={`Imagen ${2}`}
+                                ref={imageProd}
+                                onClick={() => setSelectedImage(2)}
+                            />
+                            <img
+                                className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
+                                src={image4 || ba}
+                                alt={`Imagen ${3}`}
+                                ref={imageProd}
+                                onClick={() => setSelectedImage(3)}
+                            />
                         </div>
-                        <Card className="flex flex-col justify-center items-center lg:w-1/3 w-1/2 h-[720px]">
-                            <CardHeader className="flex justify-center items-center text-center">
-                                <ButtonGroup className="flex justify-center items-center w-full h-12 p-3">
-                                    {CardType.CardType === "general" ? (
-                                        <Button
-                                            auto
-                                            variant="success"
-                                            className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
-                                            size="sm"
-                                            onPress={() => setCardType({ ...CardType, CardType: "general" })}
-                                            disabled={loading}
-                                        >
-                                            Datos generales
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            auto
-                                            variant="success"
-                                            className="bg-transparent hover:bg-[#3B3B3B] text-white font-bold p-3 h-12 w-1/3 mt-1"
-                                            size="sm"
-                                            onPress={() => setCardType({ ...CardType, CardType: "general" })}
-                                            disabled={loading}
-                                        >
-                                            Datos generales
-                                        </Button>
-                                    )}
-                                    {CardType.CardType === "prices" ? (
-                                        <Button
-                                            auto
-                                            variant="success"
-                                            className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
-                                            size="sm"
-                                            onPress={() => setCardType({ ...CardType, CardType: "prices" })}
-                                            disabled={loading}
-                                        >
-                                            Precios
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            auto
-                                            variant="success"
-                                            className="bg-transparent hover:bg-[#3B3B3B]  text-white font-bold p-3 h-12 w-1/3 mt-1"
-                                            size="sm"
-                                            onPress={() => setCardType({ ...CardType, CardType: "prices" })}
-                                            disabled={loading}
-                                        >
-                                            Precios
-                                        </Button>
-                                    )}
-                                    {CardType.CardType === "regulations" ? (
-                                        <Button
-                                            auto
-                                            variant="success"
-                                            className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
-                                            size="sm"
-                                            onPress={() => setCardType({ ...CardType, CardType: "regulations" })}
-                                            disabled={loading}
-                                        >
-                                            Regulaciones
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            auto
-                                            variant="success"
-                                            className="bg-transparent hover:bg-[#3B3B3B] text-white font-bold p-3 h-12 w-1/3 mt-1"
-                                            size="sm"
-                                            onPress={() => setCardType({ ...CardType, CardType: "regulations" })}
-                                            disabled={loading}
-                                        >
-                                            Regulaciones
-                                        </Button>
-                                    )}
-                                </ButtonGroup>
-                            </CardHeader>
-                            <CardBody className="flex flex-col justify-center items-center w-full">
-                                {CardType.CardType === "general" && (
-                                    <div>
-                                        <div className="flex text-center justify-center items-center">
-                                            <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4"
-                                                label='Nombre del producto'
-                                                labelPlacement='outside'
-                                                placeholder='Nombre del producto'
-                                                name="productName"
-                                                value={product.productName}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4"
-                                                label='Código de la empresa'
-                                                labelPlacement='outside'
-                                                placeholder='Código de la empresa'
-                                                name="companyCode"
-                                                value={product.companyCode}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                        </div>
-                                        <div className="flex items-start">
-                                            <Input
-                                                className="w-full mr-4 mt-4"
-                                                label='Código del fabricante'
-                                                labelPlacement='outside'
-                                                placeholder='Código del fabricante'
-                                                name="manofacturerCode"
-                                                value={product.manofacturerCode}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Dropdown>
-                                                <DropdownTrigger>
-                                                    <Input
-                                                        className="w-1/2 mr-4 mt-4"
-                                                        label='Marca'
-                                                        labelPlacement='outside'
-                                                        placeholder='Marca'
-                                                        name="brand"
-                                                        value={product.brand || "selecciona una marca"}
-                                                        onChange={handleInputChange}
-                                                        disabled={isInputDisabled}
-                                                    />
-                                                </DropdownTrigger>
-                                                <DropdownMenu>
-                                                    <DropdownSection>
-                                                        {productsBrands.brands.map((brand) => (
-                                                            <DropdownItem
-                                                                key={brand.value}
-                                                                onClick={() => setProduct({ ...product, brand: brand.value })}
-                                                            >
-                                                                {brand.label}
-                                                            </DropdownItem>
-                                                        ))}
-                                                    </DropdownSection>
-                                                </DropdownMenu>
-                                            </Dropdown>
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4 inline-flex"
-                                                label='Modelo'
-                                                labelPlacement='outside'
-                                                placeholder='Modelo'
-                                                name="model"
-                                                value={product.model}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                                {CardType.CardType === "prices" && (
-                                    <div>
-                                        <div className="flex justify-center items-center text-center">
-                                            <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Precios</label>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4"
-                                                type='number'
-                                                label='Precio 1'
-                                                labelPlacement='outside'
-                                                placeholder='Precio 1'
-                                                name="price1"
-                                                value={product.price1}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4"
-                                                type='number'
-                                                label='Precio 2'
-                                                labelPlacement='outside'
-                                                placeholder='Precio 2'
-                                                name="price2"
-                                                value={product.price2}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4"
-                                                type='number'
-                                                label='Precio 3'
-                                                labelPlacement='outside'
-                                                placeholder='Precio 3'
-                                                name="price3"
-                                                value={product.price3}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4"
-                                                type='number'
-                                                label='Precio 4'
-                                                labelPlacement='outside'
-                                                placeholder='Precio 4'
-                                                name="price4"
-                                                value={product.price4}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                        </div>
-                                        <div className="flex justify-center items-center text-center">
-                                            <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Tarifas</label>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4"
-                                                type='number'
-                                                label='Tarifa 1'
-                                                labelPlacement='outside'
-                                                placeholder='Tarifa 1'
-                                                name="rate1"
-                                                value={product.rate1}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                            <Input
-                                                className="w-1/2 mr-4 mt-4"
-                                                type='number'
-                                                label='Tarifa 2'
-                                                labelPlacement='outside'
-                                                placeholder='Tarifa 2'
-                                                name="rate2"
-                                                value={product.rate2}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Input
-                                                className="w-full mr-4 mt-4"
-                                                type='number'
-                                                label='Tarifa 3'
-                                                labelPlacement='outside'
-                                                placeholder='Tarifa 3'
-                                                name="rate3"
-                                                value={product.rate3}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                                {CardType.CardType === "regulations" && (
-                                    <div>
-                                        <div className="flex align-middle justify-center">
-                                            <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Regulaciones</label>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Input
-                                                className="w-1/3 mr-4 mt-4"
-                                                label='Código SAT del producto'
-                                                labelPlacement='outside'
-                                                name="satProductCode"
-                                                placeholder='Código SAT del producto'
-                                                value={product.satProductCode}
-                                                onChange={handleInputChange}
-                                                disabled={isInputDisabled}
-                                            />
-                                            <Dropdown
-                                                backdrop='blur'
-                                            >
-                                                <DropdownTrigger>
-                                                    <Input
-                                                        className="w-1/3 mr-4 mt-4"
-                                                        label='Código de unidad SAT'
-                                                        labelPlacement='outside'
-                                                        selectionMode="single"
-                                                        name="satUnitCode"
-                                                        placeholder='Código de unidad SAT'
-                                                        value={product.satUnitCode || "selecciona un código"}
-                                                        onChange={handleInputChange}
-                                                        isDisabled={isInputDisabled}
-                                                    />
-                                                </DropdownTrigger>
-                                                <DropdownMenu>
-                                                    <DropdownSection>
-                                                        {productUnits.units.map((unit) => (
-                                                            <DropdownItem
-                                                                key={unit.value}
-                                                                onClick={() => setProduct({ ...product, satUnitCode: unit.value, unitMeasurement: unit.label })}
-                                                            >
-                                                                {unit.label}
-                                                            </DropdownItem>
-                                                        ))}
-                                                    </DropdownSection>
-                                                </DropdownMenu>
-                                            </Dropdown>
-                                            <Input
-                                                className="w-1/3 mr-4 mt-4"
-                                                label='Unidad de medida'
-                                                labelPlacement='outside'
-                                                name="unitMeasurement"
-                                                placeholder='Unidad de medida'
-                                                value={product.unitMeasurement}
-                                                onChange={handleInputChange}
-                                                disabled={true}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </CardBody>
-                            <CardFooter className="flex justify-center items-center text-center">
-                                {!isInputDisabled && (
-                                    <div className="flex justify-center mt-4">
-                                        <Button
-                                            auto
-                                            startContent={<MdSave />}
-                                            variant="success"
-                                            className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-full h-12 mt-10 mb-10"
-                                            size="sm"
-                                            onClick={handleSubmit}
-                                            disabled={loading}
-                                        >
-                                            Guardar
-                                        </Button>
-                                    </div>
-                                )}
-                                {isInputDisabled && (
+                        {!isInputDisabled && (
+                            <div>
+                                <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Imagen del producto</label>
+                                <br />
+                                <input
+                                    className="w-96 bg-transparent p-2 rounded-lg justify-center"
+                                    type='file'
+                                    name="image"
+                                    accept="image/jpeg, image/png, image/jpg"
+                                    ref={imageProd}
+                                    multiple
+                                    onChange={handleImageUpload}
+                                    disabled={isInputDisabled}
+                                />
+                            </div>
+                        )}
+                        {technicalSheet && (
+                            <div className="flex flex-col justify-center items-center">
+                                <p> Nombre del Archivo: {technicalSheet.name}</p>
+                                <a href={URL.createObjectURL(technicalSheet)} download={technicalSheet.name}>
+                                    <Button>Descargar</Button>
+                                </a>
+                            </div>
+                        )}
+                        {!isInputDisabled && (
+                            <div>
+                                <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Ficha técnica</label>
+                                <br />
+                                <input
+                                    className="w-96 bg-transparent p-2 rounded-lg justify-center"
+                                    type='file'
+                                    accept=".pdf"
+                                    name="technicalSheet"
+                                    src={technicalSheet}
+                                    onChange={handleTechnicalSheet}
+                                    disabled={isInputDisabled}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <Card className="flex flex-col justify-center items-center lg:w-1/3 w-1/2 h-[720px]">
+                        <CardHeader className="flex justify-center items-center text-center">
+                            <ButtonGroup className="flex justify-center items-center w-full h-12 p-3">
+                                {CardType.CardType === "general" ? (
                                     <Button
                                         auto
-                                        startContent={<MdArrowBack />}
+                                        variant="success"
+                                        className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "general" })}
+                                        disabled={loading}
+                                    >
+                                        Datos generales
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-transparent hover:bg-[#3B3B3B] text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "general" })}
+                                        disabled={loading}
+                                    >
+                                        Datos generales
+                                    </Button>
+                                )}
+                                {CardType.CardType === "prices" ? (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "prices" })}
+                                        disabled={loading}
+                                    >
+                                        Precios
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-transparent hover:bg-[#3B3B3B]  text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "prices" })}
+                                        disabled={loading}
+                                    >
+                                        Precios
+                                    </Button>
+                                )}
+                                {CardType.CardType === "regulations" ? (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-[#3B3B3B] hover:bg-primary text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "regulations" })}
+                                        disabled={loading}
+                                    >
+                                        Regulaciones
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        auto
+                                        variant="success"
+                                        className="bg-transparent hover:bg-[#3B3B3B] text-white font-bold p-3 h-12 w-1/3 mt-1"
+                                        size="sm"
+                                        onPress={() => setCardType({ ...CardType, CardType: "regulations" })}
+                                        disabled={loading}
+                                    >
+                                        Regulaciones
+                                    </Button>
+                                )}
+                            </ButtonGroup>
+                        </CardHeader>
+                        <CardBody className="flex flex-col justify-center items-center w-full">
+                            {CardType.CardType === "general" && (
+                                <div>
+                                    <div className="flex text-center justify-center items-center">
+                                        <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            label='Nombre del producto'
+                                            labelPlacement='outside'
+                                            placeholder='Nombre del producto'
+                                            name="productName"
+                                            value={product.productName}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            label='Código de la empresa'
+                                            labelPlacement='outside'
+                                            placeholder='Código de la empresa'
+                                            name="companyCode"
+                                            value={product.companyCode}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex items-start">
+                                        <Input
+                                            className="w-full mr-4 mt-4"
+                                            label='Código del fabricante'
+                                            labelPlacement='outside'
+                                            placeholder='Código del fabricante'
+                                            name="manofacturerCode"
+                                            value={product.manofacturerCode}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Dropdown>
+                                            <DropdownTrigger>
+                                                <Input
+                                                    className="w-1/2 mr-4 mt-4"
+                                                    label='Marca'
+                                                    labelPlacement='outside'
+                                                    placeholder='Marca'
+                                                    name="brand"
+                                                    value={product.brand || "selecciona una marca"}
+                                                    onChange={handleInputChange}
+                                                    disabled={isInputDisabled}
+                                                />
+                                            </DropdownTrigger>
+                                            <DropdownMenu>
+                                                <DropdownSection>
+                                                    {productsBrands.brands.map((brand) => (
+                                                        <DropdownItem
+                                                            key={brand.value}
+                                                            onClick={() => setProduct({ ...product, brand: brand.value })}
+                                                        >
+                                                            {brand.label}
+                                                        </DropdownItem>
+                                                    ))}
+                                                </DropdownSection>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4 inline-flex"
+                                            label='Modelo'
+                                            labelPlacement='outside'
+                                            placeholder='Modelo'
+                                            name="model"
+                                            value={product.model}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            {CardType.CardType === "prices" && (
+                                <div>
+                                    <div className="flex justify-center items-center text-center">
+                                        <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Precios</label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Precio 1'
+                                            labelPlacement='outside'
+                                            placeholder='Precio 1'
+                                            name="price1"
+                                            value={product.price1}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Precio 2'
+                                            labelPlacement='outside'
+                                            placeholder='Precio 2'
+                                            name="price2"
+                                            value={product.price2}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Precio 3'
+                                            labelPlacement='outside'
+                                            placeholder='Precio 3'
+                                            name="price3"
+                                            value={product.price3}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Precio 4'
+                                            labelPlacement='outside'
+                                            placeholder='Precio 4'
+                                            name="price4"
+                                            value={product.price4}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex justify-center items-center text-center">
+                                        <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Tarifas</label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Tarifa 1'
+                                            labelPlacement='outside'
+                                            placeholder='Tarifa 1'
+                                            name="rate1"
+                                            value={product.rate1}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Input
+                                            className="w-1/2 mr-4 mt-4"
+                                            type='number'
+                                            label='Tarifa 2'
+                                            labelPlacement='outside'
+                                            placeholder='Tarifa 2'
+                                            name="rate2"
+                                            value={product.rate2}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-full mr-4 mt-4"
+                                            type='number'
+                                            label='Tarifa 3'
+                                            labelPlacement='outside'
+                                            placeholder='Tarifa 3'
+                                            name="rate3"
+                                            value={product.rate3}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            {CardType.CardType === "regulations" && (
+                                <div>
+                                    <div className="flex align-middle justify-center">
+                                        <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Regulaciones</label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Input
+                                            className="w-1/3 mr-4 mt-4"
+                                            label='Código SAT del producto'
+                                            labelPlacement='outside'
+                                            name="satProductCode"
+                                            placeholder='Código SAT del producto'
+                                            value={product.satProductCode}
+                                            onChange={handleInputChange}
+                                            disabled={isInputDisabled}
+                                        />
+                                        <Dropdown
+                                            backdrop='blur'
+                                        >
+                                            <DropdownTrigger>
+                                                <Input
+                                                    className="w-1/3 mr-4 mt-4"
+                                                    label='Código de unidad SAT'
+                                                    labelPlacement='outside'
+                                                    selectionMode="single"
+                                                    name="satUnitCode"
+                                                    placeholder='Código de unidad SAT'
+                                                    value={product.satUnitCode || "selecciona un código"}
+                                                    onChange={handleInputChange}
+                                                    isDisabled={isInputDisabled}
+                                                />
+                                            </DropdownTrigger>
+                                            <DropdownMenu>
+                                                <DropdownSection>
+                                                    {productUnits.units.map((unit) => (
+                                                        <DropdownItem
+                                                            key={unit.value}
+                                                            onClick={() => setProduct({ ...product, satUnitCode: unit.value, unitMeasurement: unit.label })}
+                                                        >
+                                                            {unit.label}
+                                                        </DropdownItem>
+                                                    ))}
+                                                </DropdownSection>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <Input
+                                            className="w-1/3 mr-4 mt-4"
+                                            label='Unidad de medida'
+                                            labelPlacement='outside'
+                                            name="unitMeasurement"
+                                            placeholder='Unidad de medida'
+                                            value={product.unitMeasurement}
+                                            onChange={handleInputChange}
+                                            disabled={true}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </CardBody>
+                        <CardFooter className="flex justify-center items-center text-center">
+                            {!isInputDisabled && (
+                                <div className="flex justify-center mt-4">
+                                    <Button
+                                        auto
+                                        startContent={<MdSave />}
                                         variant="success"
                                         className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-full h-12 mt-10 mb-10"
                                         size="sm"
-                                        onClick={() => navigate('/products')}
+                                        onClick={handleSubmit}
                                         disabled={loading}
                                     >
-                                        Volver
+                                        Guardar
                                     </Button>
-                                )}
-                            </CardFooter>
-                        </Card>
-                    </div>
-                    )
-            }
-                </div >
+                                </div>
+                            )}
+                            {isInputDisabled && (
+                                <Button
+                                    auto
+                                    startContent={<MdArrowBack />}
+                                    variant="success"
+                                    className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-full h-12 mt-10 mb-10"
+                                    size="sm"
+                                    onClick={() => navigate('/products')}
+                                    disabled={loading}
+                                >
+                                    Volver
+                                </Button>
+                            )}
+                        </CardFooter>
+                    </Card>
+                </div>
             )
             }
+        </div >
+    )
+}
 
-            export default NewProducts
+export default NewProducts
