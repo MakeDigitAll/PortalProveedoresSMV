@@ -72,6 +72,7 @@ const Products = () => {
         })
       )
       const products = response.data.map((product, index) => {
+        console.log(images[index]);
         const isNullBlob = images[index].data.size === 0;
         const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
         return {
@@ -105,7 +106,7 @@ const Products = () => {
       label: "Codigo de la empresa",
     },
     {
-      key: "retailPrice",
+      key: "price1",
       label: "Precio de venta",
     },
     {
@@ -225,15 +226,28 @@ const Products = () => {
         }
         break;
       case "availabilityCat":
-        setAvailability({
-          ...availability,
-          availabilityCat: e.target.value,
-        });
+        if (availability.productStock > availability.productMin && availability.productStock < availability.productMax) {
+          setAvailability({
+            ...availability,
+            availabilityCat: "Disponible",
+          });
+        } else if (availability.productStock <= availability.productMin) {
+          setAvailability({
+            ...availability,
+            availabilityCat: "Agotado",
+          });
+        } else if (availability.productStock >= availability.productMax) {
+          setAvailability({
+            ...availability,
+            availabilityCat: "Sobre stock",
+          });
+        }
         break;
       default:
         break;
     }
   };
+
 
   const handleAvailability = async (id) => {
     try {
@@ -247,7 +261,6 @@ const Products = () => {
 
   const handlerSaveAvailability = async (id) => {
     try {
-      console.log(availability);
       const newAvailability = {
         productId: availability.productId,
         productStock: availability.productStock,
@@ -255,7 +268,6 @@ const Products = () => {
         productMax: availability.productMax,
         availabilityCat: availability.availabilityCat,
       };
-      console.log(newAvailability);
 
       await axios.put(`/products/availability/${id}`, newAvailability, {
         headers: {
@@ -292,7 +304,6 @@ const Products = () => {
   //------------------------------------------------------------------------------------------
   //----------------------------Funcion para renderizar la tabla -----------------------------------------------------------
   //------------------------------------------------------------------------------------------
-
 
 
   const renderCell = React.useCallback((products, columnKey) => {
@@ -628,11 +639,11 @@ const Products = () => {
             isLoading={isLoading && !items.length}
             emptyContent={
               products.length === 0 ? (
-                <Spinner label="Cargando" />
-              ) : (
-                "No products found"
-              )
-            }
+              "No products found"
+            ) : (
+              <Spinner label="Cargando" />
+            )}
+            
           >
             {(item) => (
               <TableRow key={item.id}>

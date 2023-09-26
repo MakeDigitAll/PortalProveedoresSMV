@@ -419,9 +419,9 @@ const Distributors = () => {
             <TableBody items={filterDistributors(distributors)}
               emptyContent={
                 distributors.length === 0 ? (
-                  <Spinner label="Cargando" />
-                ) : (
                   "No distributors found"
+                ) : (
+                  <Spinner label="Cargando" />
                 )
               }
             >

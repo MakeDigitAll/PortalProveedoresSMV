@@ -98,8 +98,13 @@ create table "pvProducts" (
     "companyCode" varchar(100),
     "brand" varchar(100),
     "model" varchar(100),
-    "retailPrice" float,
-    "wholesalePrice" float,
+    "price1" float,
+    "price2" float,
+    "price3" float,
+    "price4" float,
+    "rate1" float,
+    "rate2" float,
+    "rate3" float,
     "satProductCode" varchar(100) not null,
     "satUnitCode" varchar(100) not null,
     "unitMeasurement" varchar(100),
@@ -111,10 +116,22 @@ create table "pvProducts" (
 create table "pvProductsImages" (
     "id" serial primary key,
     "productId" int not null,
-    "image" BYTEA,
+    "image" BYTEA[],
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
+);
+
+create table "technicalSheetProducts"
+(
+    "id" serial primary key,
+    "productId" int not null,
+    "tecnicalSheet" BYTEA,
+    "name" varchar(100) not null,
+    "type" varchar(100) not null,
+    "created_At" timestamp default current_timestamp,
+    "updated_At" timestamp default current_timestamp,
+    "isDeleted" boolean default false 
 );
 
 
@@ -241,6 +258,9 @@ add constraint fk_prod_provider foreign key ("providerId") references "providers
 
 alter table "pvProductsImages"
 add constraint fk_prodImg_prod foreign key ("productId") references "pvProducts" ("id");
+
+alter table "technicalSheetProducts"
+add constraint fk_tecSheet_prod foreign key ("productId") references "pvProducts" ("id");
 
 ------------------------------------------------------------------------------------   Llaves foraneas   ------------------------------------------------------------------------------------------------------------
 

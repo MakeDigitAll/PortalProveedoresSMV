@@ -4,7 +4,7 @@ const upload = multer();
 const router = Router();
 
 
-const {getproductById, getProducts, createProduct, updateProduct, deleteProduct, updateImageProducts, getImageProduct, getDispobility, updateDispobility} = require('../controllers/productsController');
+const {getproductById, getProducts, createProduct, updateProduct, deleteProduct, updateImageProducts, getImageProduct, getDispobility, updateDispobility, getTechnicalSheet, technicalSheet, getImagesProduct} = require('../controllers/productsController');
 
 router.get('/products/get/:id', getproductById);
 
@@ -18,10 +18,15 @@ router.delete('/products/delete/:id', deleteProduct);
 
 router.get('/products/image/:id', getImageProduct);
 
-router.put('/products/image/:id',upload.single('image'), updateImageProducts);
+router.get('/products/images/:id', getImagesProduct);
+
+router.put('/products/images/:id',upload.fields([{ name: 'image0', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]), updateImageProducts);
 
 router.get('/products/availability/:id', getDispobility);
 
 router.put('/products/availability/:id', updateDispobility);
 
+//router.get('/products/technicalSheet/:id', getTechnicalSheet);
+
+router.put('/products/technicalSheet/:id', upload.single('technicalSheet'), technicalSheet);
 module.exports = router;
