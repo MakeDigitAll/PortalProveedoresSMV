@@ -683,24 +683,15 @@ const NewProducts = () => {
     const removeImage = () => {
         const updatedImages = [...images];
         updatedImages.splice(selectedImage, 1);
+
+        setImage1(selectedImage[0] || null);
+        setImage2(selectedImage[1] || null);
+        setImage3(selectedImage[2] || null);
+        setImage4(selectedImage[3] || null);
+
         setImages(updatedImages);
 
-        switch (selectedImage) {
-            case 0:
-                setImage1(null);
-                break;
-            case 1:
-                setImage2(null);
-                break;
-            case 2:
-                setImage3(null);
-                break;
-            case 3:
-                setImage4(null);
-                break;
-            default:
-                break;
-        }
+        setSelectedImage(0);
     };
 
 
@@ -717,20 +708,17 @@ const NewProducts = () => {
                     formData.append(`image${index}`, image);
                 });
 
-                console.log('edicion', formData);
-                console.log('edicion1', images);
-
-                // await axios.put(`/products/images/${idpd}`, formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data',
-                //     },
-                // }).then((response) => {
-                //     if (response.status === 200) {
-                //         console.log('Imágenes actualizadas');
-                //     }
-                // }).catch((error) => {
-                //     console.log(error);
-                // });
+                await axios.put(`/products/images/${idpd}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Imágenes actualizadas');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
             } catch (error) {
                 console.log(error);
             }
@@ -741,10 +729,21 @@ const NewProducts = () => {
 
 
     const handleTechnicalSheet = async (event) => {
-        setTechnicalSheet(event.target.files[0]);
-        if (event.target.files[0]) {
+        if (event.target.files[0] && event.target.files[0].type === 'application/pdf') {
+            setTechnicalSheet(event.target.files[0]);
             setNameTS(event.target.files[0].name);
             setTypeTS(event.target.files[0].type);
+        } else {
+            toast.error('El archivo debe ser PDF', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                autoClose: 5000,
+                theme: "colored",
+            });
         }
     }
 
@@ -895,8 +894,7 @@ const NewProducts = () => {
             const url4 = URL.createObjectURL(blob4);
             setImage4(url4);
         }
-
-        console.log('images', images);
+        
     }, [images, selectedImage]);
 
     useEffect(() => {
