@@ -754,6 +754,7 @@ const NewProducts = () => {
                 },
             });
             const imagesData = response.data;
+            console.log(response);
             if (imagesData.length > 0 && imagesData !== null) {
                 const imagesArray = [];
                 imagesData.forEach((image) => {

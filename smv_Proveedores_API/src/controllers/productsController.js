@@ -74,7 +74,7 @@ const getImagesProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const img = await pool.query('SELECT "image" FROM "pvProductsImages" WHERE "productId" = $1', [id]);
-        return res.status(200).json(img.rows[0].image);
+        return res.send(img.rows[0].image);
     } catch (error) {
         res.status(400).json({ error: 'Error al obtener la imagen' });
     }

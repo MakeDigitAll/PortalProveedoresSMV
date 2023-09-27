@@ -72,7 +72,6 @@ const Products = () => {
         })
       )
       const products = response.data.map((product, index) => {
-        console.log(images[index]);
         const isNullBlob = images[index].data.size === 0;
         const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
         return {
@@ -81,7 +80,6 @@ const Products = () => {
         } 
       })
       setProducts(products);
-      console.log(products);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
