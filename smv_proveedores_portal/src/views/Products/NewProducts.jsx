@@ -149,6 +149,7 @@ const NewProducts = () => {
     const [image4, setImage4] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
+    const [showDeleteOption, setShowDeleteOption] = useState(false);
     const [technicalSheet, setTechnicalSheet] = useState(null);
     const [nameTS, setNameTS] = useState(null);
     const [typeTS, setTypeTS] = useState(null);
@@ -643,6 +644,14 @@ const NewProducts = () => {
         }
     }
 
+    const handleImagePreviewHover = () => {
+        setShowDeleteOption(true);
+    };
+
+    const handleImagePreviewLeave = () => {
+        setShowDeleteOption(false);
+    };
+
     //agrego las imagenes al arreglo de imagenes
     // como maximum 4 images
     const handleImageUpload = (e) => {
@@ -671,11 +680,29 @@ const NewProducts = () => {
         }
     };
 
-    const removeImage = (index) => {
+    const removeImage = () => {
         const updatedImages = [...images];
-        updatedImages.splice(index, 1);
+        updatedImages.splice(selectedImage, 1);
         setImages(updatedImages);
+
+        switch (selectedImage) {
+            case 0:
+                setImage1(null);
+                break;
+            case 1:
+                setImage2(null);
+                break;
+            case 2:
+                setImage3(null);
+                break;
+            case 3:
+                setImage4(null);
+                break;
+            default:
+                break;
+        }
     };
+
 
 
     const submitImages = async (idprd) => {
@@ -689,18 +716,21 @@ const NewProducts = () => {
                 images.forEach((image, index) => {
                     formData.append(`image${index}`, image);
                 });
-                
-                await axios.put(`/products/images/${idpd}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }).then((response) => {
-                    if (response.status === 200) {
-                        console.log('Imágenes actualizadas');
-                    }
-                }).catch((error) => {
-                    console.log(error);
-                });
+
+                console.log('edicion', formData);
+                console.log('edicion1', images);
+
+                // await axios.put(`/products/images/${idpd}`, formData, {
+                //     headers: {
+                //         'Content-Type': 'multipart/form-data',
+                //     },
+                // }).then((response) => {
+                //     if (response.status === 200) {
+                //         console.log('Imágenes actualizadas');
+                //     }
+                // }).catch((error) => {
+                //     console.log(error);
+                // });
             } catch (error) {
                 console.log(error);
             }
@@ -865,6 +895,8 @@ const NewProducts = () => {
             const url4 = URL.createObjectURL(blob4);
             setImage4(url4);
         }
+
+        console.log('images', images);
     }, [images, selectedImage]);
 
     useEffect(() => {
@@ -925,14 +957,24 @@ const NewProducts = () => {
             ) : (
                 <div className='flex flex-col justify-center text-center items-center w-full lg:flex-row'>
                     <div className="lg:mb-10 mb-10 flex flex-col items-center w-1/2 h-full">
-                    <div className="flex flex-row justify-center items-center w-full">
-                        <img
-                            className="w-96 h-96 lg:rounded-full rounded-sm object-cover mt-4"
-                            src={imagePreview || ba}
-                            alt={`Imagen ${0}`}
-                            ref={imageProd}
-                        />
-                    </div>
+                        <div className="flex flex-row justify-center items-center w-full">
+                            <div
+                                className="relative"
+                                onMouseEnter={handleImagePreviewHover}
+                                onMouseLeave={handleImagePreviewLeave}
+                            >
+                                <img
+                                    className="w-96 h-96 lg:rounded-full rounded-sm object-cover mt-4"
+                                    src={imagePreview || ba}
+                                    alt={`Imagen ${selectedImage}`}
+                                />
+                                {showDeleteOption && (
+                                    <button className="absolute top-0 right-0 p-2 rounded bg-red-500 text-white" onClick={removeImage}>
+                                        Borrar
+                                    </button>
+                                )}
+                            </div>
+                        </div>
                         <div className="flex flex-row justify-center items-center w-full">
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"

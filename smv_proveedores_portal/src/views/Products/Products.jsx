@@ -623,6 +623,7 @@ const Products = () => {
 
       <div className="flex justify-between items-center w-11/12 ml-20 mt-20">
         <Table
+          isHeaderSticky
           aria-label=" table with client async pagination"
           classNames={{
             wrapper: "w-full max-h-[500px]",
@@ -636,10 +637,10 @@ const Products = () => {
           <TableBody items={filterProducts(products)}
             isLoading={isLoading && !items.length}
             emptyContent={
-              products.length === 0 ? (
-              "No products found"
-            ) : (
+              isLoading ? (
               <Spinner label="Cargando" />
+            ) : (
+              "No products found"
             )}
             
           >
