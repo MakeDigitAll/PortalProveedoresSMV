@@ -12,7 +12,7 @@ const morgan = require('morgan');
 
 const providersRoutes = require('./routes/providers.routes');
 const authRoutes = require('./routes/auth.routes');
-const distributorsRoutes = require('./routes/distributors.routes');
+const usersRoutes = require('./routes/users.routes');
 const productsRoutes = require('./routes/products.routes');
 const orders = require('./routes/orders.routes');
 
@@ -33,7 +33,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 //definir rutas
 app.use(providersRoutes);
 app.use(authRoutes);
-app.use(distributorsRoutes);
+app.use(usersRoutes);
 app.use(productsRoutes);
 app.use(orders);
 

@@ -33,7 +33,7 @@ const handleNewUser = async (req, res) => {
 
             const hashedPassword = await encryptPassword(password);
             const result = await pool.query('INSERT INTO "userAuth" ("userName", "password", "isPasswordModified") VALUES ($1, $2, $3) RETURNING *', [username, hashedPassword, true]);
-            await pool.query('INSERT INTO "distributorsProfile" ("distributorId", "distributorName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, 'nombreProvisional', 'direccionProvisional', 'colProvisional', 'ciudadProvisional', 'estadoProvisional', 'cpProvisional', 'paisProvisional', 'contactoProvisional', '4920000000', username]);
+            await pool.query('INSERT INTO "UsersProfile" ("profileId", "profileName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, 'nombreProvisional', 'direccionProvisional', 'colProvisional', 'ciudadProvisional', 'estadoProvisional', 'cpProvisional', 'paisProvisional', 'contactoProvisional', '4920000000', username]);
 
             //---------------------------------------------------------------------------------------- Asignacion de permisos
 
@@ -52,7 +52,7 @@ const handleNewUser = async (req, res) => {
             await pool.query('INSERT INTO "verifyToken" ("userId", "token", "expireTime") VALUES ($1, $2, $3)', [token.userId, token.token, token.expireDate]);
 
             //---------------------------------------------------------------------------------------- Envio de correo de verificacion y notificacion de nuevo distribuidor
-            const urlWaitingProvider = `http://localhost:5173/distributors`;
+            const urlWaitingProvider = `http://localhost:5173/users`;
             await sendEmail(referenceExist.rows[0].email, "Tienes a un nuevos distribuidores que necesita ser confirmados", urlWaitingProvider);
 
             const urlVerif = `http://localhost:5173/users/${token.userId}/verify/${token.token}`;

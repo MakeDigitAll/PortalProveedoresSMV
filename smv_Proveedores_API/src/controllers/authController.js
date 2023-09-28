@@ -64,10 +64,10 @@ const getAuth = async (username) => {
   const Pv = await pool.query('SELECT * FROM "providersProfile" WHERE "providerId" = $1', [response.rows[0].id]);
   if (!Pv.rows[0]) {
 
-    const profileDist = await pool.query('SELECT * FROM "distributorsProfile" WHERE "distributorId" = $1', [response.rows[0].id]);
+    const profileDist = await pool.query('SELECT * FROM "UsersProfile" WHERE "profileId" = $1', [response.rows[0].id]);
     const idProv = await pool.query('SELECT "id" FROM "providersProfile" WHERE "referenceCode" = (SELECT "reference" FROM "Permissions" WHERE "userId" = $1)', [response.rows[0].id]);
     const resp = {
-      user: profileDist.rows[0].distributorName,
+      user: profileDist.rows[0].profileName,
       password: response.rows[0].password,
       isVerified: response.rows[0].isVerified,
       userId: response.rows[0].id,

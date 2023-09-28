@@ -22,7 +22,7 @@ import '../../App.css';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
-const DistributorsPermissions = () => {
+const UsersPermissions = () => {
     const { auth } = useAuth();
     const pvId = auth.ID;
     const navigate = useNavigate();
@@ -44,13 +44,13 @@ const DistributorsPermissions = () => {
     const fetchData = async () => {
 
         try {
-            const result = await axios.get(`/distributors/permissions/${id}`);
+            const result = await axios.get(`/users/permissions/${id}`);
             const cleanedString = result.data.permission.replace(/[{}"]/g, '');
             const rolesArrayWithStrings = cleanedString.split(',');
             const roles = [
                 {
                     id: result.data.userId,
-                    username: result.data.distributorName,
+                    username: result.data.ProfileName,
                     avatar: result.data.avatar ? result.data.avatar : 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png',
                     pedidos: rolesArrayWithStrings[0],
                     finanzas: rolesArrayWithStrings[1],
@@ -166,7 +166,7 @@ const DistributorsPermissions = () => {
             const data = {
                 permission: `{${permisos[0]['pedidos']},${permisos[0]['finanzas']},${permisos[0]['productos']},${permisos[0]['facturacion']},${rolDristribuidor}}`,
             };
-            const result = await axios.put(`/distributors/permissions/${id}/${pvId}`, data, {
+            const result = await axios.put(`/users/permissions/${id}/${pvId}`, data, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -183,7 +183,7 @@ const DistributorsPermissions = () => {
                     theme: "colored",
                 });
 
-                navigate('/distributors', { replace: true });
+                navigate('/users', { replace: true });
             }
         } catch (error) {
             console.log(error);
@@ -225,17 +225,17 @@ const DistributorsPermissions = () => {
                             sx={{ display: "flex", alignItems: "center" }}
                             color="foreground"
                             href="#"
-                            onClick={() => navigate(`/distributors`)}
+                            onClick={() => navigate(`/users`)}
                         >
                             <RiUserSharedFill sx={{ mr: 0.5 }} fontSize="inherit" />
-                            Distribuidores
+                            Usuarios
                         </Link>
                         <Typography
                             sx={{ display: "flex", alignItems: "center" }}
                             className="text-foreground"
                         >
                             <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-                            Permisos del distribuidor
+                            Permisos del usuario
                         </Typography>
                     </Breadcrumbs>
                 </div>
@@ -249,7 +249,7 @@ const DistributorsPermissions = () => {
                 <><div className="flex justify-between items-center p-4 w-11/12 ml-20 mt-20">
                     <div className="flex items-center mt-1">
                         <Typography variant="h5" className="text-foreground">
-                            Permisos del distribuidor
+                            Permisos del usuario
                             <User
                                 name={permisos[0].username} 
                                 description={permisos[0].id}
@@ -296,7 +296,7 @@ const DistributorsPermissions = () => {
     );
 };
 
-export default DistributorsPermissions;
+export default UsersPermissions;
 
 
 

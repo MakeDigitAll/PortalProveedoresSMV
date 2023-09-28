@@ -362,7 +362,7 @@ const Register = () => {
                                     style={{ marginTop: "20px" }}
                                 >
                                     <Radio value="1">{"Proveedor"}</Radio>
-                                    <Radio value="2">{"Distributor"}</Radio>
+                                    <Radio value="2">{"Usuario"}</Radio>
                                 </RadioGroup>
 
                                 {typeUser === '2' && <Spacer y={1} />}

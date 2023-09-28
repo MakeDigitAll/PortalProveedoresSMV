@@ -43,15 +43,15 @@ const NewOrders = () => {
     const axios = useAxiosPrivate();
     const { auth } = useAuth();
     const ID = auth?.ID;
-    const distributorName = auth?.username;
+    const profileName = auth?.username;
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const [searchName, setSearchName] = React.useState("");
     const [searchManofacturerCode, setSearchManofacturerCode] = React.useState("");
 
     const [order, setOrder] = useState({
-        distributorId: ID,
-        distributorName: distributorName,
+        profileId: ID,
+        profileName: profileName,
         costumer: "" || "",
         orderDate: "" || new Date().toISOString().split('T')[0],
         orderType: "",
@@ -380,7 +380,7 @@ const NewOrders = () => {
         try {
             const response = await axios.get(`/orders/getOrder/${params.id}`);
             setOrder({
-                distributorId: ID,
+                profileId: ID,
                 costumer: response.data.costumer,
                 socialReasonCostumer: response.data.socialReasonCostumer,
                 orderDate: response.data.orderDate,
@@ -574,7 +574,7 @@ const NewOrders = () => {
 
 
             <div className="flex flex-col mx-10 mt-10 mb-1 pr-20 lg:flex-row w-full h-full">
-                <Input className='w-full lg:w-1/2 px-10' placeholder="Distribuidor" label="Responsable" labelPlacement="outside" value={order.distributorName} onChange={handleOrderChange} name="distributor" isDisabled={true} />
+                <Input className='w-full lg:w-1/2 px-10' placeholder="user" label="Responsable" labelPlacement="outside" value={order.profileName} onChange={handleOrderChange} name="user" isDisabled={true} />
                 <Dropdown>
                     <DropdownTrigger>
                         <Input className='w-full lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione un almacen"} name="costumer" isDisabled={isInputDisabled} />

@@ -1,4 +1,3 @@
-import useAxiosPrivate from "./useAxiosPrivate";
 import useAuth from "./useAuth";
 import Cookies from "js-cookie";
 
@@ -11,7 +10,7 @@ const useLogout = () => {
         localStorage.removeItem("r");
         localStorage.removeItem("iV");
         localStorage.removeItem("ID");
-        localStorage.removeItem("img");
+        localStorage.removeItem("userId");
         localStorage.removeItem("username");
         localStorage.removeItem("imgURL");
 

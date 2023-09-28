@@ -40,9 +40,9 @@ const useRefreshToken = () => {
             console.log('RT:', error);
             localStorage.removeItem('r');
             localStorage.removeItem('ID');
+            localStorage.removeItem('userId');
             localStorage.removeItem('iV');
             localStorage.removeItem('username');
-            localStorage.removeItem('img');
             Cookies.remove('aT');
             Cookies.remove('rT');
             navigate('/', { replace: true });
