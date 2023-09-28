@@ -32,23 +32,19 @@ const getProducts = async (req, res) => {
 //---------------------------------------------------------------------------------------
 
 const updateImageProducts = async (req, res) => {
-    const { id } = req.params;
-    const images = req.files;
+    const { id, position } = req.params;
+    const image = req.files;
     //se recibe un array de imagenes
 
-    const imageBuffers = [];
-
-    for (let i = 0; i < 4; i++) {
-        if (images[`image${i}`]) {
-            imageBuffers.push(images[`image${i}`][0].buffer);
-        } else {
-            imageBuffers.push(null);
-        }
+    if (!image) {
+        return res.status(400).json({
+            message: 'No se encontro la imagen'
+        });
     }
  
     try {
         const date = new Date();
-        await pool.query('UPDATE "pvProductsImages" SET "image" = $1, "updated_At" = $2 WHERE "productId" = $3', [imageBuffers, date, id]);
+        await pool.query(`UPDATE "pvProductsImages" SET "image${position}" = $1, "updated_At" = $2 WHERE "productId" = $3`, [image[0].buffer, date, id]);
         res.status(200).json({
             message: 'Imagenes actualizadas correctamente'
         });
@@ -62,24 +58,13 @@ const updateImageProducts = async (req, res) => {
 
 const getImageProduct = async (req, res) => {
     try {
-        const { id } = req.params;
-        const img = await pool.query('SELECT "image" FROM "pvProductsImages" WHERE "productId" = $1', [id]);
-        return res.send(img.rows[0].image[0]);
-    } catch (error) {
-        res.status(400).json({ error: 'Error al obtener la imagen' });
-    }
-}
-
-const getImagesProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const img = await pool.query('SELECT "image" FROM "pvProductsImages" WHERE "productId" = $1', [id]);
+        const { id, position } = req.params;
+        const img = await pool.query(`SELECT "image${position}" FROM "pvProductsImages" WHERE "productId" = $1`, [id]);
         return res.send(img.rows[0].image);
     } catch (error) {
         res.status(400).json({ error: 'Error al obtener la imagen' });
     }
 }
-
 //---------------------------------------------------------------------------------------
 
 
@@ -104,7 +89,10 @@ const createProduct = async (req, res) => {
         const isDeleted = false;
         const newProd = await pool.query('INSERT INTO "pvProducts" ("productName", "manofacturerCode", "companyCode", "brand", "model", "price1", "price2", "price3", "price4", "rate1", "rate2", "rate3", "satProductCode", "satUnitCode", "unitMeasurement", "providerId", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING id', [productName, manofacturerCode, companyCode, brand, model, price1, price2, price3, price4, rate1, rate2, rate3, satProductCode, satUnitCode, unitMeasurement, id, date, date, isDeleted]);
         await pool.query('INSERT INTO "providerProductsAvailability" ("productId", "productStock", "productMin", "productMax","availabilityCat", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [newProd.rows[0].id, 0, 0, 0, 0, date, date, isDeleted]);
-        await pool.query('INSERT INTO "pvProductsImages" ("productId", "image", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5)', [newProd.rows[0].id, [null, null, null, null], date, date, isDeleted]);
+        await pool.query('INSERT INTO "pvProductsImages" ("productId", "image1", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5)', [newProd.rows[0].id, null, date, date, isDeleted]);
+        await pool.query('INSERT INTO "pvProductsImages" ("productId", "image2", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5)', [newProd.rows[0].id, null , date, date, isDeleted]);
+        await pool.query('INSERT INTO "pvProductsImages" ("productId", "image3", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5)', [newProd.rows[0].id, null, date, date, isDeleted]);
+        await pool.query('INSERT INTO "pvProductsImages" ("productId", "image4", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5)', [newProd.rows[0].id, null, date, date, isDeleted]);
         await pool.query('INSERT INTO "technicalSheetProducts" ("productId", "tecnicalSheet", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5)', [newProd.rows[0].id, null, date, date, isDeleted]);
         res.status(200).json({
             message: 'Producto creado correctamente',
@@ -237,7 +225,6 @@ module.exports = {
     deleteProduct, 
     updateImageProducts,
     getImageProduct,
-    getImagesProduct,
     getDispobility,
     updateDispobility,
     technicalSheet,

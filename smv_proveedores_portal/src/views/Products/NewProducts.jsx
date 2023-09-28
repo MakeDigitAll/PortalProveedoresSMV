@@ -140,13 +140,15 @@ const NewProducts = () => {
 
     const [variable, setVariable] = useState('Nuevo producto');
     const [CardType, setCardType] = useState('general');
-    const imageProd = React.useRef(null);
     //const technicalSheetPreview = React.useRef(null);
-    const [images, setImages] = useState([]);
     const [image1, setImage1] = useState(null);
     const [image2, setImage2] = useState(null);
     const [image3, setImage3] = useState(null);
     const [image4, setImage4] = useState(null);
+    const [imgPreview1, setImgPreview1] = useState(null);
+    const [imgPreview2, setImgPreview2] = useState(null);
+    const [imgPreview3, setImgPreview3] = useState(null);
+    const [imgPreview4, setImgPreview4] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
     const [showDeleteOption, setShowDeleteOption] = useState(false);
@@ -656,77 +658,101 @@ const NewProducts = () => {
     // como maximum 4 images
     const handleImageUpload = (e) => {
         const selectedImages = Array.from(e.target.files);
-        switch (images.length) {
+    //    if (e.target.files.type === 'image/jpeg' || e.target.files.type === 'image/png') {
+            if (image1 === null) {
+                setImage1(selectedImages[0]);
+                setSelectedImage(0);
+            } else if (image2 === null) {
+                setImage2(selectedImages[0]);
+                setSelectedImage(1);
+            } else if (image3 === null) {
+                setImage3(selectedImages[0]);
+                setSelectedImage(2);
+            } else if (image4 === null) {
+                setImage4(selectedImages[0]);
+                setSelectedImage(3);
+            } else {
+                toast.error('Solo se pueden agregar 4 imágenes', {
+                    position: "bottom-right",
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    autoClose: 5000,
+                    theme: "colored",
+                });
+            }
+        //} else {
+        //     toast.error('Solo se pueden agregar imágenes en formato JPG o PNG', {
+        //         position: "bottom-right",
+        //         hideProgressBar: false,
+        //         closeOnClick: true,
+        //         pauseOnHover: true,
+        //         draggable: true,
+        //         progress: undefined,
+        //         autoClose: 5000,
+        //         theme: "colored",
+        //     });
+        // }
+    };
+
+    const removeImage = () => {
+        switch (selectedImage) {
             case 0:
-                setImage1(URL.createObjectURL(selectedImages[0]));
+                setImage1(null);
+                setImgPreview1(null);
                 break;
             case 1:
-                setImage2(URL.createObjectURL(selectedImages[0]));
+                setImage2(null);
+                setImgPreview2(null);
                 break;
             case 2:
-                setImage3(URL.createObjectURL(selectedImages[0]));
+                setImage3(null);
+                setImgPreview3(null);
                 break;
             case 3:
-                setImage4(URL.createObjectURL(selectedImages[0]));
+                setImage4(null);
+                setImgPreview4(null);
                 break;
             default:
                 break;
         }
-
-        // Verifica si se ha alcanzado el número máximo de imágenes (4 en este caso)
-        if (images.length + selectedImages.length <= 4) {
-            setImages((prevImages) => [...prevImages, ...selectedImages]);
-
-        }
     };
-
-    const removeImage = () => {
-        const updatedImages = [...images];
-        updatedImages.splice(selectedImage, 1);
-
-        setImage1(selectedImage[0] || null);
-        setImage2(selectedImage[1] || null);
-        setImage3(selectedImage[2] || null);
-        setImage4(selectedImage[3] || null);
-
-        setImages(updatedImages);
-
-        setSelectedImage(0);
-    };
-
 
 
     const submitImages = async (idprd) => {
         const idpd = idprd || params.id;
-
-        if (images.length > 0) { // Verifica si se han seleccionado imágenes
-            try {
-                const formData = new FormData();
-
-                // Agrega todas las imágenes al formulario
-                images.forEach((image, index) => {
-                    formData.append(`image${index}`, image);
-                });
-
-                await axios.put(`/products/images/${idpd}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }).then((response) => {
-                    if (response.status === 200) {
-                        console.log('Imágenes actualizadas');
-                    }
-                }).catch((error) => {
+        
+        const imagesToUpload = [image1, image2, image3, image4];
+    
+        for (let position = 0; position < imagesToUpload.length; position++) {
+            const image = imagesToUpload[position];
+            
+            if (image) {
+                try {
+                    const formData = new FormData();
+                    formData.append('image', image);
+    
+                    await axios.put(`/products/image${position + 1}/${idpd}`, formData, {
+                        params: {
+                            position: position,
+                        },
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+    
+                    console.log(`Imagen ${position + 1} actualizada`);
+                } catch (error) {
                     console.log(error);
-                });
-            } catch (error) {
-                console.log(error);
+                }
+            } else {
+                console.log(`No se seleccionó imagen ${position + 1}`);
             }
-        } else {
-            console.log('No se seleccionaron imágenes');
         }
     };
-
+    
 
     const handleTechnicalSheet = async (event) => {
         if (event.target.files[0] && event.target.files[0].type === 'application/pdf') {
@@ -777,26 +803,50 @@ const NewProducts = () => {
 
     const getImages = async () => {
         try {
-            const response = await axios.get(`/products/images/${params.id}`, {
-                headers: {
-                    'responseType': 'blob',
-                },
-            });
-            const imagesData = response.data;
-            console.log(response);
-            if (imagesData.length > 0 && imagesData !== null) {
-                const imagesArray = [];
-                imagesData.forEach((image) => {
-                    imagesArray.push(image);
+            const imagePromises = [];
+    
+            for (let position = 0; position < 4; position++) {
+                const response = await axios.get(`/products/image/${params.id}`, {
+                    params: {
+                        position: position,
+                    },
+                    responseType: 'blob',
                 });
-                return imagesArray;
+    
+                if (response.data.size > 0) {
+                    const imageBlob = response.data;
+                    imagePromises.push(setImage(position, imageBlob));
+                }
             }
-            return [];
+    
+            await Promise.all(imagePromises);
         } catch (error) {
             console.log(error);
-            return [];
+            setLoading(false);
         }
     };
+    
+    const setImage = async (position, imageBlob) => {
+        switch (position) {
+            case 0:
+                setImage1(imageBlob);
+                break;
+            case 1:
+                setImage2(imageBlob);
+                break;
+            case 2:
+                setImage3(imageBlob);
+                break;
+            case 3:
+                setImage4(imageBlob);
+                break;
+            default:
+                break;
+        }
+    };
+    
+
+
 
     const getTechnicalSheet = async () => {
         try {
@@ -817,7 +867,7 @@ const NewProducts = () => {
     };
 
     const loadProduct = async () => {
-        setImages(await getImages());
+        await getImages();
         await getTechnicalSheet();
         const response = await axios.get(`/products/get/${params.id}`);
         setProduct({
@@ -854,48 +904,38 @@ const NewProducts = () => {
     useEffect(() => {
         switch (selectedImage) {
             case 0:
-                setImagePreview(image1);
+                setImagePreview(imgPreview1);
                 break;
             case 1:
-                setImagePreview(image2);
+                setImagePreview(imgPreview2);
                 break;
             case 2:
-                setImagePreview(image3);
+                setImagePreview(imgPreview3);
                 break;
             case 3:
-                setImagePreview(image4);
+                setImagePreview(imgPreview4);
                 break;
             default:
                 break;
         }
 
-        if (!images || images === null || images.length === 0)
-            return;
-        const blob = new Blob([new Uint8Array(images[0]?.data)], { type: 'image/jpeg' });
-        if (blob && blob.size > 0) {
-            const url = URL.createObjectURL(blob);
-            setImage1(url);
+        if (image1 && image1 !== null) {
+            const blob1 = new Blob([image1], { type: 'image/jpeg' });
+            setImgPreview1(URL.createObjectURL(blob1));
         }
-
-        const blob2 = new Blob([new Uint8Array(images[1]?.data)], { type: 'image/jpeg' });
-        if (blob2 && blob2.size > 0) {
-            const url2 = URL.createObjectURL(blob2);
-            setImage2(url2);
+        if (image2 && image2 !== null) {
+            const blob2 = new Blob([image2], { type: 'image/jpeg' });
+            setImgPreview2(URL.createObjectURL(blob2));
         }
-
-        const blob3 = new Blob([new Uint8Array(images[2]?.data)], { type: 'image/jpeg' });
-        if (blob3 && blob3.size > 0) {
-            const url3 = URL.createObjectURL(blob3);
-            setImage3(url3);
+        if (image3 && image3 !== null) {
+            const blob3 = new Blob([image3], { type: 'image/jpeg' });
+            setImgPreview3(URL.createObjectURL(blob3));
         }
-
-        const blob4 = new Blob([new Uint8Array(images[3]?.data)], { type: 'image/jpeg' });
-        if (blob4 && blob4.size > 0) {
-            const url4 = URL.createObjectURL(blob4);
-            setImage4(url4);
+        if (image4 && image4 !== null) {
+            const blob4 = new Blob([image4], { type: 'image/jpeg' });
+            setImgPreview4(URL.createObjectURL(blob4));
         }
-        
-    }, [images, selectedImage]);
+    }, [image1, image2, image3, image4, selectedImage]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -976,30 +1016,26 @@ const NewProducts = () => {
                         <div className="flex flex-row justify-center items-center w-full">
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                src={image1 || ba}
+                                src={imgPreview1 || ba}
                                 alt={`Imagen ${0}`}
-                                ref={imageProd}
                                 onClick={() => setSelectedImage(0)}
                             />
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                src={image2 || ba}
+                                src={imgPreview2 || ba}
                                 alt={`Imagen ${1}`}
-                                ref={imageProd}
                                 onClick={() => setSelectedImage(1)}
                             />
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                src={image3 || ba}
+                                src={imgPreview3 || ba}
                                 alt={`Imagen ${2}`}
-                                ref={imageProd}
                                 onClick={() => setSelectedImage(2)}
                             />
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                src={image4 || ba}
+                                src={imgPreview4 || ba}
                                 alt={`Imagen ${3}`}
-                                ref={imageProd}
                                 onClick={() => setSelectedImage(3)}
                             />
                         </div>
@@ -1012,7 +1048,6 @@ const NewProducts = () => {
                                     type='file'
                                     name="image"
                                     accept="image/jpeg, image/png, image/jpg"
-                                    ref={imageProd}
                                     multiple
                                     onChange={handleImageUpload}
                                     disabled={isInputDisabled}

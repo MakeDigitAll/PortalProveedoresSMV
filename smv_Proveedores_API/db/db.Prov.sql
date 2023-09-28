@@ -116,7 +116,10 @@ create table "pvProducts" (
 create table "pvProductsImages" (
     "id" serial primary key,
     "productId" int not null,
-    "image" BYTEA[],
+    "image1" BYTEA,
+    "image2" BYTEA,
+    "image3" BYTEA,
+    "image4" BYTEA,
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
