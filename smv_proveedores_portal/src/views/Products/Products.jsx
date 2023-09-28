@@ -66,10 +66,7 @@ const Products = () => {
       const response = await axios.get(`/products/all/${auth.ID}`);
       const images = await Promise.all(
         response.data.map((product) => {
-          return axios.get(`/products/image/${product.id}`, { 
-            params: {
-              position: 0
-            },
+          return axios.get(`/products/image/${product.id}/${0}`, {
             responseType: 'blob'
           })
         })

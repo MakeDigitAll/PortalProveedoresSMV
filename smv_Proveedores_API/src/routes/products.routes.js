@@ -16,9 +16,9 @@ router.put('/products/update/:id', updateProduct);
 
 router.delete('/products/delete/:id', deleteProduct);
 
-router.get('/products/image/:id', getImageProduct);
+router.get('/products/image/:id/:position', getImageProduct);
 
-router.put('/products/images/:id',upload.fields([{ name: 'image0', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]), updateImageProducts);
+router.put('/products/image/:id/:position', upload.single('image'), updateImageProducts);
 
 router.get('/products/availability/:id', getDispobility);
 

@@ -734,10 +734,7 @@ const NewProducts = () => {
                     const formData = new FormData();
                     formData.append('image', image);
     
-                    await axios.put(`/products/image${position + 1}/${idpd}`, formData, {
-                        params: {
-                            position: position,
-                        },
+                    await axios.put(`/products/image/${idpd}/${position + 1}`, formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },
@@ -806,10 +803,7 @@ const NewProducts = () => {
             const imagePromises = [];
     
             for (let position = 0; position < 4; position++) {
-                const response = await axios.get(`/products/image/${params.id}`, {
-                    params: {
-                        position: position,
-                    },
+                const response = await axios.get(`/products/image/${params.id}/${position + 1}`, {
                     responseType: 'blob',
                 });
     
