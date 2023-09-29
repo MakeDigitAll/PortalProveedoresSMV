@@ -24,11 +24,11 @@ create table "providersProfile" (
     "isDeleted" boolean default false 
 );
 
-create table "distributorsProfile"
+create table "usersProfile"
 (
     "id" serial primary key,
-    "distributorId" int not null,
-    "distributorName" varchar(100) not null,
+    "profileId" int not null,
+    "profileName" varchar(100) not null,
     "address" varchar(100),
     "col" varchar(100),
     "city" varchar(100),

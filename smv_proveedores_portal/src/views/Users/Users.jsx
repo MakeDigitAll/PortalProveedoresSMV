@@ -38,7 +38,7 @@ import Header from "../../components/header/headerC/Header";
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import useAuth from '../../hooks/useAuth'
 
-const Distributors = () => {
+const Users = () => {
   
   const axios = useAxiosPrivate()
   const { auth } = useAuth()
@@ -438,4 +438,4 @@ const Distributors = () => {
   )
 }
 
-export default Distributors
+export default Users;

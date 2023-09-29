@@ -4,9 +4,9 @@ import Inicio from "./views/Inicio/Home";
 import Register from "./views/Inicio/Register";
 import VerifyAccount from "./views/Inicio/verifyAccount";
 import RequireAuth from './components/Protection/RequireAuth';
-import Distributors from './views/Distributors/Distributors';
-import NewDistributors from './views/Distributors/NewDistributors';
-import DistributorsPermissions from './views/Distributors/DistributorsPermissions';
+import Users from './views/Users/Users';
+import NewUsers from './views/Users/NewUsers';
+import UsersPermissions from './views/Users/UsersPermissions';
 import Products from './views/Products/Products';
 import NewProducts from './views/Products/NewProducts';
 import NewOrders from './views/Orders/newOrders';
@@ -17,7 +17,7 @@ import PersistLogin from "./components/Protection/auth/PersistLogin";
  
 const ROLES = {
   PROVIDER: 4444,
-  DISTRIBUTOR: 2000,
+  USER: 2000,
   PEDIDOS: 2001,
   FINANZAS: 2002,
   PRODUCTOS: 2003,
@@ -52,7 +52,7 @@ function App() {
          children: [
     {
       path: "/",
-      element: <RequireAuth allowedRoles={[ROLES.PROVIDER, ROLES.DISTRIBUTOR, ROLES.PEDIDOS, ROLES.FINANZAS, ROLES.PRODUCTOS, ROLES.FACTURACION]} />,
+      element: <RequireAuth allowedRoles={[ROLES.PROVIDER, ROLES.USER, ROLES.PEDIDOS, ROLES.FINANZAS, ROLES.PRODUCTOS, ROLES.FACTURACION]} />,
       children: [
         {
           path: "/Home",
@@ -100,25 +100,25 @@ function App() {
       element: <RequireAuth allowedRoles={[ROLES.PROVIDER]} />,
       children: [  
         {
-          path: "/distributors",
-          element: <Distributors />,
+          path: "/users",
+          element: <Users />,
           errorElement: <Error404 />,
         },
         { 
-          path: "/distributors/New",
-          element: <NewDistributors />,
+          path: "/users/New",
+          element: <NewUsers />,
         },
         {
-          path: "/distributors/Edit/:id",
-          element: <NewDistributors />, 
+          path: "/users/Edit/:id",
+          element: <NewUsers />, 
         },
         {
-          path: "/distributors/Permissions/:id",
-          element: <DistributorsPermissions />,
+          path: "/users/Permissions/:id",
+          element: <UsersPermissions />,
         },
         {
-          path: "/distributors/View/:id",
-          element: <NewDistributors />,
+          path: "/users/View/:id",
+          element: <NewUsers />,
         },
       ],
     },
