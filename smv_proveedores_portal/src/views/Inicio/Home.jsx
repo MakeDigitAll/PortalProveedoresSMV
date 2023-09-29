@@ -212,30 +212,30 @@ const Home = () => {
               </Card>
               <Card shadow className="m-10">
                 <CardHeader>
-                  <h1>Distribuidores</h1>
+                  <h1>Usuarios</h1>
                 </CardHeader>
                 <Divider />
                 <CardBody>
                   <Dropdown placement="bottom-start">
                     <DropdownTrigger>
-                      <p>En esta sección podrás revisar tus distribuidores.</p>
+                      <p>En esta sección podrás revisar tus usuarios.</p>
                     </DropdownTrigger>
                     <DropdownMenu>
                       <DropdownItem
                         onClick={() => {
-                          navigate("/distributors/New");
+                          navigate("/users/New");
                         }
                         }
                       >
-                        Nuevo distribuidor
+                        Nuevo usuario
                       </DropdownItem>
                       <DropdownItem
                         onClick={() => {
-                          navigate("/distributors");
+                          navigate("/users");
                         }
                         }
                       >
-                        Mis distribuidores
+                        Mis usuarios
                       </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
@@ -246,22 +246,22 @@ const Home = () => {
                     className="bg-primary"
                     auto
                     onClick={() => {
-                      navigate("/distributors/New");
+                      navigate("/users/New");
                     }
                     }
                   >
-                    Nuevo distribuidor
+                    Nuevo usuario
                   </Button>
                   <Spacer x={0.5} />
                   <Button
                     className="ml-10 bg-primary"
                     auto
                     onClick={() => {
-                      navigate("/distributors");
+                      navigate("/users");
                     }
                     }
                   >
-                    Mis distribuidores
+                    Mis usuarios
                   </Button>
                 </CardFooter>
               </Card>

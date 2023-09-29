@@ -24,11 +24,11 @@ create table "providersProfile" (
     "isDeleted" boolean default false 
 );
 
-create table "distributorsProfile"
+create table "UsersProfile"
 (
     "id" serial primary key,
-    "distributorId" int not null,
-    "distributorName" varchar(100) not null,
+    "profileId" int not null,
+    "profileName" varchar(100) not null,
     "address" varchar(100),
     "col" varchar(100),
     "city" varchar(100),
@@ -98,8 +98,13 @@ create table "pvProducts" (
     "companyCode" varchar(100),
     "brand" varchar(100),
     "model" varchar(100),
-    "retailPrice" float,
-    "wholesalePrice" float,
+    "price1" float,
+    "price2" float,
+    "price3" float,
+    "price4" float,
+    "rate1" float,
+    "rate2" float,
+    "rate3" float,
     "satProductCode" varchar(100) not null,
     "satUnitCode" varchar(100) not null,
     "unitMeasurement" varchar(100),
@@ -111,10 +116,23 @@ create table "pvProducts" (
 create table "pvProductsImages" (
     "id" serial primary key,
     "productId" int not null,
-    "image" BYTEA,
+    "image1" BYTEA,
+    "image2" BYTEA,
+    "image3" BYTEA,
+    "image4" BYTEA,
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
+);
+
+create table "technicalSheetProducts"
+(
+    "id" serial primary key,
+    "productId" int not null,
+    "tecnicalSheet" BYTEA,
+    "created_At" timestamp default current_timestamp,
+    "updated_At" timestamp default current_timestamp,
+    "isDeleted" boolean default false 
 );
 
 
@@ -124,7 +142,7 @@ create table "pvProductsImages" (
 -- para esto se creara una tabla que se llamara providerProductsAvailability, en esta tabla se mostrara el nombre del producto, la cantidad disponible, la cantidad minima y la cantidad maxima
 
 
-create table "providerProductsAvailability" (
+create table "ProductsAvailability" (
     "productId" int not null unique,
     "productStock" int not null,
     "productMin" int not null,
@@ -140,8 +158,7 @@ create table "providerProductsAvailability" (
 
 create table "pvOrders" (
     "id" serial primary key,
-    "providerId" int not null,
-    "distributorId" int not null,
+    "responsibleId" int not null,
     "costumerId" varchar(100) not null,
     "orderDate" timestamp not null,
     "orderType" varchar(100) not null,
@@ -152,16 +169,9 @@ create table "pvOrders" (
     "isDeleted" boolean default false
 );
 
-alter table "pvOrders"
-add constraint fk_order_provider foreign key ("providerId") references "providersProfile" ("id");
-
-alter table "pvOrders"
-add constraint fk_order_distributor foreign key ("distributorId") references "distributorsProfile" ("id");
-
 create table "pvOrdersDetails" (
     "id" serial primary key,
     "orderId" int not null,
-    --productQuantity es un arreglo que contiene la cantidad de productos que se ordenaron y el id de cada producto
     "productQuantity" integer[] not null,
     "amountPaid" float not null,
     "amountPending" float not null,
@@ -221,10 +231,10 @@ CREATE TRIGGER update_isDeleted_userAuth_profileProv
 alter table "providersProfile"
 add constraint fk_profile_userAuth foreign key ("providerId") references "userAuth" ("id");
 
-alter table "distributorsProfile"
-add constraint fk_profile_distributorLI foreign key ("distributorId") references "userAuth" ("id");
+alter table "UsersProfile"
+add constraint fk_profile_userAuth foreign key ("profileId") references "userAuth" ("id");
 
-alter table "providerProducts"
+alter table "pvProducts"
 add constraint fk_prod_profile foreign key ("providerId") references "providersProfile" ("id");
 
 alter table "Permissions"
@@ -241,6 +251,9 @@ add constraint fk_prod_provider foreign key ("providerId") references "providers
 
 alter table "pvProductsImages"
 add constraint fk_prodImg_prod foreign key ("productId") references "pvProducts" ("id");
+
+alter table "technicalSheetProducts"
+add constraint fk_tecSheet_prod foreign key ("productId") references "pvProducts" ("id");
 
 ------------------------------------------------------------------------------------   Llaves foraneas   ------------------------------------------------------------------------------------------------------------
 

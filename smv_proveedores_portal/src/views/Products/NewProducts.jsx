@@ -101,7 +101,7 @@ const NewProducts = () => {
             },
             {
                 "value": "A9",
-                "label": "Tafira"
+                "label": "Tarifa"
             },
             {
                 "value": "MTR",
@@ -141,10 +141,22 @@ const NewProducts = () => {
     const [variable, setVariable] = useState('Nuevo producto');
     const [CardType, setCardType] = useState('general');
     const imageProd = React.useRef(null);
-    const [image, setImage] = useState(null);
-    const [techinicalSheet, setTechinicalSheet] = useState(null);
+    //const technicalSheetPreview = React.useRef(null);
+    const [image1, setImage1] = useState(null);
+    const [image2, setImage2] = useState(null);
+    const [image3, setImage3] = useState(null);
+    const [image4, setImage4] = useState(null);
+    const [imgPreview1, setImgPreview1] = useState(null);
+    const [imgPreview2, setImgPreview2] = useState(null);
+    const [imgPreview3, setImgPreview3] = useState(null);
+    const [imgPreview4, setImgPreview4] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(0);
+    const [showDeleteOption, setShowDeleteOption] = useState(false);
+    const [technicalSheet, setTechnicalSheet] = useState(null);
+    const [nameTS, setNameTS] = useState(null);
+    const [typeTS, setTypeTS] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [isInputDisabled, setIsInputDisabled] = useState(false);
     const params = useParams();
@@ -160,16 +172,19 @@ const NewProducts = () => {
         });
     }
 
-
-
     const prod = {
         productName: product.productName,
         manofacturerCode: product.manofacturerCode,
         companyCode: product.companyCode,
         brand: product.brand,
         model: product.model,
-        retailPrice: product.retailPrice,
-        wholesalePrice: product.wholesalePrice,
+        price1: product.price1,
+        price2: product.price2,
+        price3: product.price3,
+        price4: product.price4,
+        rate1: product.rate1,
+        rate2: product.rate2,
+        rate3: product.rate3,
         satProductCode: product.satProductCode,
         satUnitCode: product.satUnitCode,
         unitMeasurement: product.unitMeasurement
@@ -290,7 +305,7 @@ const NewProducts = () => {
 
         if (product.model === "") {
             toast.error('El modelo es requerido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -304,7 +319,7 @@ const NewProducts = () => {
 
         if (product.model.length < 3 || product.model.length > 100) {
             toast.error('El modelo debe tener entre 3 y 100 caracteres', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -316,9 +331,9 @@ const NewProducts = () => {
             return;
         }
 
-        if (product.retailPrice === "") {
-            toast.error('El precio al público es requerido', {
-                position: "top-right",
+        if (product.price1 === "") {
+            toast.error('Los precios son requeridos', {
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -330,9 +345,109 @@ const NewProducts = () => {
             return;
         }
 
-        if (product.retailPrice < 0) {
-            toast.error('El precio al público debe ser mayor a 0', {
-                position: "top-right",
+        if (product.price2 === "") {
+            toast.error('Los precios son requeridos', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                autoClose: 5000,
+                theme: "colored",
+            });
+            return;
+        }
+
+        if (product.price3 === "") {
+            toast.error('Los precios son requeridos', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                autoClose: 5000,
+                theme: "colored",
+            });
+            return;
+        }
+
+        if (product.price4 === "") {
+            toast.error('Los precios son requeridos', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                autoClose: 5000,
+                theme: "colored",
+            });
+            return;
+        }
+
+        if (product.price1 < 0 || product.price1 > 1000000 || product.price2 < 0 || product.price2 > 1000000 || product.price3 < 0 || product.price3 > 1000000 || product.price4 < 0 || product.price4 > 1000000) {
+            toast.error('Los precios deben tener un valor valido', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                autoClose: 10000,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+
+
+
+        if (product.rate1 === "") {
+            toast.error('Las tarifas son requeridas', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                autoClose: 10000,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+
+        if (product.rate2 === "") {
+            toast.error('Las tarifas son requeridas', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                autoClose: 10000,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+
+        if (product.rate3 === "") {
+            toast.error('Las tarifas son requeridas', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                autoClose: 10000,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+
+        if (product.rate1 < 0 || product.rate1 > 100 || product.rate2 < 0 || product.rate2 > 100 || product.rate3 < 0 || product.rate3 > 100) {
+            toast.error('Las tarifas deben ser entre 0 y 100', {
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -346,7 +461,7 @@ const NewProducts = () => {
 
         if (product.wholesalePrice === "") {
             toast.error('El precio al mayoreo es requerido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -358,23 +473,9 @@ const NewProducts = () => {
             return;
         }
 
-        if (product.wholesalePrice < 0) {
-            toast.error('El precio al mayoreo debe ser mayor a 0', {
-                position: "top-right",
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                autoClose: 10000,
-                progress: undefined,
-                theme: "colored",
-            });
-            return;
-        }
-
         if (product.satProductCode === "") {
             toast.error('El código del producto SAT es requerido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -388,7 +489,7 @@ const NewProducts = () => {
 
         if (product.satProductCode.length < 3 || product.satProductCode.length > 100) {
             toast.error('El código del producto SAT debe tener entre 3 y 100 caracteres', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -401,7 +502,7 @@ const NewProducts = () => {
         }
         if (product.satUnitCode === "") {
             toast.error('El código de unidad SAT es requerido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -414,7 +515,7 @@ const NewProducts = () => {
         }
         if (product.unitMeasurement === "") {
             toast.error('La unidad de medida es requerida', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -429,7 +530,8 @@ const NewProducts = () => {
 
         if (editing) {
             try {
-                await submitImage();
+                await submitImages();
+                await submitTechnicalSheet();
                 await axios.put(`/products/update/${params.id}`, prod,
                     {
                         headers: {
@@ -491,8 +593,10 @@ const NewProducts = () => {
                             'Content-Type': 'application/json'
                         }
                     }).then((response) => {
+                        console.log(response);
                         if (response.status === 200) {
-                            submitImage(response.data.id);
+                            submitImages(response.data.idproduct);
+                            submitTechnicalSheet(response.data.id);
                             toast.success('Producto creado', {
                                 position: "bottom-right",
                                 hideProgressBar: false,
@@ -543,76 +647,275 @@ const NewProducts = () => {
         }
     }
 
+    const handleImagePreviewHover = () => {
+        setShowDeleteOption(true);
+    };
 
-    const submitImage = async (idprd) => {
+    const handleImagePreviewLeave = () => {
+        setShowDeleteOption(false);
+    };
+
+    const handleImageUpload = (e) => {
+        if (image1 === null) {
+            setImage1(e.target.files[0]);
+            setSelectedImage(0);
+        } else if (image2 === null) {
+            setImage2(e.target.files[0]);
+        } else if (image3 === null) {
+            setImage3(e.target.files[0]);
+        } else if (image4 === null) {
+            setImage4(e.target.files[0]);
+        } else {
+            toast.error('Solo se pueden agregar 4 imágenes', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                autoClose: 5000,
+                theme: "colored",
+            });
+        }
+    };
+
+
+    const removeImage = () => {
+        switch (selectedImage) {
+            case 0:
+                setImage1(null);
+                setImgPreview1(null);
+                setSelectedImage(1);
+                break;
+            case 1:
+                setImage2(null);
+                setImgPreview2(null);
+                setSelectedImage(2);
+                break;
+            case 2:
+                setImage3(null);
+                setImgPreview3(null);
+                setSelectedImage(3);
+                break;
+            case 3:
+                setImage4(null);
+                setImgPreview4(null);
+                setSelectedImage(0);
+                break;
+            default:
+                break;
+        }
+    };
+
+
+
+
+    const submitImages = async (idprd) => {
         const idpd = idprd || params.id;
-        const imgsubmit = image;
-        console.log('img', imgsubmit, 'id', idpd);
-        if (imgsubmit) {
+    
+        if (image1) {
             try {
                 const formData = new FormData();
-                formData.append('image', image);
-                await axios.put(`/products/image/${idpd}`, formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then((response) => {
-                        if (response.status === 200) {
-                            console.log('imagen actualizada');
-                        }
+                formData.append('image', image1);
+                await axios.put(`/products/image/${idpd}/1`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Imagen 1 actualizada');
                     }
-                    ).catch((error) => {
-                        console.log(error);
-                    });
+                }).catch((error) => {
+                    console.log(error);
+                });
             } catch (error) {
                 console.log(error);
             }
         } else {
-            console.log('no se selecciono imagen');
+            console.log('No se seleccionó imagen 1');
+        }
+
+        if (image2) {
+            try {
+                const formData = new FormData();
+                formData.append('image', image2);
+                await axios.put(`/products/image/${idpd}/2`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Imagen 2 actualizada');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log('No se seleccionó imagen 2');
+        }
+
+        if (image3) {
+            try {
+                const formData = new FormData();
+                formData.append('image', image3);
+                await axios.put(`/products/image/${idpd}/3`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Imagen 3 actualizada');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log('No se seleccionó imagen 3');
+        }
+
+        if (image4) {
+            try {
+                const formData = new FormData();
+                formData.append('image', image4);
+                await axios.put(`/products/image/${idpd}/4`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Imagen 4 actualizada');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log('No se seleccionó imagen 4');
+        }
+        
+    };
+
+
+    const handleTechnicalSheet = async (event) => {
+        if (event.target.files[0] && event.target.files[0].type === 'application/pdf') {
+            setTechnicalSheet(event.target.files[0]);
+            setNameTS(event.target.files[0].name);
+            setTypeTS(event.target.files[0].type);
+        } else {
+            toast.error('El archivo debe ser PDF', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                autoClose: 5000,
+                theme: "colored",
+            });
         }
     }
 
+    const submitTechnicalSheet = async (idprd) => {
+        const idpd = idprd || params.id;
+        if (technicalSheet) {
+            try {
+                const formData = new FormData();
+                formData.append('technicalSheet', technicalSheet);
+                formData.append('name', nameTS);
+                formData.append('type', typeTS);
+                await axios.put(`/products/technicalSheet/${idpd}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Ficha técnica actualizada');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log('No se seleccionó ficha técnica');
+        }
+    };
 
-    const handleImageChange = (e) => {
-        setImagePreview(URL.createObjectURL(e.target.files[0]));
-        setImage(e.target.files[0]);
-    }
 
-    const handleTecnicalSheet = async (event) => {
-        setTechinicalSheet(event.target.files[0]);
-        console.log('ficha tecnica', techinicalSheet);
+    const getImages = async () => {
         try {
-            const formData = new FormData();
-            formData.append('techinicalSheet', techinicalSheet);
-            console.log('ficha tecnica', techinicalSheet);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
-    const getImage = async () => {
-        await axios.get(`/products/image/${params.id}`, {
-            responseType: 'blob',
-        }).then(response => {
-            console.log(response);
-            if (response.data.size !== 0) {
-                const imageBlob = response.data;
-                if (imageBlob.size > 0) {
-                    const imageUrl = URL.createObjectURL(imageBlob);
-                    setImage(imageUrl);
+            const imagePromises = [];
+    
+            for (let position = 0; position < 4; position++) {
+                const response = await axios.get(`/products/image/${params.id}/${position + 1}`, {
+                    responseType: 'blob',
+                });
+    
+                if (response.data.size > 0) {
+                    const imageBlob = response.data;
+                    imagePromises.push(setImage(position, imageBlob));
                 }
             }
-        }).catch(error => {
+    
+            await Promise.all(imagePromises);
+        } catch (error) {
             console.log(error);
             setLoading(false);
-            console.log(error.response);
-        });
+        }
+    };
+    
+    const setImage = async (position, imageBlob) => {
+        switch (position) {
+            case 0:
+                setImage1(imageBlob);
+                break;
+            case 1:
+                setImage2(imageBlob);
+                break;
+            case 2:
+                setImage3(imageBlob);
+                break;
+            case 3:
+                setImage4(imageBlob);
+                break;
+            default:
+                break;
+        }
+    };
+
+
+
+
+    const getTechnicalSheet = async () => {
+        try {
+            const response = await axios.get(`/products/technicalSheet/${params.id}`, {
+                responseType: 'blob',
+            });
+
+            if (response.data.size !== 0) {
+                const technicalSheetBlob = response.data;
+                if (technicalSheetBlob.size > 0) {
+                    setTechnicalSheet(technicalSheetBlob);
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
+        }
     };
 
     const loadProduct = async () => {
-        await getImage();
+        await getImages();
+        await getTechnicalSheet();
         const response = await axios.get(`/products/get/${params.id}`);
         setProduct({
             productName: response.data.productName,
@@ -620,8 +923,13 @@ const NewProducts = () => {
             companyCode: response.data.companyCode,
             brand: response.data.brand,
             model: response.data.model,
-            retailPrice: response.data.retailPrice,
-            wholesalePrice: response.data.wholesalePrice,
+            price1: response.data.price1,
+            price2: response.data.price2,
+            price3: response.data.price3,
+            price4: response.data.price4,
+            rate1: response.data.rate1,
+            rate2: response.data.rate2,
+            rate3: response.data.rate3,
             satProductCode: response.data.satProductCode,
             satUnitCode: response.data.satUnitCode,
             unitMeasurement: response.data.unitMeasurement
@@ -637,7 +945,59 @@ const NewProducts = () => {
             setVariable('Ver producto');
             setIsInputDisabled(true);
         }
+        setLoading(false);
     };
+
+    useEffect(() => {
+
+        if (image1 !== null) {
+            const blob = new Blob([image1], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImgPreview1(url);
+        }
+
+        if (image2 !== null) {
+            const blob = new Blob([image2], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImgPreview2(url);
+        }
+
+        if (image3 !== null) {
+            const blob = new Blob([image3], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImgPreview3(url);
+        }
+
+        if (image4 !== null) {
+            const blob = new Blob([image4], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImgPreview4(url);
+        }
+
+
+        switch (selectedImage) {
+            case 0:
+                setImagePreview(imgPreview1);
+                break;
+            case 1:
+                setImagePreview(imgPreview2);
+                break;
+            case 2:
+                setImagePreview(imgPreview3);
+                break;
+            case 3:
+                setImagePreview(imgPreview4);
+                break;
+            default:
+                break;
+        }
+    }, [image1, image2, image3, image4, selectedImage]);
+
+
+    console.log(image1);
+    console.log(image2);
+    console.log(image3);
+    console.log(image4);
 
     useEffect(() => {
         setTimeout(() => {
@@ -647,6 +1007,7 @@ const NewProducts = () => {
             loadProduct(params.id);
         } else {
             setEditing(false);
+            setLoading(false);
         }
     }, []);
 
@@ -696,12 +1057,54 @@ const NewProducts = () => {
             ) : (
                 <div className='flex flex-col justify-center text-center items-center w-full lg:flex-row'>
                     <div className="lg:mb-10 mb-10 flex flex-col items-center w-1/2 h-full">
-                        <img
-                            className="w-96 h-96 lg:rounded-full rounded-sm object-cover mt-4"
-                            src={imagePreview || image || ba}
-                            alt="Imagen del producto"
-                            ref={imageProd}
-                        />
+                        <div className="flex flex-row justify-center items-center w-full">
+                            <div
+                                className="relative"
+                                onMouseEnter={handleImagePreviewHover}
+                                onMouseLeave={handleImagePreviewLeave}
+                            >
+                                <img
+                                    className="w-96 h-96 lg:rounded-full rounded-sm object-cover mt-4"
+                                    src={imagePreview || ba}
+                                    alt={`Imagen ${selectedImage}`}
+                                />
+                                {showDeleteOption && (
+                                    <button className="absolute top-0 right-0 p-2 rounded bg-red-500 text-white" onClick={removeImage}>
+                                        Borrar
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex flex-row justify-center items-center w-full">
+                            <img
+                                className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
+                                src={imgPreview1 || ba}
+                                alt={`Imagen ${0}`}
+                                ref={imageProd}
+                                onClick={() => setSelectedImage(0)}
+                            />
+                            <img
+                                className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
+                                src={imgPreview2 || ba}
+                                alt={`Imagen ${1}`}
+                                ref={imageProd}
+                                onClick={() => setSelectedImage(1)}
+                            />
+                            <img
+                                className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
+                                src={imgPreview3 || ba}
+                                alt={`Imagen ${2}`}
+                                ref={imageProd}
+                                onClick={() => setSelectedImage(2)}
+                            />
+                            <img
+                                className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
+                                src={imgPreview4 || ba}
+                                alt={`Imagen ${3}`}
+                                ref={imageProd}
+                                onClick={() => setSelectedImage(3)}
+                            />
+                        </div>
                         {!isInputDisabled && (
                             <div>
                                 <label className="text-foreground font-bold text-lg my-5 text-center mt-4">Imagen del producto</label>
@@ -710,10 +1113,19 @@ const NewProducts = () => {
                                     className="w-96 bg-transparent p-2 rounded-lg justify-center"
                                     type='file'
                                     name="image"
-                                    ref={imageProd}
-                                    onChange={handleImageChange}
+                                    accept="image/jpeg, image/png, image/jpg"
+                                    multiple
+                                    onChange={handleImageUpload}
                                     disabled={isInputDisabled}
                                 />
+                            </div>
+                        )}
+                        {technicalSheet && (
+                            <div className="flex flex-col justify-center items-center">
+                                <p> Nombre del Archivo: {technicalSheet.name}</p>
+                                <a href={URL.createObjectURL(technicalSheet)} download={technicalSheet.name}>
+                                    <Button>Descargar</Button>
+                                </a>
                             </div>
                         )}
                         {!isInputDisabled && (
@@ -723,9 +1135,10 @@ const NewProducts = () => {
                                 <input
                                     className="w-96 bg-transparent p-2 rounded-lg justify-center"
                                     type='file'
-                                    name="techinicalSheet"
-                                    ref={imageProd}
-                                    onChange={handleTecnicalSheet}
+                                    accept=".pdf"
+                                    name="technicalSheet"
+                                    src={technicalSheet}
+                                    onChange={handleTechnicalSheet}
                                     disabled={isInputDisabled}
                                 />
                             </div>

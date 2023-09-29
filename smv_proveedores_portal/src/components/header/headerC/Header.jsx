@@ -49,7 +49,7 @@ const Header = () => {
   //-------------------------------------------------------------------------------------
   async function getImg() {
     try {
-      const responseImg = await axiosInstance.get(`users/${auth.userId}/image`, {
+      const responseImg = await axiosInstance.get(`/users/image/${auth.userId}`, {
         responseType: 'blob',
       });
       const img = responseImg?.data;

@@ -43,15 +43,16 @@ const NewOrders = () => {
     const axios = useAxiosPrivate();
     const { auth } = useAuth();
     const ID = auth?.ID;
-    const distributorName = auth?.username;
+    const profileName = auth?.username;
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen: isOpenAdd, onOpen: onOpenAdd, onOpenChange: onOpenChangeAdd } = useDisclosure();
 
     const [searchName, setSearchName] = React.useState("");
     const [searchManofacturerCode, setSearchManofacturerCode] = React.useState("");
 
     const [order, setOrder] = useState({
-        distributorId: ID,
-        distributorName: distributorName,
+        profileId: ID,
+        profileName: profileName,
         costumer: "" || "",
         orderDate: "" || new Date().toISOString().split('T')[0],
         orderType: "",
@@ -70,19 +71,7 @@ const NewOrders = () => {
 
     const [products, setProducts] = useState([]);
     const [quantity, setQuantity] = useState(0);
-    const [productsForOrder, setProductsForOrder] = useState([
-        {
-            id: "",
-            productName: "",
-            manofacturerCode: "",
-            retailPrice: "",
-            model: "",
-            brand: "",
-            image: "",
-            quantity: "",
-        },
-    ]);
-
+    const [cart, setCart] = useState([]);
     const [variable, setVariable] = useState('Nuevo pedido');
     const [isLoading, setLoading] = useState(false);
     const [editing, setEditing] = useState(false);
@@ -116,6 +105,20 @@ const NewOrders = () => {
             ...orderDetail,
             [event.target.name]: event.target.value,
         });
+    }
+
+    const AddtoCart = (product, quantity) => {
+        const newProduct = cart.find((item) => item.productId === product.id);
+
+        if (newProduct) {
+            const newProducts = cart.map((item =>
+                item.productId === product.id ? { ...item, quantity: item.quantity + quantity } : item
+            ));
+            setCart(newProducts);
+        } else {
+            setCart([...cart, { productId: product.id, productName: product.productName, manofacturerCode: product.manofacturerCode, image: product.image, quantity: quantity, price1: product.price1 }]);
+        }
+
     }
 
     const handleSubmit = async (event) => {
@@ -153,7 +156,7 @@ const NewOrders = () => {
                 return (
                     product.productName.toLowerCase().includes(searchName.toLowerCase()) &&
                     product.manofacturerCode.toLowerCase().includes(searchManofacturerCode.toLowerCase())
-                );
+                ); 
             });
         }
     };
@@ -165,7 +168,7 @@ const NewOrders = () => {
             const response = await axios.get(`/orders/getProductsOrders/${ID}`);
             const images = await Promise.all(
                 response.data.map((product) => {
-                    return axios.get(`/products/image/${product.id}`, {
+                    return axios.get(`/products/image/${product.id}/${1}`, {
                         responseType: 'blob'
                     })
                 })
@@ -187,21 +190,6 @@ const NewOrders = () => {
         }
     };
 
-
-    const addProducttoOrder = (product, cantidad) => {
-        const newProduct = productsForOrder.find((item) => item.productId === product.id);
-
-        if (newProduct) {
-            const newProducts = productsForOrder.map((item =>
-                item.productId === product.id ? { ...item, quantity: item.quantity + cantidad } : item
-            ));
-            setProductsForOrder(newProducts);
-        } else {
-            setProductsForOrder([...productsForOrder, { productId: product.id, productName: product.productName, quantity: cantidad }]);
-        }
-    }
-
-
     const columnsOrder = [
         {
             key: "productName",
@@ -212,7 +200,7 @@ const NewOrders = () => {
             label: "Codigo del fabricante",
         },
         {
-            key: "retailPrice",
+            key: "price1",
             label: "Precio",
         },
         {
@@ -240,7 +228,7 @@ const NewOrders = () => {
             label: "B.O",
         },
         {
-            key: "retailPrice",
+            key: "price1",
             label: "Precio",
         },
         {
@@ -283,10 +271,10 @@ const NewOrders = () => {
             case "bo":
                 return (
                     <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">{cellValue}</p>
+                        <p className="text-bold text-sm capitalize">{cellValue || "NA"}</p>
                     </div>
                 );
-            case "retailPrice":
+            case "price1":
                 return (
                     <div className="flex items-center">
                         <p className="text-bold text-sm capitalize">${cellValue}</p>
@@ -295,23 +283,18 @@ const NewOrders = () => {
             case "quantity":
                 return (
                     <div className="flex items-center text-center">
-                        <Input
-                            className="w-1/2 text-center"
-                            type="number"
-                            // defaultValue={4}
-                            //     max={products.existence}
-                            value={quantity}
-                            onChange={(event) => {
-                                setQuantity(event.target.value);
-                            }
-                            }
-                        />
+                        <Button
+                            auto
+                            type="success"
+                            onPress={isOpenAdd}
+                            startContent={<TbPlus />}
+                            />
                     </div>
                 );
-            case "Subtotal":
+            case "Total":
                 return (
                     <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">$ {products.retailPrice * productsForOrder.quantity}</p>
+                        <p className="text-bold text-sm capitalize">$ {products.price1 * quantity || 0}</p>
                     </div>
                 );
             default:
@@ -339,7 +322,7 @@ const NewOrders = () => {
                         <p className="text-bold text-sm capitalize">{cellValue}</p>
                     </div>
                 );
-            case "retailPrice":
+            case "price1":
                 return (
                     <div className="flex items-center">
                         <p className="text-bold text-sm capitalize">${cellValue}</p>
@@ -380,7 +363,7 @@ const NewOrders = () => {
         try {
             const response = await axios.get(`/orders/getOrder/${params.id}`);
             setOrder({
-                distributorId: ID,
+                profileId: ID,
                 costumer: response.data.costumer,
                 socialReasonCostumer: response.data.socialReasonCostumer,
                 orderDate: response.data.orderDate,
@@ -574,7 +557,7 @@ const NewOrders = () => {
 
 
             <div className="flex flex-col mx-10 mt-10 mb-1 pr-20 lg:flex-row w-full h-full">
-                <Input className='w-full lg:w-1/2 px-10' placeholder="Distribuidor" label="Responsable" labelPlacement="outside" value={order.distributorName} onChange={handleOrderChange} name="distributor" isDisabled={true} />
+                <Input className='w-full lg:w-1/2 px-10' placeholder="Usuario" label="Responsable" labelPlacement="outside" value={order.profileName} onChange={handleOrderChange} name="user" isDisabled={true} />
                 <Dropdown>
                     <DropdownTrigger>
                         <Input className='w-full lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione un almacen"} name="costumer" isDisabled={isInputDisabled} />

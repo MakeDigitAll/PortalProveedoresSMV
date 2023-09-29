@@ -215,23 +215,6 @@ const resendVerifyEmail = async (req, res) => {
   }
 };
 
-const getImageUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const imgQuery = await pool.query('SELECT "image" FROM "userImages" WHERE "userId" = $1', [id]);
-
-    if (!imgQuery.rows[0]) {
-      return res.status(402).send({ message: 'Imagen no encontrada' });
-    }
-
-    res.status(200).send(imgQuery.rows[0].image);
-  } catch (error) {
-    res.status(400).send({ message: 'Link invalido' });
-  }
-};
-
-
 //---------------------------------------------------------------------------------------
 
 module.exports = {
@@ -240,6 +223,5 @@ module.exports = {
   updatePasswordAuth,
   deleteAuth,
   verifyEmail,
-  resendVerifyEmail,
-  getImageUser
+  resendVerifyEmail
 };

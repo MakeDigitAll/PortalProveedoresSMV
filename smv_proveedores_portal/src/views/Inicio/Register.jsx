@@ -321,9 +321,11 @@ const Register = () => {
                                             id="email"
                                             value={user.email}
                                             onChange={handleChange}
+                                            key="outside"
                                             size={"sm"}
                                             type="email"
                                             label="Email"
+                                            labelPlacement="inside"
                                             name="email"
                                         />
                                     </div>
@@ -338,6 +340,7 @@ const Register = () => {
                                             size={"sm"}
                                             type="password"
                                             label="password"
+                                            labelPlacement="inside"
                                             name="password"
                                         />
                                     </div>
@@ -352,6 +355,7 @@ const Register = () => {
                                             size={"sm"}
                                             type="password"
                                             label="confirmPassword"
+                                            labelPlacement="inside"
                                             name="confirmPassword"
                                         />
                                     </div>

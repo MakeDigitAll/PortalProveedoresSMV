@@ -66,7 +66,7 @@ const Products = () => {
       const response = await axios.get(`/products/all/${auth.ID}`);
       const images = await Promise.all(
         response.data.map((product) => {
-          return axios.get(`/products/image/${product.id}`, { 
+          return axios.get(`/products/image/${product.id}/${1}`, {
             responseType: 'blob'
           })
         })
@@ -80,7 +80,6 @@ const Products = () => {
         } 
       })
       setProducts(products);
-      console.log(products);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -105,7 +104,7 @@ const Products = () => {
       label: "Codigo de la empresa",
     },
     {
-      key: "retailPrice",
+      key: "price1",
       label: "Precio de venta",
     },
     {
@@ -117,7 +116,6 @@ const Products = () => {
       label: "Acciones",
     },
   ];
-
 
   //------------------------------------------------------------------------------------------
   //----------------------------Funcion para filtrar productos -------------------------------
@@ -225,15 +223,28 @@ const Products = () => {
         }
         break;
       case "availabilityCat":
-        setAvailability({
-          ...availability,
-          availabilityCat: e.target.value,
-        });
+        if (availability.productStock > availability.productMin && availability.productStock < availability.productMax) {
+          setAvailability({
+            ...availability,
+            availabilityCat: "Disponible",
+          });
+        } else if (availability.productStock <= availability.productMin) {
+          setAvailability({
+            ...availability,
+            availabilityCat: "Agotado",
+          });
+        } else if (availability.productStock >= availability.productMax) {
+          setAvailability({
+            ...availability,
+            availabilityCat: "Sobre stock",
+          });
+        }
         break;
       default:
         break;
     }
   };
+
 
   const handleAvailability = async (id) => {
     try {
@@ -247,7 +258,6 @@ const Products = () => {
 
   const handlerSaveAvailability = async (id) => {
     try {
-      console.log(availability);
       const newAvailability = {
         productId: availability.productId,
         productStock: availability.productStock,
@@ -255,7 +265,6 @@ const Products = () => {
         productMax: availability.productMax,
         availabilityCat: availability.availabilityCat,
       };
-      console.log(newAvailability);
 
       await axios.put(`/products/availability/${id}`, newAvailability, {
         headers: {
@@ -292,7 +301,6 @@ const Products = () => {
   //------------------------------------------------------------------------------------------
   //----------------------------Funcion para renderizar la tabla -----------------------------------------------------------
   //------------------------------------------------------------------------------------------
-
 
 
   const renderCell = React.useCallback((products, columnKey) => {
@@ -614,6 +622,7 @@ const Products = () => {
 
       <div className="flex justify-between items-center w-11/12 ml-20 mt-20">
         <Table
+          isHeaderSticky
           aria-label=" table with client async pagination"
           classNames={{
             wrapper: "w-full max-h-[500px]",
@@ -627,12 +636,12 @@ const Products = () => {
           <TableBody items={filterProducts(products)}
             isLoading={isLoading && !items.length}
             emptyContent={
-              products.length === 0 ? (
-                <Spinner label="Cargando" />
-              ) : (
-                "No products found"
-              )
-            }
+              isLoading ? (
+              <Spinner label="Cargando" />
+            ) : (
+              "No products found"
+            )}
+            
           >
             {(item) => (
               <TableRow key={item.id}>

@@ -16,13 +16,13 @@ import useAuth from '../../hooks/useAuth';
 import '../../App.css';
 import ba from '../../../public/Blank-Avatar.png';
 
-const NewDistributors = () => {
+const NewUsers = () => {
     const navigate = useNavigate();
     const axios = useAxiosPrivate();
     const { auth } = useAuth();
     const pvId = auth?.ID;
-    const [distributor, setDistributor] = useState({
-        distributorName: '',
+    const [user, setUser] = useState({
+        profileName: '',
         address: '',
         col: '',
         city: '',
@@ -68,8 +68,8 @@ const NewDistributors = () => {
         Object.entries(countriesWithoutEmpty).sort((a, b) => a[0].localeCompare(b[0]))
     );
 
-    const [variable, setVariable] = useState('Nuevo distribuidor');
-    const imageDistr = React.useRef(null);
+    const [variable, setVariable] = useState('Nuevo usuario');
+    const imageUser = React.useRef(null);
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -82,19 +82,11 @@ const NewDistributors = () => {
         return value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
     };
 
-    const validatePhone = (value) => {
-        return value.match(/^[0-9]{10}$/i);
-    };
-
-    const validatePostalCode = (value) => {
-        return value.match(/^[0-9]{5}$/i);
-    };
-
     //-------------------------------------------------------------Validaciones de campos---------------------------------------------
 
     const handleSubmit = async (e) => {
-        if (distributor.distributorName === '') {
-            toast.error('El nombre del distribuidor es obligatorio', {
+        if (user.profileName === '') {
+            toast.error('El nombre del usuario es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -107,8 +99,8 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.distributorName.length < 3 || distributor.distributorName.length > 100) {
-            toast.error('El nombre del distribuidor debe tener entre 3 y 100 caracteres', {
+        if (user.profileName.length < 3 || user.profileName.length > 100) {
+            toast.error('El nombre del usuario debe tener entre 3 y 100 caracteres', {
                 position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -121,7 +113,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.address === '') {
+        if (user.address === '') {
             toast.error('El campo Dirección es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -135,7 +127,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.address.length < 3 || distributor.address.length > 100) {
+        if (user.address.length < 3 || user.address.length > 100) {
             toast.error('La dirección debe tener entre 3 y 100 caracteres', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -148,7 +140,7 @@ const NewDistributors = () => {
             });
             return;
         }
-        if (distributor.col === '') {
+        if (user.col === '') {
             toast.error('El campo Colonia es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -162,7 +154,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.col.length < 3 || distributor.col.length > 100) {
+        if (user.col.length < 3 || user.col.length > 100) {
             toast.error('La colonia debe tener entre 3 y 100 caracteres', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -175,7 +167,7 @@ const NewDistributors = () => {
             });
             return;
         }
-        if (distributor.city === '') {
+        if (user.city === '') {
             toast.error('El campo Ciudad es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -189,7 +181,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.city.length < 3 || distributor.city.length > 100) {
+        if (user.city.length < 3 || user.city.length > 100) {
             toast.error('La ciudad debe tener entre 3 y 100 caracteres', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -203,7 +195,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.state === '') {
+        if (user.state === '') {
             toast.error('El campo Estado es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -217,7 +209,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.postalCode === '') {
+        if (user.postalCode === '') {
             toast.error('El campo Código Postal es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -231,7 +223,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.postalCode.length < 5) {
+        if (user.postalCode.length < 5) {
             toast.error('El campo Código Postal debe tener 6 digitos', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -245,7 +237,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.country === '') {
+        if (user.country === '') {
             toast.error('El campo País es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -259,7 +251,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.contact === '') {
+        if (user.contact === '') {
             toast.error('El campo Contacto es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -273,7 +265,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.phone === '') {
+        if (user.phone === '') {
             toast.error('El campo Teléfono es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -287,7 +279,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.phone.length < 10) {
+        if (user.phone.length < 10) {
             toast.error('El campo Teléfono debe tener 10 digitos', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -301,7 +293,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (distributor.email === '') {
+        if (user.email === '') {
             toast.error('El campo Correo electrónico es obligatorio', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -315,7 +307,7 @@ const NewDistributors = () => {
             return;
         }
 
-        if (!validateEmail(distributor.email)) {
+        if (!validateEmail(user.email)) {
             toast.error('El correo electrónico no es válido', {
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -334,15 +326,15 @@ const NewDistributors = () => {
 
         if (editing) {
             await submitImage();
-            await axios.put(`/distributors/edit/${params.id}/${pvId}`, distributor, {
+            await axios.put(`/users/edit/${params.id}/${pvId}`, user, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }).then(response => {
                 if (response.status === 200) {
-                    toast.success('Distribuidor actualizado');
+                    toast.success('Usuario actualizado');
                     setLoading(false);
-                    navigate('/distributors', { replace: true });
+                    navigate('/users', { replace: true });
                 }
             })
                 .catch(error => {
@@ -360,16 +352,16 @@ const NewDistributors = () => {
                 });
 
         } else {
-            await axios.post(`/distributors/new/${pvId}`, distributor, {
+            await axios.post(`/users/new/${pvId}`, user, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }).then(response => {
                 if (response.status === 200) {
-                    toast.success('Distribuidor creado');
+                    toast.success('Usuario creado');
                     submitImage(response.data.id); //Subir imagen
                     setLoading(false);
-                    navigate('/distributors', { replace: true });
+                    navigate('/users', { replace: true });
                 }
             })
                 .catch(error => {
@@ -433,7 +425,7 @@ const NewDistributors = () => {
                 break;
         }
 
-        setDistributor({ ...distributor, [name]: value });
+        setUser({ ...user, [name]: value });
     };
 
     const handleImage = (e) => {
@@ -449,7 +441,7 @@ const NewDistributors = () => {
             try {
                 const formData = new FormData();
                 formData.append('image', image);
-                await axios.put(`/usr/image/${id}`, formData, {
+                await axios.put(`/users/image/${id}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -470,7 +462,7 @@ const NewDistributors = () => {
     }
 
     const getImage = async () => {
-        await axios.get(`/distributors/image/${params.id}`, {
+        await axios.get(`/users/image/${params.id}`, {
             responseType: 'blob',
         }).then(response => {
             console.log(response.data.size);
@@ -497,7 +489,7 @@ const NewDistributors = () => {
             let valueCountry = value.currentKey;
             let nameState = 'state';
             let valueState = '';
-            setDistributor({ ...distributor, [nameCountry]: valueCountry, [nameState]: valueState });
+            setUser({ ...user, [nameCountry]: valueCountry, [nameState]: valueState });
         };
 
         return (
@@ -511,7 +503,7 @@ const NewDistributors = () => {
                         name='country'
                         isDisabled={isInputDisabled}
                     >
-                        {distributor.country || 'Selecciona un país'}
+                        {user.country || 'Selecciona un país'}
                     </Button>
                 </DropdownTrigger>
                 <DropdownMenu
@@ -538,7 +530,7 @@ const NewDistributors = () => {
         const handleStateChange = (value) => {
             let nameState = 'state';
             let valueState = value.currentKey;
-            setDistributor({ ...distributor, [nameState]: valueState });
+            setUser({ ...user, [nameState]: valueState });
         };
 
         return (
@@ -552,7 +544,7 @@ const NewDistributors = () => {
                         name='state'
                         isDisabled={isInputDisabled}
                     >
-                        {distributor.state || 'Selecciona un estado'}
+                        {user.state || 'Selecciona un estado'}
                     </Button>
                 </DropdownTrigger>
                 <DropdownMenu
@@ -576,11 +568,11 @@ const NewDistributors = () => {
     };
 
 
-    const loadDistributor = async (id) => {
+    const loadUser = async (id) => {
         await getImage();
-        const response = await axios.get(`/distributors/get/${id}/${pvId}`);
-        setDistributor({
-            distributorName: response.data.distributorName,
+        const response = await axios.get(`/users/get/${id}/${pvId}`);
+        setUser({
+            profileName: response.data.profileName,
             address: response.data.address,
             col: response.data.col,
             city: response.data.city,
@@ -595,18 +587,18 @@ const NewDistributors = () => {
         let url = window.location.pathname;
         let arr = url.split('/');
         if (arr[2] === 'Edit') {
-            setVariable('Editar distribuidor');
+            setVariable('Editar Usuario');
             setIsInputDisabled(false);
         }
         if (arr[2] === 'View') {
-            setVariable('Ver distribuidor');
+            setVariable('Ver Usuario');
             setIsInputDisabled(true);
         }
     };
 
     useEffect(() => {
         if (params.id) {
-            loadDistributor(params.id);
+            loadUser(params.id);
         } else {
             setLoading(false);
         }
@@ -636,10 +628,10 @@ const NewDistributors = () => {
                             sx={{ display: "flex", alignItems: "center" }}
                             color="foreground"
                             href="#"
-                            onClick={() => navigate(`/distributors`)}
+                            onClick={() => navigate(`/users`)}
                         >
                             <MdSettings sx={{ mr: 0.5 }} fontSize="inherit" />
-                            Distribuidores
+                            Usuarios
                         </Link>
                         <Typography
                             sx={{ display: "flex", alignItems: "center" }}
@@ -662,15 +654,15 @@ const NewDistributors = () => {
                         <img
                             className="w-96 h-96 rounded-full object-cover"
                             src={imagePreview || image || ba}
-                            alt="Imagen del distribuidor"
-                            ref={imageDistr}
+                            alt="Imagen del usuario"
+                            ref={imageUser}
                         />
                         {!isInputDisabled && (
                             <input
                                 className="w-96 bg-transparent p-2 rounded"
                                 type="file"
                                 name="image"
-                                ref={imageDistr}
+                                ref={imageUser}
                                 onChange={handleImage}
                                 disabled={isInputDisabled}
                             />
@@ -683,11 +675,11 @@ const NewDistributors = () => {
                         <div className="flex items-center">
                             <Input
                                 className="w-60 mr-4 mt-4"
-                                label="Nombre del distribuidor"
+                                label="Nombre del usuario"
                                 labelPlacement='outside'
-                                placeholder='Nombre del distribuidor'
-                                name='distributorName'
-                                value={distributor.distributorName}
+                                placeholder='Nombre del usuario'
+                                name='profileName'
+                                value={user.profileName}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
@@ -697,7 +689,7 @@ const NewDistributors = () => {
                                 labelPlacement='outside'
                                 placeholder='Dirección'
                                 name='address'
-                                value={distributor.address}
+                                value={user.address}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
@@ -709,7 +701,7 @@ const NewDistributors = () => {
                                 labelPlacement='outside'
                                 placeholder='Colonia'
                                 name='col'
-                                value={distributor.col}
+                                value={user.col}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
@@ -719,7 +711,7 @@ const NewDistributors = () => {
                                 labelPlacement='outside'
                                 placeholder='Ciudad'
                                 name='city'
-                                value={distributor.city}
+                                value={user.city}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
@@ -732,7 +724,7 @@ const NewDistributors = () => {
                                 labelPlacement='outside'
                                 placeholder='Código Postal'
                                 name='postalCode'
-                                value={distributor.postalCode}
+                                value={user.postalCode}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
@@ -741,10 +733,10 @@ const NewDistributors = () => {
                             <label className="text-foreground font-bold text-lg text-center mt-4">País y Estado</label>
                         </div>
                         <div className="flex items-center">
-                            <CountryDropdown value={distributor.country} />
-                            {distributor.country !== '' && (
+                            <CountryDropdown value={user.country} />
+                            {user.country !== '' && (
                                 <div className='flex text-center'>
-                                    <StateDropdown country={distributor.country} value={distributor.state} />
+                                    <StateDropdown country={user.country} value={user.state} />
                                 </div>
                             )}
 
@@ -759,7 +751,7 @@ const NewDistributors = () => {
                                 labelPlacement='outside'
                                 placeholder='Contacto'
                                 name='contact'
-                                value={distributor.contact}
+                                value={user.contact}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
@@ -770,7 +762,7 @@ const NewDistributors = () => {
                                 labelPlacement='outside'
                                 placeholder='Teléfono'
                                 name='phone'
-                                value={distributor.phone}
+                                value={user.phone}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
@@ -782,7 +774,7 @@ const NewDistributors = () => {
                                 labelPlacement='outside'
                                 placeholder='Correo electrónico'
                                 name='email'
-                                value={distributor.email}
+                                value={user.email}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
@@ -810,7 +802,7 @@ const NewDistributors = () => {
                                     variant="success"
                                     className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
                                     size="sm"
-                                    onClick={() => navigate(`/distributors`)}
+                                    onClick={() => navigate(`/users`)}
                                     disabled={loading}
                                 >
                                     Volver
@@ -825,5 +817,5 @@ const NewDistributors = () => {
     );
 };
 
-export default NewDistributors;
+export default NewUsers;
 

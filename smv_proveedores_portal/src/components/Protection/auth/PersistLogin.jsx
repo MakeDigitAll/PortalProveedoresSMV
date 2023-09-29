@@ -19,24 +19,13 @@ const PersistLogin = () => {
     const username = localStorage.getItem("username");
     const accessToken = Cookies.get("aT");
     const userId = localStorage.getItem("userId");
-    const imgURL = localStorage.getItem("imgURL");
-    //const [imgURL, setImgURL] = useState(null);
-   // const arrayBufferString = localStorage.getItem('img');
 
 
     useEffect(() => {
         let isMounted = true;
 
-        //if (arrayBufferString) {
-         //   const arrayBuffer = new Uint8Array(arrayBufferString.split(',').map(Number)).buffer;
-         //   const recoveredBlob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
-          //   const imageURL = URL.createObjectURL(recoveredBlob);
-        //     localStorage.setItem('imgURL', imageURL);
-        //     setImgURL(imageURL);
-        //    }
-
         if (ID && roles && isVerified && username && accessToken) {
-            setAuth({ ID, roles, isVerified, username, accessToken, imgURL, userId });
+            setAuth({ ID, roles, isVerified, username, accessToken, userId });
             setIsLoading(false);
         }
         else {
