@@ -51,11 +51,11 @@ const handleNewUser = async (req, res) => {
             //---------------------------------------------------------------------------------------- Creacion de token de verificacion
             await pool.query('INSERT INTO "verifyToken" ("userId", "token", "expireTime") VALUES ($1, $2, $3)', [token.userId, token.token, token.expireDate]);
 
-            //---------------------------------------------------------------------------------------- Envio de correo de verificacion y notificacion de nuevo distribuidor
-            const urlWaitingProvider = `http://localhost:5173/distributors`;
-            await sendEmail(referenceExist.rows[0].email, "Tienes a un nuevos distribuidores que necesita ser confirmados", urlWaitingProvider);
+            //---------------------------------------------------------------------------------------- Envio de correo de verificacion y notificacion de nuevo usuario
+            const urlWaitingProvider = `http://localhost:3000/users`;
+            await sendEmail(referenceExist.rows[0].email, "Tienes a un nuevos usuarios que necesita ser confirmados", urlWaitingProvider);
 
-            const urlVerif = `http://localhost:5173/users/${token.userId}/verify/${token.token}`;
+            const urlVerif = `http://localhost:3000/verifications/${token.userId}/verify/${token.token}`;
             await sendEmail(username, "Verifica tu cuenta", urlVerif);
 
             return res.status(200).json({ 'success': 'New user ${result.rows[0].userName} created' });
@@ -84,7 +84,7 @@ const handleNewUser = async (req, res) => {
 
         await pool.query('INSERT INTO "verifyToken" ("userId", "token", "expireTime") VALUES ($1, $2, $3)', [token.userId, token.token, token.expireDate]);
 
-        const url = `http://localhost:5173/users/${token.userId}/verify/${token.token}`;
+        const url = `http://localhost:3000/verifications/${token.userId}/verify/${token.token}`;
         await sendEmail(username, "Verifica tu cuenta", url);
 
         return res.status(200).json({ 'success': 'New user ${result.rows[0].userName} created' });

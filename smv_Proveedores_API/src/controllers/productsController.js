@@ -32,9 +32,8 @@ const getProducts = async (req, res) => {
 //---------------------------------------------------------------------------------------
 
 const updateImageProducts = async (req, res) => {
-    const { id } = req.params;
-    const images = req.files;
-    //se recibe un array de imagenes
+    const { id, position } = req.params;
+    const image = req.file;
 
     const imageBuffers = [];
 
@@ -48,7 +47,7 @@ const updateImageProducts = async (req, res) => {
  
     try {
         const date = new Date();
-        await pool.query('UPDATE "pvProductsImages" SET "image" = $1, "updated_At" = $2 WHERE "productId" = $3', [imageBuffers, date, id]);
+        await pool.query(`UPDATE "pvProductsImages" SET "image${position}" = $1, "updated_At" = $2 WHERE "productId" = $3`, [image.buffer, date, id]);
         res.status(200).json({
             message: 'Imagenes actualizadas correctamente'
         });
@@ -57,24 +56,15 @@ const updateImageProducts = async (req, res) => {
             message: 'Error al actualizar las imagenes'
         });
     }
-}
+} 
 
 
 const getImageProduct = async (req, res) => {
     try {
-        const { id } = req.params;
-        const img = await pool.query('SELECT "image" FROM "pvProductsImages" WHERE "productId" = $1', [id]);
-        return res.send(img.rows[0].image[0]);
-    } catch (error) {
-        res.status(400).json({ error: 'Error al obtener la imagen' });
-    }
-}
-
-const getImagesProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const img = await pool.query('SELECT "image" FROM "pvProductsImages" WHERE "productId" = $1', [id]);
-        return res.send(img.rows[0].image);
+        const { id, position } = req.params;
+        const imageField = `image${position}`;
+        const img = await pool.query(`SELECT "image${position}" FROM "pvProductsImages" WHERE "productId" = $1`, [id]);
+        return res.send(img.rows[0][imageField]);
     } catch (error) {
         res.status(400).json({ error: 'Error al obtener la imagen' });
     }
@@ -103,8 +93,8 @@ const createProduct = async (req, res) => {
         const date = new Date();
         const isDeleted = false;
         const newProd = await pool.query('INSERT INTO "pvProducts" ("productName", "manofacturerCode", "companyCode", "brand", "model", "price1", "price2", "price3", "price4", "rate1", "rate2", "rate3", "satProductCode", "satUnitCode", "unitMeasurement", "providerId", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING id', [productName, manofacturerCode, companyCode, brand, model, price1, price2, price3, price4, rate1, rate2, rate3, satProductCode, satUnitCode, unitMeasurement, id, date, date, isDeleted]);
-        await pool.query('INSERT INTO "providerProductsAvailability" ("productId", "productStock", "productMin", "productMax","availabilityCat", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [newProd.rows[0].id, 0, 0, 0, 0, date, date, isDeleted]);
-        await pool.query('INSERT INTO "pvProductsImages" ("productId", "image", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5)', [newProd.rows[0].id, [null, null, null, null], date, date, isDeleted]);
+        await pool.query('INSERT INTO "ProductsAvailability" ("productId", "productStock", "productMin", "productMax","availabilityCat", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [newProd.rows[0].id, 0, 0, 0, 0, date, date, isDeleted]);
+        await pool.query('INSERT INTO "pvProductsImages" ("productId", "image1", "image2", "image3", "image4", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [newProd.rows[0].id, null, null, null, null, date, date, isDeleted]);
         await pool.query('INSERT INTO "technicalSheetProducts" ("productId", "tecnicalSheet", "created_At", "updated_At", "isDeleted") VALUES ($1, $2, $3, $4, $5)', [newProd.rows[0].id, null, date, date, isDeleted]);
         res.status(200).json({
             message: 'Producto creado correctamente',

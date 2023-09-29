@@ -302,7 +302,7 @@ const NewProducts = () => {
 
         if (product.model === "") {
             toast.error('El modelo es requerido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -316,7 +316,7 @@ const NewProducts = () => {
 
         if (product.model.length < 3 || product.model.length > 100) {
             toast.error('El modelo debe tener entre 3 y 100 caracteres', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -330,7 +330,7 @@ const NewProducts = () => {
 
         if (product.price1 === "") {
             toast.error('Los precios son requeridos', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -344,7 +344,7 @@ const NewProducts = () => {
 
         if (product.price2 === "") {
             toast.error('Los precios son requeridos', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -358,7 +358,7 @@ const NewProducts = () => {
 
         if (product.price3 === "") {
             toast.error('Los precios son requeridos', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -372,7 +372,7 @@ const NewProducts = () => {
 
         if (product.price4 === "") {
             toast.error('Los precios son requeridos', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -386,7 +386,7 @@ const NewProducts = () => {
 
         if (product.price1 < 0 || product.price1 > 1000000 || product.price2 < 0 || product.price2 > 1000000 || product.price3 < 0 || product.price3 > 1000000 || product.price4 < 0 || product.price4 > 1000000) {
             toast.error('Los precios deben tener un valor valido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -402,7 +402,7 @@ const NewProducts = () => {
 
         if (product.rate1 === "") {
             toast.error('Las tarifas son requeridas', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -416,7 +416,7 @@ const NewProducts = () => {
 
         if (product.rate2 === "") {
             toast.error('Las tarifas son requeridas', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -430,7 +430,7 @@ const NewProducts = () => {
 
         if (product.rate3 === "") {
             toast.error('Las tarifas son requeridas', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -444,7 +444,7 @@ const NewProducts = () => {
 
         if (product.rate1 < 0 || product.rate1 > 100 || product.rate2 < 0 || product.rate2 > 100 || product.rate3 < 0 || product.rate3 > 100) {
             toast.error('Las tarifas deben ser entre 0 y 100', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -458,7 +458,7 @@ const NewProducts = () => {
 
         if (product.wholesalePrice === "") {
             toast.error('El precio al mayoreo es requerido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -472,7 +472,7 @@ const NewProducts = () => {
 
         if (product.satProductCode === "") {
             toast.error('El código del producto SAT es requerido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -486,7 +486,7 @@ const NewProducts = () => {
 
         if (product.satProductCode.length < 3 || product.satProductCode.length > 100) {
             toast.error('El código del producto SAT debe tener entre 3 y 100 caracteres', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -499,7 +499,7 @@ const NewProducts = () => {
         }
         if (product.satUnitCode === "") {
             toast.error('El código de unidad SAT es requerido', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -512,7 +512,7 @@ const NewProducts = () => {
         }
         if (product.unitMeasurement === "") {
             toast.error('La unidad de medida es requerida', {
-                position: "top-right",
+                position: "bottom-right",
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -652,8 +652,6 @@ const NewProducts = () => {
         setShowDeleteOption(false);
     };
 
-    //agrego las imagenes al arreglo de imagenes
-    // como maximum 4 images
     const handleImageUpload = (e) => {
         const selectedImages = Array.from(e.target.files);
         switch (images.length) {
@@ -698,23 +696,18 @@ const NewProducts = () => {
 
     const submitImages = async (idprd) => {
         const idpd = idprd || params.id;
-
-        if (images.length > 0) { // Verifica si se han seleccionado imágenes
+    
+        if (image1) {
             try {
                 const formData = new FormData();
-
-                // Agrega todas las imágenes al formulario
-                images.forEach((image, index) => {
-                    formData.append(`image${index}`, image);
-                });
-
-                await axios.put(`/products/images/${idpd}`, formData, {
+                formData.append('image', image1);
+                await axios.put(`/products/image/${idpd}/1`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 }).then((response) => {
                     if (response.status === 200) {
-                        console.log('Imágenes actualizadas');
+                        console.log('Imagen 1 actualizada');
                     }
                 }).catch((error) => {
                     console.log(error);
@@ -723,8 +716,75 @@ const NewProducts = () => {
                 console.log(error);
             }
         } else {
-            console.log('No se seleccionaron imágenes');
+            console.log('No se seleccionó imagen 1');
         }
+
+        if (image2) {
+            try {
+                const formData = new FormData();
+                formData.append('image', image2);
+                await axios.put(`/products/image/${idpd}/2`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Imagen 2 actualizada');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log('No se seleccionó imagen 2');
+        }
+
+        if (image3) {
+            try {
+                const formData = new FormData();
+                formData.append('image', image3);
+                await axios.put(`/products/image/${idpd}/3`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Imagen 3 actualizada');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log('No se seleccionó imagen 3');
+        }
+
+        if (image4) {
+            try {
+                const formData = new FormData();
+                formData.append('image', image4);
+                await axios.put(`/products/image/${idpd}/4`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log('Imagen 4 actualizada');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log('No se seleccionó imagen 4');
+        }
+        
     };
 
 
@@ -798,6 +858,28 @@ const NewProducts = () => {
         }
     };
 
+    const setImage = async (position, imageBlob) => {
+        switch (position) {
+            case 0:
+                setImage1(imageBlob);
+                break;
+            case 1:
+                setImage2(imageBlob);
+                break;
+            case 2:
+                setImage3(imageBlob);
+                break;
+            case 3:
+                setImage4(imageBlob);
+                break;
+            default:
+                break;
+        }
+    };
+    
+
+
+
     const getTechnicalSheet = async () => {
         try {
             const response = await axios.get(`/products/technicalSheet/${params.id}`, {
@@ -852,22 +934,6 @@ const NewProducts = () => {
     };
 
     useEffect(() => {
-        switch (selectedImage) {
-            case 0:
-                setImagePreview(image1);
-                break;
-            case 1:
-                setImagePreview(image2);
-                break;
-            case 2:
-                setImagePreview(image3);
-                break;
-            case 3:
-                setImagePreview(image4);
-                break;
-            default:
-                break;
-        }
 
         if (!images || images === null || images.length === 0)
             return;
@@ -894,8 +960,24 @@ const NewProducts = () => {
             const url4 = URL.createObjectURL(blob4);
             setImage4(url4);
         }
-        
-    }, [images, selectedImage]);
+
+        switch (selectedImage) {
+            case 0:
+                setImagePreview(imgPreview1);
+                break;
+            case 1:
+                setImagePreview(imgPreview2);
+                break;
+            case 2:
+                setImagePreview(imgPreview3);
+                break;
+            case 3:
+                setImagePreview(imgPreview4);
+                break;
+            default:
+                break;
+        }
+    }, [image1, image2, image3, image4, selectedImage]);
 
     useEffect(() => {
         setTimeout(() => {

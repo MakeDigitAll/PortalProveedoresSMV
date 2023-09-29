@@ -2,7 +2,7 @@ const { Router } = require("express")
 const router = Router();
 const refreshTokenController = require("../controllers/refreshTokenController");
 
-const { auth, updatePasswordAuth, deleteAuth, verifyEmail, resendVerifyEmail, getImageUser} = require('../controllers/authController');
+const { auth, updatePasswordAuth, deleteAuth, verifyEmail, resendVerifyEmail} = require('../controllers/authController');
 const  handleNewUser = require('../controllers/registerController');
 
 
@@ -19,8 +19,6 @@ router.post('/register', handleNewUser);
 router.post('/users/:id/verify/:token', verifyEmail);
 
 router.post('/resendVerifyEmail', resendVerifyEmail);
-
-router.get('/users/:id/image', getImageUser);
 
 
 //---------------------------------------------------------------------------------------

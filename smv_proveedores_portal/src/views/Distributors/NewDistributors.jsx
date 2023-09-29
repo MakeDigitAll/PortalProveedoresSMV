@@ -82,14 +82,6 @@ const NewDistributors = () => {
         return value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
     };
 
-    const validatePhone = (value) => {
-        return value.match(/^[0-9]{10}$/i);
-    };
-
-    const validatePostalCode = (value) => {
-        return value.match(/^[0-9]{5}$/i);
-    };
-
     //-------------------------------------------------------------Validaciones de campos---------------------------------------------
 
     const handleSubmit = async (e) => {
@@ -449,7 +441,7 @@ const NewDistributors = () => {
             try {
                 const formData = new FormData();
                 formData.append('image', image);
-                await axios.put(`/usr/image/${id}`, formData, {
+                await axios.put(`/users/image/${id}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -576,11 +568,11 @@ const NewDistributors = () => {
     };
 
 
-    const loadDistributor = async (id) => {
+    const loadUsers = async (id) => {
         await getImage();
-        const response = await axios.get(`/distributors/get/${id}/${pvId}`);
-        setDistributor({
-            distributorName: response.data.distributorName,
+        const response = await axios.get(`/users/get/${id}/${pvId}`);
+        setUser({
+            profileName: response.data.profileName,
             address: response.data.address,
             col: response.data.col,
             city: response.data.city,

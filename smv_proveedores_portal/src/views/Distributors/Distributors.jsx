@@ -64,7 +64,7 @@ const Distributors = () => {
             });
           })
           );
-          const distributors = response.data.map((distributor, index) => {
+          const users = response.data.map((users, index) => {
             const isNullBlob = images[index].data.size === 0;
             const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
             return {
@@ -321,7 +321,7 @@ const Distributors = () => {
       <Modal
         size='xs'
         isOpen={isOpen}
-        placement='center'
+        placement='auto'
         aria-labelledby="modal-delete"
         aria-describedby="modal-description"
         isDismissable={false}

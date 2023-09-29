@@ -66,7 +66,7 @@ const Products = () => {
       const response = await axios.get(`/products/all/${auth.ID}`);
       const images = await Promise.all(
         response.data.map((product) => {
-          return axios.get(`/products/image/${product.id}`, { 
+          return axios.get(`/products/image/${product.id}/${1}`, {
             responseType: 'blob'
           })
         })
@@ -116,7 +116,6 @@ const Products = () => {
       label: "Acciones",
     },
   ];
-
 
   //------------------------------------------------------------------------------------------
   //----------------------------Funcion para filtrar productos -------------------------------

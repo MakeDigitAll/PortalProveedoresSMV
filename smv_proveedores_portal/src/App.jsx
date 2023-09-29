@@ -38,7 +38,7 @@ function App() {
       errorElement: <Error404 />,
     },
     {
-      path: "/users/:id/verify/:token",
+      path: "/verifications/:id/verify/:token",
       element: <VerifyAccount />,
       errorElement: <Error404 />,
     },

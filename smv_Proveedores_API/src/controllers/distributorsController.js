@@ -1,5 +1,6 @@
 const pool = require('../database')
 const crypto = require('crypto');
+const { encryptPassword } = require('../helpers/hashing');
 const sendEmail = require('../helpers/sendEmail');
 
 
@@ -99,13 +100,14 @@ const createDistributor = async (req, res) => {
     const distributorExist = await pool.query('SELECT * FROM "userAuth" WHERE "userName" = $1', [email]);
     if (distributorExist.rows[0]) return res.status(400).json({ error: 'El distribuidor ya existe' });
     const password = crypto.randomBytes(4).toString('hex');
+    const hashedPassword = await encryptPassword(password);
     const role = '{2000}';
-
-    // CREACION DEL DISTRIBUIDOR
-    const newDistributor = await pool.query('INSERT INTO "userAuth" ("userName", "password") VALUES ($1, $2) RETURNING *', [email, password])
-    await pool.query('INSERT INTO "distributorsProfile" ("distributorId", "distributorName", "address", "col", "city", "state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', [newDistributor.rows[0].id, distributorName, address, col, city, state, postalCode, country, contact, phone, email])
-    await pool.query('INSERT INTO "Permissions" ("userId", "reference", "permission") VALUES ($1, $2, $3)', [newDistributor.rows[0].id, referenceExist.rows[0].referenceCode, role])
-    await pool.query('INSERT INTO "userImages" ("userId") VALUES ($1)', [newDistributor.rows[0].id])
+ 
+    // CREACION DEL USUARIO
+    const newUser = await pool.query('INSERT INTO "userAuth" ("userName", "password") VALUES ($1, $2) RETURNING *', [email, hashedPassword]);
+    await pool.query('INSERT INTO "UsersProfile" ("profileId", "profileName", "address", "col", "city", "state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', [newUser.rows[0].id, profileName, address, col, city, state, postalCode, country, contact, phone, email])
+    await pool.query('INSERT INTO "Permissions" ("userId", "reference", "permission") VALUES ($1, $2, $3)', [newUser.rows[0].id, referenceExist.rows[0].referenceCode, role])
+    await pool.query('INSERT INTO "userImages" ("userId") VALUES ($1)', [newUser.rows[0].id])
     
     // CREACION DEL TOKEN DE VERIFICACION
     const token = {
@@ -116,8 +118,8 @@ const createDistributor = async (req, res) => {
 
     await pool.query('INSERT INTO "verifyToken" ("userId", "token", "expireTime") VALUES ($1, $2, $3)', [token.userId, token.token, token.expireDate]);
     
-    const urlVerif = `http://localhost:5173/users/${token.userId}/verify/${token.token}`;
-    await sendEmail(email, 'Nuevo Distribuidor de SMV - Verificacion de Cuenta' ,`Se ha creado una nueva cuenta de distribuidor asociada a este correo por parte de su proveedor, \n la contraseña para acceder por primera vez sera:  ${password}, El nombre de usuario será su correo. Por favor, \n verifique su cuenta dando clic en el siguiente enlace \n` + urlVerif);
+    const urlVerif = `http://localhost:3000/verifications/${token.userId}/verify/${token.token}`;
+    await sendEmail(email, 'Nuevo Usuario de SMV - Verificacion de Cuenta' ,`Se ha creado una nueva cuenta de usuario asociada a este correo por parte de su proveedor, \n la contraseña para acceder por primera vez sera:  ${password}, El nombre de usuario será su correo. Por favor, \n verifique su cuenta dando clic en el siguiente enlace \n` + urlVerif);
 
     return res.status(200).json({ message: 'Distribuidor creado', id: newDistributor.rows[0].id });
 
@@ -219,15 +221,15 @@ const getImageUser = async (req, res) => {
 
 // ----------------------  Controlador de usuarios (admin) -------------------------------
 module.exports = {
-  getDistributorById,
-  getWaitingDistributors,
-  getAllDistributors,
-  confirmationDistributor,
-  declineDistributor,
-  createDistributor,
-  updateDistributor,
+  getUserById,
+  createUser,
+  updateUser,
   getPermissionsById,
   updatePermissions,
   updateImageUser,
-  getImageUser
+  getImageUser,
+  getWaitingUsers,
+  getAllUsers,
+  confirmationUser,
+  declineUser
 }
