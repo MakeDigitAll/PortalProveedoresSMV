@@ -5,7 +5,7 @@ const sendEmail = require('../helpers/sendEmail');
 
 
 //----------------------------------------------------------------------------------------
-//                          VISTA DE DISTRIBUIDORES (proveedor)
+//                          VISTA DE USUARIOS (proveedor)
 //----------------------------------------------------------------------------------------
 
 //solo manda usuarios que esten pendientes
@@ -14,10 +14,10 @@ const getWaitingUsers = async (req, res) => {
 
     const { pvId } = req.params;
     const referenceExist = await pool.query('SELECT referenceCode FROM "providersProfile" WHERE "id" = $1', [pvId]);
-    const response = await pool.query('SELECT * FROM "Permissions", "distributorsProfile" WHERE "Permissions"."userId" = "distributorsProfile"."distributorId" AND "Permissions"."reference" = $1 AND "Permissions"."estatus" = $2', [referenceExist.rows[0].referenceCode, 'Pendiente']);
+    const response = await pool.query('SELECT * FROM "Permissions", "UsersProfile" WHERE "Permissions"."userId" = "UsersProfile"."profileId" AND "Permissions"."reference" = $1 AND "Permissions"."estatus" = $2', [referenceExist.rows[0].referenceCode, 'Pendiente']);
     return res.status(200).json(response.rows);
   } catch (error) {
-    res.status(400).json({ error: 'Error al obtener el distribuidor' });
+    res.status(400).json({ error: 'Error al obtener el usuario' });
   }
 }
 //----------------------------------------------------------------------------------------
@@ -27,13 +27,13 @@ const getAllUsers = async (req, res) => {
     const { pvId } = req.params; 
     const referenceExist = await pool.query('SELECT "referenceCode" FROM "providersProfile" WHERE "id" = $1', [pvId]);
     if (!referenceExist.rows[0]) return res.status(400).json({ error: 'El codigo de referencia no existe' });
-    const response = await pool.query('SELECT "distributorsProfile"."distributorId", "distributorsProfile"."distributorName", "distributorsProfile"."address", "distributorsProfile"."col", "distributorsProfile"."city", "distributorsProfile"."state", "distributorsProfile"."postalCode", "distributorsProfile"."country", "distributorsProfile"."contact", "distributorsProfile"."phone", "distributorsProfile"."email" FROM "Permissions", "userAuth", "distributorsProfile" WHERE "Permissions"."userId" = "userAuth"."id" AND "userAuth"."id" = "distributorsProfile"."distributorId" AND "Permissions"."reference" = $1 AND "Permissions"."estatus" = $2', [referenceExist.rows[0].referenceCode, 'Activo']);
+    const response = await pool.query('SELECT "UsersProfile"."profileId", "UsersProfile"."profileName", "UsersProfile"."address", "UsersProfile"."col", "UsersProfile"."city", "UsersProfile"."state", "UsersProfile"."postalCode", "UsersProfile"."country", "UsersProfile"."contact", "UsersProfile"."phone", "UsersProfile"."email" FROM "Permissions", "userAuth", "UsersProfile" WHERE "Permissions"."userId" = "userAuth"."id" AND "userAuth"."id" = "UsersProfile"."profileId" AND "Permissions"."reference" = $1 AND "Permissions"."estatus" = $2', [referenceExist.rows[0].referenceCode, 'Activo']);
     return res.status(200).json(response.rows);
   } catch (error) {
     throw new Error('Error al obtener el usuario por nombre de usuario');
   }
 }
-//----------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------- 
 const confirmationUser = async (req, res) => {
   try {
     const { id, estatus, pvId } = req.params;
@@ -41,13 +41,13 @@ const confirmationUser = async (req, res) => {
     const referenceExist = await pool.query('SELECT * FROM "providersProfile" WHERE "id" = $1', [pvId]);
     if (!referenceExist.rows[0]) return res.status(400).json({ error: 'El codigo de referencia no existe' });
     await pool.query('UPDATE "Permissions" SET "estatus" = $1 AND "permission" = $2 WHERE "userId" = $3 AND "reference" = $4', [estatus, roles, id, referenceExist.rows[0].referencecode]);
-    return res.status(200).json({ message: 'Estatus del distribuidor actualizado' });
+    return res.status(200).json({ message: 'Estatus del usuario actualizado' });
   } catch (error) {
     throw new Error('Error al obtener el usuario por nombre de usuario');
   }
 }
 //----------------------------------------------------------------------------------------
-//Para rechazar un distribuidor de parte del proveedor
+//Para rechazar un usuario de parte del proveedor
 const declineUser = async (req, res) => {
   try {
     const { id, pvId } = req.params;
@@ -56,7 +56,7 @@ const declineUser = async (req, res) => {
 
 
     await pool.query('UPDATE "Permissions" SET "estatus" = $1 WHERE "userId" = $2 AND "reference" = $3', ['Eliminado', id, referenceExist.rows[0].referenceCode]);
-    return res.status(200).json({ message: 'Distribuidor eliminado' });
+    return res.status(200).json({ message: 'usuario eliminado' });
   } catch (error) {
     throw new Error('Error al obtener el usuario por nombre de usuario');
   }
@@ -72,17 +72,17 @@ const declineUser = async (req, res) => {
 
 
 //----------------------------------------------------------------------------------------
-//                          CRUD de distribuidores (admin)
+//                          CRUD de usuarios (admin)
 //----------------------------------------------------------------------------------------
 
 
 const getUserById = async (req, res) => {
   try {
       const { id } = req.params;
-      const response = await pool.query('SELECT * FROM "distributorsProfile" WHERE "distributorId" = $1', [id]);
+      const response = await pool.query('SELECT * FROM "UsersProfile" WHERE "profileId" = $1', [id]);
       return res.status(200).json(response.rows[0]);
     } catch (error) {
-      res.status(400).json({ error: 'Error al obtener el distribuidor' });
+      res.status(400).json({ error: 'Error al obtener el usuario' });
     }
   };
 
@@ -91,14 +91,14 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const { pvId } = req.params;
-    const { distributorName, address, col, city, state, postalCode, country,  contact, phone, email} = req.body;
+    const { profileName, address, col, city, state, postalCode, country,  contact, phone, email} = req.body;
     const expireDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     // VALIDACIONES
     const referenceExist = await pool.query('SELECT * FROM "providersProfile" WHERE "id" = $1', [pvId]);
     if (!referenceExist.rows[0]) return res.status(400).json({ error: 'El codigo de referencia no existe' });
-    const distributorExist = await pool.query('SELECT * FROM "userAuth" WHERE "userName" = $1', [email]);
-    if (distributorExist.rows[0]) return res.status(400).json({ error: 'El distribuidor ya existe' });
+    const userExist = await pool.query('SELECT * FROM "userAuth" WHERE "userName" = $1', [email]);
+    if (userExist.rows[0]) return res.status(400).json({ error: 'El usuario ya existe' });
     const password = crypto.randomBytes(4).toString('hex');
     const hashedPassword = await encryptPassword(password);
     const role = '{2000}';
@@ -111,7 +111,7 @@ const createUser = async (req, res) => {
     
     // CREACION DEL TOKEN DE VERIFICACION
     const token = {
-      userId: newDistributor.rows[0].id,
+      userId: newUser.rows[0].id,
       token: crypto.randomBytes(32).toString('hex'),
       expireDate: expireDate
     }
@@ -121,10 +121,10 @@ const createUser = async (req, res) => {
     const urlVerif = `http://localhost:3000/verifications/${token.userId}/verify/${token.token}`;
     await sendEmail(email, 'Nuevo Usuario de SMV - Verificacion de Cuenta' ,`Se ha creado una nueva cuenta de usuario asociada a este correo por parte de su proveedor, \n la contraseña para acceder por primera vez sera:  ${password}, El nombre de usuario será su correo. Por favor, \n verifique su cuenta dando clic en el siguiente enlace \n` + urlVerif);
 
-    return res.status(200).json({ message: 'Distribuidor creado', id: newDistributor.rows[0].id });
+    return res.status(200).json({ message: 'usuario creado', id: newUser.rows[0].id });
 
   } catch (error) {
-    res.status(400).json({ error: 'Error al crear el distribuidor' });
+    res.status(400).json({ error: 'Error al crear el usuario' });
   }
 }
 
@@ -133,18 +133,18 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id, pvId } = req.params;
-    const { distributorName, address, col, city, state, postalCode, country, contact, phone, email } = req.body;
+    const { profileName, address, col, city, state, postalCode, country, contact, phone, email } = req.body;
     const date = new Date();
 
     const referenceExist = await pool.query('SELECT * FROM "providersProfile" WHERE "id" = $1', [pvId]);
     if (!referenceExist.rows[0]) return res.status(400).json({ error: 'El codigo de referencia no existe' });
-    const distributorExist = await pool.query('SELECT * FROM "userAuth" WHERE "userName" = $1 and "id" != $2', [email, id]);
-    if (distributorExist.rows[0]) return res.status(400).json({ error: 'El correo ya esta registrado' });
+    const userExist = await pool.query('SELECT * FROM "userAuth" WHERE "userName" = $1 and "id" != $2', [email, id]);
+    if (userExist.rows[0]) return res.status(400).json({ error: 'El correo ya esta registrado' });
 
 
     await pool.query('UPDATE "userAuth" SET "userName" = $1, "updated_At" = $2 WHERE "id" = $3', [email, date, id]);
-    await pool.query('UPDATE "distributorsProfile" SET "distributorName" = $1, "address" = $2, "col" = $3, "city" = $4, "state" = $5, "postalCode" = $6, "country" = $7, "contact" = $8, "phone" = $9, "email" = $10, "updated_At" = $11 WHERE "distributorId" = $12', [distributorName, address, col, city, state, postalCode, country, contact, phone, email, date, id]);
-    return res.status(200).json({ message: 'Distribuidor actualizado' });
+    await pool.query('UPDATE "UsersProfile" SET "profileName" = $1, "address" = $2, "col" = $3, "city" = $4, "state" = $5, "postalCode" = $6, "country" = $7, "contact" = $8, "phone" = $9, "email" = $10, "updated_At" = $11 WHERE "profileId" = $12', [profileName, address, col, city, state, postalCode, country, contact, phone, email, date, id]);
+    return res.status(200).json({ message: 'usuario actualizado' });
   } catch (error) {
     throw new Error('Error al actualizar el usuario');
   }
@@ -162,7 +162,7 @@ const updateUser = async (req, res) => {
 const getPermissionsById = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await pool.query('SELECT "Permissions"."userId","distributorsProfile"."distributorName", "Permissions"."reference", "Permissions"."permission" FROM "Permissions", "distributorsProfile", "userAuth" WHERE "Permissions"."userId" = "distributorsProfile"."distributorId" AND "Permissions"."userId" = "userAuth"."id" AND "Permissions"."userId" = $1', [id]);
+    const response = await pool.query('SELECT "Permissions"."userId","UsersProfile"."profileName", "Permissions"."reference", "Permissions"."permission" FROM "Permissions", "UsersProfile", "userAuth" WHERE "Permissions"."userId" = "UsersProfile"."profileId" AND "Permissions"."userId" = "userAuth"."id" AND "Permissions"."userId" = $1', [id]);
     return res.status(200).json(response.rows[0]);
   } catch (error) {
     res.status(400).json({ error: 'Error al obtener los permisos' });

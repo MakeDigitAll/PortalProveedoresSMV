@@ -44,7 +44,7 @@ const Users = () => {
   const { auth } = useAuth()
   const pvId = auth.ID
   const [isLoading, setIsLoading] = React.useState(true);
-  const [distributors, setDistributors] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
   const navigate = useNavigate()
   const [searchName, setSearchName] = React.useState("");
   const [searchPhone, setSearchPhone] = React.useState("");
@@ -56,10 +56,10 @@ const Users = () => {
   useEffect(() => {
     async function fetch() {
       try {
-        const response = await axios.get(`/distributors/all/${pvId}`);
+        const response = await axios.get(`/users/all/${pvId}`);
         const images = await Promise.all(
-          response.data.map((distributor) => {
-            return axios.get(`/distributors/image/${distributor.distributorId}`, {
+          response.data.map((user) => {
+            return axios.get(`/users/image/${user.profileId}`, {
               responseType: "blob",
             });
           })
@@ -68,12 +68,11 @@ const Users = () => {
             const isNullBlob = images[index].data.size === 0;
             const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
             return {
-              ...distributor,
+              ...users,
               image,
             }; 
           });
-          setDistributors(distributors);
-          //console.log(distributors);
+          setUsers(users);
           setIsLoading(false);
         } catch (error) {
           console.log(error);
@@ -86,8 +85,8 @@ const Users = () => {
   
   const columns = [
     {
-      key: 'distributorName',
-      label: 'Nombre del distribuidor',
+      key: 'profileName',
+      label: 'Nombre del usuario',
     },
     {
       key: 'address',
@@ -114,9 +113,9 @@ const Users = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/distributors/decline/${id}/${pvId}`);
+      await axios.delete(`/users/decline/${id}/${pvId}`);
       window.location.reload();
-      toast.success("Distribuidor eliminado con éxito", {
+      toast.success("usuario eliminado con éxito", {
         position: "bottom-right",
         hideProgressBar: false,
         closeOnClick: true,
@@ -128,7 +127,7 @@ const Users = () => {
       });
     } catch (error) {
       console.log(error);
-      toast.error("Error al eliminar el distribuidor", {
+      toast.error("Error al eliminar el usuario", {
         position: "bottom-right",
         hideProgressBar: false,
         closeOnClick: true,
@@ -157,34 +156,34 @@ const Users = () => {
     setDelItem(null);
   }
 
-  const filterDistributors = (distributors) => {
+  const filterUsers = (users) => {
     if (searchName === "" && searchPhone === "" && searchCity === "") {
-      return distributors;
+      return users;
     } else {
-      return distributors.filter((distributor) => {
+      return users.filter((user) => {
         return (
-          distributor.distributorName.toLowerCase().includes(searchName.toLowerCase()) &&
-          distributor.phone.toLowerCase().includes(searchPhone.toLowerCase()) &&
-          distributor.city.toLowerCase().includes(searchCity.toLowerCase())
+          user.profileName.toLowerCase().includes(searchName.toLowerCase()) &&
+          user.phone.toLowerCase().includes(searchPhone.toLowerCase()) &&
+          user.city.toLowerCase().includes(searchCity.toLowerCase())
         );
       });
     }
   };
 
 
-  const renderCell = React.useCallback((distributors, columnKey) => {
+  const renderCell = React.useCallback((users, columnKey) => {
 
-    const cellValue = distributors[columnKey];
+    const cellValue = users[columnKey];
 
     switch (columnKey) {
-      case 'distributorName':
+      case 'profileName':
         return (
           <User
-            avatarProps={{ radius: "lg", src: distributors.image }}
-            description={distributors.email}
-            name={distributors.distributorName}
+            avatarProps={{ radius: "lg", src: users.image }}
+            description={users.email}
+            name={users.profileName}
           >
-            {distributors.country}
+            {users.country}
           </User>
         )
       case 'address':
@@ -244,7 +243,7 @@ const Users = () => {
                   <DropdownItem
                     startContent={<IoMdEye />}
                     onClick={() => {
-                      navigate(`/distributors/View/${distributors.distributorId}`)
+                      navigate(`/users/View/${users.profileId}`)
                     }}
                   >
                     Ver
@@ -252,7 +251,7 @@ const Users = () => {
                   <DropdownItem
                     startContent={<RiPencilLine />}
                     onClick={() => {
-                      navigate(`/distributors/Edit/${distributors.distributorId}`)
+                      navigate(`/users/Edit/${users.profileId}`)
                     }}
                   >
                     Editar
@@ -260,7 +259,7 @@ const Users = () => {
                   <DropdownItem
                     startContent={<MdChecklist />}
                     onClick={() => {
-                      navigate(`/distributors/Permissions/${distributors.distributorId}`)
+                      navigate(`/users/Permissions/${users.profileId}`)
                     }}
                   >
                     Permisos
@@ -272,7 +271,7 @@ const Users = () => {
                     className='text-danger'
                     color='danger'
                     startContent={<MdDelete />}
-                    onPress={() => handlerDel(distributors.distributorId, distributors.distributorName)}
+                    onPress={() => handlerDel(users.profileId, users.profileName)}
                   >
                     Eliminar
                   </DropdownItem>
@@ -313,7 +312,7 @@ const Users = () => {
               className="text-foreground"
             >
               <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-              Listado de distribuidores
+              Listado de usuarios
             </Typography>
           </Breadcrumbs>
         </div>
@@ -332,9 +331,9 @@ const Users = () => {
         <ModalContent>
           {() => (
             <>
-              <ModalHeader>Eliminar distribuidor</ModalHeader>
+              <ModalHeader>Eliminar usuario</ModalHeader>
               <ModalBody>
-                <p>¿Está seguro que desea eliminar el distribuidor <b>{DelItem?.userName}</b>?</p>
+                <p>¿Está seguro que desea eliminar al usuario <b>{DelItem?.userName}</b>?</p>
               </ModalBody>
               <ModalFooter>
                 <Button
@@ -360,7 +359,7 @@ const Users = () => {
             <Input
               startContent={<MdSearch />}
               className="mr-10"
-              placeholder="Nombre del distribuidor"
+              placeholder="Nombre del usuario"
               size="large"
               width="300px"
               onChange={(e) => setSearchName(e.target.value)}
@@ -394,9 +393,9 @@ const Users = () => {
             className="mr-10 text-inherit bg-primary"
             size="small"
             variant="success"
-            onClick={() => navigate(`/distributors/New`)}
+            onClick={() => navigate(`/users/New`)}
           >
-            Nuevo distribuidor
+            Nuevo usuario
           </Button>
         </div>
       </div>
@@ -416,17 +415,17 @@ const Users = () => {
             >
               {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
             </TableHeader>
-            <TableBody items={filterDistributors(distributors)}
+            <TableBody items={filterUsers(users)}
               emptyContent={
-                distributors.length === 0 ? (
-                  "No distributors found"
+                users.length === 0 ? (
+                  "No users found"
                 ) : (
                   <Spinner label="Cargando" />
                 )
               }
             >
               {(item) => (
-                <TableRow key={item.distributorId}>
+                <TableRow key={item.profileId}>
                   {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                 </TableRow>
               )}
