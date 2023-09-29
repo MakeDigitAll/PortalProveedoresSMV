@@ -142,11 +142,14 @@ const NewProducts = () => {
     const [CardType, setCardType] = useState('general');
     const imageProd = React.useRef(null);
     //const technicalSheetPreview = React.useRef(null);
-    const [images, setImages] = useState([]);
     const [image1, setImage1] = useState(null);
     const [image2, setImage2] = useState(null);
     const [image3, setImage3] = useState(null);
     const [image4, setImage4] = useState(null);
+    const [imgPreview1, setImgPreview1] = useState(null);
+    const [imgPreview2, setImgPreview2] = useState(null);
+    const [imgPreview3, setImgPreview3] = useState(null);
+    const [imgPreview4, setImgPreview4] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
     const [showDeleteOption, setShowDeleteOption] = useState(false);
@@ -653,44 +656,56 @@ const NewProducts = () => {
     };
 
     const handleImageUpload = (e) => {
-        const selectedImages = Array.from(e.target.files);
-        switch (images.length) {
+        if (image1 === null) {
+            setImage1(selectedImage[0]);
+            setSelectedImage(0);
+        } else if (image2 === null) {
+            setImage2(selectedImage[0]);
+            setSelectedImage(1);
+        } else if (image3 === null) {
+            setImage3(selectedImage[0]);
+            setSelectedImage(2);
+        } else if (image4 === null) {
+            setImage4(selectedImage[0]);
+            setSelectedImage(3);
+        } else {
+            toast.error('Solo se pueden agregar 4 imágenes', {
+                position: "bottom-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                autoClose: 5000,
+                theme: "colored",
+            });
+        }
+    };
+
+
+    const removeImage = () => {
+        switch (selectedImage) {
             case 0:
-                setImage1(URL.createObjectURL(selectedImages[0]));
+                setImage1(null);
+                setImgPreview1(null);
                 break;
             case 1:
-                setImage2(URL.createObjectURL(selectedImages[0]));
+                setImage2(null);
+                setImgPreview2(null);
                 break;
             case 2:
-                setImage3(URL.createObjectURL(selectedImages[0]));
+                setImage3(null);
+                setImgPreview3(null);
                 break;
             case 3:
-                setImage4(URL.createObjectURL(selectedImages[0]));
+                setImage4(null);
+                setImgPreview4(null);
                 break;
             default:
                 break;
         }
-
-        // Verifica si se ha alcanzado el número máximo de imágenes (4 en este caso)
-        if (images.length + selectedImages.length <= 4) {
-            setImages((prevImages) => [...prevImages, ...selectedImages]);
-
-        }
     };
 
-    const removeImage = () => {
-        const updatedImages = [...images];
-        updatedImages.splice(selectedImage, 1);
-
-        setImage1(selectedImage[0] || null);
-        setImage2(selectedImage[1] || null);
-        setImage3(selectedImage[2] || null);
-        setImage4(selectedImage[3] || null);
-
-        setImages(updatedImages);
-
-        setSelectedImage(0);
-    };
 
 
 
@@ -837,27 +852,26 @@ const NewProducts = () => {
 
     const getImages = async () => {
         try {
-            const response = await axios.get(`/products/images/${params.id}`, {
-                headers: {
-                    'responseType': 'blob',
-                },
-            });
-            const imagesData = response.data;
-            console.log(response);
-            if (imagesData.length > 0 && imagesData !== null) {
-                const imagesArray = [];
-                imagesData.forEach((image) => {
-                    imagesArray.push(image);
+            const imagePromises = [];
+    
+            for (let position = 0; position < 4; position++) {
+                const response = await axios.get(`/products/image/${params.id}/${position + 1}`, {
+                    responseType: 'blob',
                 });
-                return imagesArray;
+    
+                if (response.data.size > 0) {
+                    const imageBlob = response.data;
+                    imagePromises.push(setImage(position, imageBlob));
+                }
             }
-            return [];
+    
+            await Promise.all(imagePromises);
         } catch (error) {
             console.log(error);
-            return [];
+            setLoading(false);
         }
     };
-
+    
     const setImage = async (position, imageBlob) => {
         switch (position) {
             case 0:
@@ -876,7 +890,7 @@ const NewProducts = () => {
                 break;
         }
     };
-    
+
 
 
 
@@ -899,7 +913,7 @@ const NewProducts = () => {
     };
 
     const loadProduct = async () => {
-        setImages(await getImages());
+        await getImages();
         await getTechnicalSheet();
         const response = await axios.get(`/products/get/${params.id}`);
         setProduct({
@@ -935,30 +949,36 @@ const NewProducts = () => {
 
     useEffect(() => {
 
-        if (!images || images === null || images.length === 0)
-            return;
-        const blob = new Blob([new Uint8Array(images[0]?.data)], { type: 'image/jpeg' });
-        if (blob && blob.size > 0) {
-            const url = URL.createObjectURL(blob);
-            setImage1(url);
+        if (image1 !== null) {
+            const blob = new Blob([new Uint8Array(image1?.data)], { type: 'image/jpeg' });
+            if (blob && blob.size > 0) {
+                const url = URL.createObjectURL(blob);
+                setImgPreview1(url);
+            }
         }
 
-        const blob2 = new Blob([new Uint8Array(images[1]?.data)], { type: 'image/jpeg' });
-        if (blob2 && blob2.size > 0) {
-            const url2 = URL.createObjectURL(blob2);
-            setImage2(url2);
+        if (image2 !== null) {
+            const blob = new Blob([new Uint8Array(image2?.data)], { type: 'image/jpeg' });
+            if (blob && blob.size > 0) {
+                const url = URL.createObjectURL(blob);
+                setImgPreview2(url);
+            }
         }
 
-        const blob3 = new Blob([new Uint8Array(images[2]?.data)], { type: 'image/jpeg' });
-        if (blob3 && blob3.size > 0) {
-            const url3 = URL.createObjectURL(blob3);
-            setImage3(url3);
+        if (image3 !== null) {
+            const blob = new Blob([new Uint8Array(image3?.data)], { type: 'image/jpeg' });
+            if (blob && blob.size > 0) {
+                const url = URL.createObjectURL(blob);
+                setImgPreview3(url);
+            }
         }
 
-        const blob4 = new Blob([new Uint8Array(images[3]?.data)], { type: 'image/jpeg' });
-        if (blob4 && blob4.size > 0) {
-            const url4 = URL.createObjectURL(blob4);
-            setImage4(url4);
+        if (image4 !== null) {
+            const blob = new Blob([new Uint8Array(image4?.data)], { type: 'image/jpeg' });
+            if (blob && blob.size > 0) {
+                const url = URL.createObjectURL(blob);
+                setImgPreview4(url);
+            }
         }
 
         switch (selectedImage) {
@@ -978,6 +998,12 @@ const NewProducts = () => {
                 break;
         }
     }, [image1, image2, image3, image4, selectedImage]);
+
+
+    console.log(image1);
+    console.log(image2);
+    console.log(image3);
+    console.log(image4);
 
     useEffect(() => {
         setTimeout(() => {

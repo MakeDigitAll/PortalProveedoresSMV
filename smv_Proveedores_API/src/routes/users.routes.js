@@ -15,7 +15,7 @@ const {
        getAllUsers,
        confirmationUser,
        declineUser
-} = require('../controllers/userscontroller');
+} = require('../controllers/usersController');
 
 
 // Routes GET 

@@ -9,7 +9,7 @@ const sendEmail = require('../helpers/sendEmail');
 //----------------------------------------------------------------------------------------
 
 //solo manda usuarios que esten pendientes
-const getWaitingDistributors = async (req, res) => {
+const getWaitingUsers = async (req, res) => {
   try {
 
     const { pvId } = req.params;
@@ -22,7 +22,7 @@ const getWaitingDistributors = async (req, res) => {
 }
 //----------------------------------------------------------------------------------------
 // Solo manda usuarios que esten activos
-const getAllDistributors = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     const { pvId } = req.params; 
     const referenceExist = await pool.query('SELECT "referenceCode" FROM "providersProfile" WHERE "id" = $1', [pvId]);
@@ -34,7 +34,7 @@ const getAllDistributors = async (req, res) => {
   }
 }
 //----------------------------------------------------------------------------------------
-const confirmationDistributor = async (req, res) => {
+const confirmationUser = async (req, res) => {
   try {
     const { id, estatus, pvId } = req.params;
     const roles = '{2001,2002,2003,2004,2000}'
@@ -48,7 +48,7 @@ const confirmationDistributor = async (req, res) => {
 }
 //----------------------------------------------------------------------------------------
 //Para rechazar un distribuidor de parte del proveedor
-const declineDistributor = async (req, res) => {
+const declineUser = async (req, res) => {
   try {
     const { id, pvId } = req.params;
     const referenceExist = await pool.query('SELECT * FROM "providersProfile" WHERE "id" = $1', [pvId]);
@@ -76,7 +76,7 @@ const declineDistributor = async (req, res) => {
 //----------------------------------------------------------------------------------------
 
 
-const getDistributorById = async (req, res) => {
+const getUserById = async (req, res) => {
   try {
       const { id } = req.params;
       const response = await pool.query('SELECT * FROM "distributorsProfile" WHERE "distributorId" = $1', [id]);
@@ -88,7 +88,7 @@ const getDistributorById = async (req, res) => {
 
 
 //----------------------------------------------------------------------------------------
-const createDistributor = async (req, res) => {
+const createUser = async (req, res) => {
   try {
     const { pvId } = req.params;
     const { distributorName, address, col, city, state, postalCode, country,  contact, phone, email} = req.body;
@@ -130,7 +130,7 @@ const createDistributor = async (req, res) => {
 
 //----------------------------------------------------------------------------------------
 
-const updateDistributor = async (req, res) => {
+const updateUser = async (req, res) => {
   try {
     const { id, pvId } = req.params;
     const { distributorName, address, col, city, state, postalCode, country, contact, phone, email } = req.body;

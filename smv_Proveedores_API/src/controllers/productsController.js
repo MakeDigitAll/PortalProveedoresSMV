@@ -34,16 +34,6 @@ const getProducts = async (req, res) => {
 const updateImageProducts = async (req, res) => {
     const { id, position } = req.params;
     const image = req.file;
-
-    const imageBuffers = [];
-
-    for (let i = 0; i < 4; i++) {
-        if (images[`image${i}`]) {
-            imageBuffers.push(images[`image${i}`][0].buffer);
-        } else {
-            imageBuffers.push(null);
-        }
-    }
  
     try {
         const date = new Date();
@@ -131,7 +121,7 @@ const deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
         await pool.query('UPDATE "pvProducts" SET "isDeleted" = true WHERE "id" = $1', [id]);
-        await pool.query('UPDATE "providerProductsAvailability" SET "isDeleted" = true WHERE "productId" = $1', [id]);
+        await pool.query('UPDATE "ProductsAvailability" SET "isDeleted" = true WHERE "productId" = $1', [id]);
         await pool.query('DELETE FROM "pvProductsImages" WHERE "productId" = $1', [id]);
         await pool.query('DELETE FROM "technicalSheetProducts" WHERE "productId" = $1', [id]);
         res.status(200).json({
@@ -152,7 +142,7 @@ const deleteProduct = async (req, res) => {
 const getDispobility = async (req, res) => {
     try {
         const { id } = req.params;
-        const response = await pool.query('SELECT * FROM "providerProductsAvailability" WHERE "productId" = $1 AND "isDeleted" = false', [id]);
+        const response = await pool.query('SELECT * FROM "ProductsAvailability" WHERE "productId" = $1 AND "isDeleted" = false', [id]);
         if (response.rows.length === 0) {
             return res.status(404).json({
                 message: 'No se encontro la disponibilidad del producto, se encuentra eliminado o no existe'
@@ -169,7 +159,7 @@ const updateDispobility = async (req, res) => {
         const { id } = req.params;
         const { productStock, productMin, productMax, availabilityCat } = req.body;
         const date = new Date();
-        await pool.query('UPDATE "providerProductsAvailability" SET "productStock" = $1, "productMin" = $2, "productMax" = $3, "availabilityCat" = $4, "updated_At" = $5 WHERE "productId" = $6', [productStock, productMin, productMax, availabilityCat, date, id]);
+        await pool.query('UPDATE "ProductsAvailability" SET "productStock" = $1, "productMin" = $2, "productMax" = $3, "availabilityCat" = $4, "updated_At" = $5 WHERE "productId" = $6', [productStock, productMin, productMax, availabilityCat, date, id]);
         res.status(200).json({
             message: 'Disponibilidad actualizada correctamente'
         });
@@ -227,7 +217,6 @@ module.exports = {
     deleteProduct, 
     updateImageProducts,
     getImageProduct,
-    getImagesProduct,
     getDispobility,
     updateDispobility,
     technicalSheet,
