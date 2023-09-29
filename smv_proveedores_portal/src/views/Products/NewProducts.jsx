@@ -657,17 +657,14 @@ const NewProducts = () => {
 
     const handleImageUpload = (e) => {
         if (image1 === null) {
-            setImage1(selectedImage[0]);
+            setImage1(e.target.files[0]);
             setSelectedImage(0);
         } else if (image2 === null) {
-            setImage2(selectedImage[0]);
-            setSelectedImage(1);
+            setImage2(e.target.files[0]);
         } else if (image3 === null) {
-            setImage3(selectedImage[0]);
-            setSelectedImage(2);
+            setImage3(e.target.files[0]);
         } else if (image4 === null) {
-            setImage4(selectedImage[0]);
-            setSelectedImage(3);
+            setImage4(e.target.files[0]);
         } else {
             toast.error('Solo se pueden agregar 4 imágenes', {
                 position: "bottom-right",
@@ -950,36 +947,29 @@ const NewProducts = () => {
     useEffect(() => {
 
         if (image1 !== null) {
-            const blob = new Blob([new Uint8Array(image1?.data)], { type: 'image/jpeg' });
-            if (blob && blob.size > 0) {
-                const url = URL.createObjectURL(blob);
-                setImgPreview1(url);
-            }
+            const blob = new Blob([image1], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImgPreview1(url);
         }
 
         if (image2 !== null) {
-            const blob = new Blob([new Uint8Array(image2?.data)], { type: 'image/jpeg' });
-            if (blob && blob.size > 0) {
-                const url = URL.createObjectURL(blob);
-                setImgPreview2(url);
-            }
+            const blob = new Blob([image2], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImgPreview2(url);
         }
 
         if (image3 !== null) {
-            const blob = new Blob([new Uint8Array(image3?.data)], { type: 'image/jpeg' });
-            if (blob && blob.size > 0) {
-                const url = URL.createObjectURL(blob);
-                setImgPreview3(url);
-            }
+            const blob = new Blob([image3], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImgPreview3(url);
         }
 
         if (image4 !== null) {
-            const blob = new Blob([new Uint8Array(image4?.data)], { type: 'image/jpeg' });
-            if (blob && blob.size > 0) {
-                const url = URL.createObjectURL(blob);
-                setImgPreview4(url);
-            }
+            const blob = new Blob([image4], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImgPreview4(url);
         }
+
 
         switch (selectedImage) {
             case 0:
@@ -1084,28 +1074,28 @@ const NewProducts = () => {
                         <div className="flex flex-row justify-center items-center w-full">
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                src={image1 || ba}
+                                src={imgPreview1 || ba}
                                 alt={`Imagen ${0}`}
                                 ref={imageProd}
                                 onClick={() => setSelectedImage(0)}
                             />
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                src={image2 || ba}
+                                src={imgPreview2 || ba}
                                 alt={`Imagen ${1}`}
                                 ref={imageProd}
                                 onClick={() => setSelectedImage(1)}
                             />
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                src={image3 || ba}
+                                src={imgPreview3 || ba}
                                 alt={`Imagen ${2}`}
                                 ref={imageProd}
                                 onClick={() => setSelectedImage(2)}
                             />
                             <img
                                 className="w-24 h-24 lg:rounded-full rounded-sm object-cover mt-4"
-                                src={image4 || ba}
+                                src={imgPreview4 || ba}
                                 alt={`Imagen ${3}`}
                                 ref={imageProd}
                                 onClick={() => setSelectedImage(3)}
@@ -1120,7 +1110,6 @@ const NewProducts = () => {
                                     type='file'
                                     name="image"
                                     accept="image/jpeg, image/png, image/jpg"
-                                    ref={imageProd}
                                     multiple
                                     onChange={handleImageUpload}
                                     disabled={isInputDisabled}

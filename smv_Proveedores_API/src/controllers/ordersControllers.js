@@ -9,8 +9,7 @@ const getOrders = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
-
+}   
 
 const createOrder = async (req, res) => {
     try {
@@ -21,7 +20,7 @@ const createOrder = async (req, res) => {
         const newOrder =  await pool.query('INSERT INTO orders (providerId, distributorId, costumer, socialReasonCostumer, orderDate, costumerBalance, orderStatus, fulfilled) VALUES (?,?,?,?,?,?,?,?)', [providerId[0].id, distributorId, costumer, socialReasonCostumer, orderDate, costumerBalance, orderStatus, fulfilled]);
         res.status(200).json(newOrder);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message }); 
     }
 }
  
@@ -29,7 +28,7 @@ const createOrder = async (req, res) => {
 const getProductsOrders = async (req, res) => {
     try {
         const { id } = req.params;
-        const products = await pool.query(`SELECT "pvProducts"."manofacturerCode", "pvProducts"."productName", "pvProducts"."retailPrice", "pvProducts"."id", "pvProducts"."model","pvProducts"."brand", "providerProductsAvailability"."productStock" AS "existence" FROM "pvProducts" INNER JOIN "providerProductsAvailability" ON "pvProducts"."id" = "providerProductsAvailability"."productId" WHERE "pvProducts"."providerId" = $1`, [id]);
+        const products = await pool.query(`SELECT "pvProducts"."manofacturerCode", "pvProducts"."productName", "pvProducts"."price1", "pvProducts"."id", "pvProducts"."model","pvProducts"."brand", "ProductsAvailability"."productStock" AS "existence" FROM "pvProducts" INNER JOIN "ProductsAvailability" ON "pvProducts"."id" = "ProductsAvailability"."productId" WHERE "pvProducts"."providerId" = $1`, [id]);
         res.status(200).json(products.rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
