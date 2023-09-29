@@ -685,18 +685,22 @@ const NewProducts = () => {
             case 0:
                 setImage1(null);
                 setImgPreview1(null);
+                setSelectedImage(1);
                 break;
             case 1:
                 setImage2(null);
                 setImgPreview2(null);
+                setSelectedImage(2);
                 break;
             case 2:
                 setImage3(null);
                 setImgPreview3(null);
+                setSelectedImage(3);
                 break;
             case 3:
                 setImage4(null);
                 setImgPreview4(null);
+                setSelectedImage(0);
                 break;
             default:
                 break;
