@@ -16,7 +16,7 @@ router.post('/refreshToken', refreshTokenController);
 
 router.post('/register', handleNewUser);
 
-router.post('/users/:id/verify/:token', verifyEmail);
+router.post('/smv/:id/verify/:token', verifyEmail);
 
 router.post('/resendVerifyEmail', resendVerifyEmail);
 

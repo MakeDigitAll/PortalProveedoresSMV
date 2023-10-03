@@ -141,7 +141,7 @@ const Header = () => {
           >
             <DropdownTrigger style={{ marginLeft: "20px" }}>
               <Avatar
-                isBordered
+                isBordered 
                 as="button"
                 className="transition-transform"
                 name={auth.username ? auth.username : "Usuario"}
@@ -174,7 +174,7 @@ const Header = () => {
                     }}
                   />
                 </DropdownItem>
-                <DropdownItem key="settings">
+                <DropdownItem key="settings" onPress={() => navigate(`/Profile`)}>
                   {t("Perfil")}
                 </DropdownItem>
               </DropdownSection>

@@ -1,5 +1,6 @@
 import React from "react";
 import Login from "./views/Inicio/Login";
+import Profile from "./views/Inicio/Profile";
 import Inicio from "./views/Inicio/Home";
 import Register from "./views/Inicio/Register";
 import VerifyAccount from "./views/Inicio/verifyAccount";
@@ -57,6 +58,11 @@ function App() {
         {
           path: "/Home",
           element: <Inicio />,
+          errorElement: <Error404 />,
+        },
+        {
+          path: "/Profile",
+          element: <Profile />,
           errorElement: <Error404 />,
         },
       ],

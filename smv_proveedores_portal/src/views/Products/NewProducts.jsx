@@ -288,21 +288,6 @@ const NewProducts = () => {
             });
             return;
         }
-
-        if (product.brand.length < 3 || product.brand.length > 100) {
-            toast.error('La marca debe tener entre 3 y 100 caracteres', {
-                position: "bottom-right",
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                autoClose: 10000,
-                progress: undefined,
-                theme: "colored",
-            });
-            return;
-        }
-
         if (product.model === "") {
             toast.error('El modelo es requerido', {
                 position: "bottom-right",

@@ -5,15 +5,15 @@ import {
     DropdownMenu,
     DropdownItem,
     Spacer,
-    Divider, link, Checkbox,
+    Divider, link, Checkbox, Card,
 } from "@nextui-org/react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination } from "@nextui-org/react";
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, getKeyValue } from "@nextui-org/react";
 import Header from "../../components/header/headerC/Header";
 import { useNavigate, useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Input, Link, Button, Textarea, User, Spinner } from "@nextui-org/react";
+import { Input, Link, Button, Textarea, User, Spinner, Radio, RadioGroup } from "@nextui-org/react";
 import { MdShoppingCart } from "react-icons/md";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowBack, MdSettings, MdSave } from 'react-icons/md';
@@ -45,7 +45,6 @@ const NewOrders = () => {
     const ID = auth?.ID;
     const profileName = auth?.username;
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const { isOpen: isOpenAdd, onOpen: onOpenAdd, onOpenChange: onOpenChangeAdd } = useDisclosure();
 
     const [searchName, setSearchName] = React.useState("");
     const [searchManofacturerCode, setSearchManofacturerCode] = React.useState("");
@@ -70,8 +69,8 @@ const NewOrders = () => {
     });
 
     const [products, setProducts] = useState([]);
-    const [quantity, setQuantity] = useState(0);
-    const [cart, setCart] = useState([]);
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [selectedKeys, setSelectedKeys] = useState({});
     const [variable, setVariable] = useState('Nuevo pedido');
     const [isLoading, setLoading] = useState(false);
     const [editing, setEditing] = useState(false);
@@ -100,40 +99,6 @@ const NewOrders = () => {
         }
     };
 
-    const handleOrderDetailChange = (event) => {
-        setOrderDetail({
-            ...orderDetail,
-            [event.target.name]: event.target.value,
-        });
-    }
-
-    const AddtoCart = (product, quantity) => {
-        const newProduct = cart.find((item) => item.productId === product.id);
-
-        if (newProduct) {
-            const newProducts = cart.map((item =>
-                item.productId === product.id ? { ...item, quantity: item.quantity + quantity } : item
-            ));
-            setCart(newProducts);
-        } else {
-            setCart([...cart, { productId: product.id, productName: product.productName, manofacturerCode: product.manofacturerCode, image: product.image, quantity: quantity, price1: product.price1 }]);
-        }
-
-    }
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.post(`/orders/createOrder`, order);
-        } catch (error) {
-            toast.error(error.response.data.message);
-        }
-
-    }
-
-
-
-
 
     //--------------------------------------------------------------------------------------------------
     //                                PRODUCTOS
@@ -142,11 +107,9 @@ const NewOrders = () => {
     const handlesearchNameChange = (event) => {
         setSearchName(event.target.value);
     };
-
     const handlesearchManofacturerCodeChange = (event) => {
         setSearchManofacturerCode(event.target.value);
     };
-
     const filterProducts = (products) => {
         if (searchName === "" && searchManofacturerCode === "") {
             return products;
@@ -156,7 +119,7 @@ const NewOrders = () => {
                 return (
                     product.productName.toLowerCase().includes(searchName.toLowerCase()) &&
                     product.manofacturerCode.toLowerCase().includes(searchManofacturerCode.toLowerCase())
-                ); 
+                );
             });
         }
     };
@@ -178,7 +141,7 @@ const NewOrders = () => {
                 const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
                 return {
                     ...product,
-                    image
+                    image,
                 }
             })
             setProducts(products);
@@ -189,6 +152,42 @@ const NewOrders = () => {
             setLoading(false);
         }
     };
+
+    //funcion para agregar los productos seleccionados a la tabla de productos del pedido, incluir el campo de cantidad en 1
+    const addProducts = () => {
+        const selectedProductsArray = Array.from(selectedProducts);
+        console.log(selectedProductsArray);
+
+        const newProducts = products.filter((product) => {
+            return selectedProductsArray.includes(product.id);
+        }
+        );
+         console.log(newProducts);
+
+        // const newProductsOrder = newProducts.map((product) => {
+        //     return {
+        //         ...product,
+        //         quantity: 1,
+        //         subtotal: product.price1,
+        //     };
+        // }
+        // );
+        // console.log(newProductsOrder);
+
+        // const newOrder = {
+        //     ...order,
+        //     productsOrder: [...order.productsOrder, ...newProductsOrder],
+        //     amountTotal: order.amountTotal + newProductsOrder.reduce((acc, product) => acc + product.price1, 0),
+        // };
+        // console.log(newOrder);
+
+        // setOrder(newOrder);
+
+        // setSelectedProducts([]);
+
+    };
+
+
 
     const columnsOrder = [
         {
@@ -207,8 +206,11 @@ const NewOrders = () => {
             key: "quantity",
             label: "Cantidad",
         },
+        {
+            key: "subtotal",
+            label: "Subtotal",
+        },
     ];
-
 
     const columns = [
         {
@@ -230,14 +232,6 @@ const NewOrders = () => {
         {
             key: "price1",
             label: "Precio",
-        },
-        {
-            key: "quantity",
-            label: "Cantidad",
-        },
-        {
-            key: "Total",
-            label: "Total",
         },
     ];
 
@@ -280,23 +274,6 @@ const NewOrders = () => {
                         <p className="text-bold text-sm capitalize">${cellValue}</p>
                     </div>
                 );
-            case "quantity":
-                return (
-                    <div className="flex items-center text-center">
-                        <Button
-                            auto
-                            type="success"
-                            onPress={isOpenAdd}
-                            startContent={<TbPlus />}
-                            />
-                    </div>
-                );
-            case "Total":
-                return (
-                    <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">$ {products.price1 * quantity || 0}</p>
-                    </div>
-                );
             default:
                 return cellValue;
         }
@@ -334,6 +311,12 @@ const NewOrders = () => {
                         <p className="text-bold text-sm capitalize">{cellValue}</p>
                     </div>
                 );
+            case "subtotal":
+                return (
+                    <div className="flex items-center">
+                        <p className="text-bold text-sm capitalize">${cellValue}</p>
+                    </div>
+                );
             default:
                 return cellValue;
         }
@@ -356,8 +339,6 @@ const NewOrders = () => {
     //--------------------------------------------------------------------------------------------------
     //                                PRODUCTOS
     //--------------------------------------------------------------------------------------------------
-
-
 
     const loadOrder = async () => {
         try {
@@ -411,7 +392,7 @@ const NewOrders = () => {
             <ToastContainer />
             <div className="flex justify-between items-center ml-20 mt-10 mb-5 text-sm md:text-base">
                 <div className="flex items-center md:sm">
-                    <Breadcrumbs aria-label="breadcrumb" color="foreground">
+                    <Breadcrumbs aria-label="breadcrumb" color="foreground" className='hidden md:flex'>
                         <Link
                             className="text-foreground"
                             underline="hover"
@@ -480,16 +461,23 @@ const NewOrders = () => {
                             <ModalHeader className="flex flex-col gap-1">Agregar producto</ModalHeader>
                             <ModalBody>
                                 <div className="flex flex-col m-10 w-11/12 h-full">
-                                    <div className="flex flex-row w-full h-1/2 lg:min-h-[100px]">
+                                    <div className="flex flex-row h-1/2 lg:min-h-[100px]">
                                         <Input className='w-full lg:w-1/2 px-10 mb-5' placeholder="Nombre del producto" label="Nombre del producto" labelPlacement="outside" value={searchName} onChange={handlesearchNameChange} name="productName" isDisabled={isInputDisabled} />
                                         <Input className='w-full lg:w-1/2 px-10' placeholder="Codigo del fabricante" label="Codigo del fabricante" labelPlacement="outside" value={searchManofacturerCode} onChange={handlesearchManofacturerCodeChange} name="manofacturerCode" isDisabled={isInputDisabled} />
                                     </div>
-                                    <div className="flex w-full h-full ">
+                                    <div>
+                                        {/* al seleccionar un item de la tabla todo el registro se guarda en un state */}
                                         <Table
                                             aria-label=" table with client async pagination"
+                                            color={'default'}
+                                            selectionMode='multiple'
+                                            selectedKeys={selectedProducts}
+                                            onSelectionChange={(keys) => {
+                                                setSelectedProducts(keys);
+                                            }}
                                             isHeaderSticky
                                             bottomContent={
-                                                <div className="flex w-full justify-center">
+                                                <div className="flex justify-center">
                                                     <Pagination
                                                         isCompact
                                                         showControls
@@ -544,10 +532,11 @@ const NewOrders = () => {
                                     auto
                                     type="success"
                                     onClick={() => {
+                                        addProducts();
                                         onClose();
                                     }}
                                 >
-                                    Accept
+                                    Agregar
                                 </Button>
                             </ModalFooter>
                         </>
@@ -556,11 +545,11 @@ const NewOrders = () => {
             </Modal>
 
 
-            <div className="flex flex-col mx-10 mt-10 mb-1 pr-20 lg:flex-row w-full h-full">
+            <div className="flex flex-col mx-10 mt-10 mb-1 lg:flex-row">
                 <Input className='w-full lg:w-1/2 px-10' placeholder="Usuario" label="Responsable" labelPlacement="outside" value={order.profileName} onChange={handleOrderChange} name="user" isDisabled={true} />
                 <Dropdown>
                     <DropdownTrigger>
-                        <Input className='w-full lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione un almacen"} name="costumer" isDisabled={isInputDisabled} />
+                        <Input className='lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione un almacen"} name="costumer" isDisabled={isInputDisabled} />
                     </DropdownTrigger>
                     <DropdownMenu>
                         {almacenes.map((almacen) => (
@@ -574,15 +563,15 @@ const NewOrders = () => {
                     </DropdownMenu>
                 </Dropdown>
             </div>
-            <div className="flex flex-col mx-10 pr-20 lg:flex-row w-full h-full justify-end">
+            <div className="flex flex-col mx-10 lg:flex-row justify-end">
                 <Textarea className='w-full lg:w-1/2 px-10' placeholder="Informacion de envio" maxRows={4} value={order.deliveryData} onChange={handleOrderChange} name="deliveryData" isDisabled={true} />
             </div>
 
-            <div className="flex flex-col mx-10 mb-5 pr-10 lg:flex-row w-full h-full">
+            <div className="flex flex-col mx-10 mb-5 pr-10 lg:flex-row h-full">
             </div>
 
-            <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-10 w-full h-full">
-                <div className="flex flex-row w-full lg:w-1/2 mt-10">
+            <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-10 h-full">
+                <div className="flex flex-row lg:w-1/2 mt-10">
                     <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de pedido" label="Fecha de pedido" labelPlacement="outside" value={order.orderDate} onChange={handleOrderChange} name="orderDate" isDisabled={true} />
                     <Dropdown>
                         <DropdownTrigger>
@@ -610,8 +599,8 @@ const NewOrders = () => {
                         Agregar producto
                     </Button>
                 </div>
-                <div className="flex w-full lg:w-1/2 mt-10 items-center justify-end">
-                        <div>
+                <div className="flex lg:w-1/2 mt-10 items-center justify-end">
+                    <div>
                         <Checkbox
                             className='w-full px-12 mt-3'
                             checked={order.fulfilled}
@@ -621,8 +610,8 @@ const NewOrders = () => {
                         >
                             Es recurrente
                         </Checkbox>
-                        </div>
-                        <div>
+                    </div>
+                    <div>
                         <Dropdown>
                             <DropdownTrigger>
                                 <Input className='w-full px-14 mt-5' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
@@ -645,11 +634,11 @@ const NewOrders = () => {
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
-                        </div>
-                        <div>
-                            <label className="text-sm text-gray-500 hidden lg:flex">Descuento</label>
+                    </div>
+                    <div>
+                        <label className="text-sm text-gray-500 hidden lg:flex">Descuento</label>
                         <Input
-                            className='w-full pr-20'
+                            className='w-full'
                             endContent="%"
                             defaultValue={0}
                             value={order.discount}
@@ -657,12 +646,12 @@ const NewOrders = () => {
                             name="discount"
                             isDisabled={isInputDisabled}
                         />
-                        </div>
+                    </div>
                 </div>
             </div>
-            <div className="flex flex-col mx-10 mb-5 pl-10 lg:flex-row w-full h-full">
+            <div className="flex flex-col mx-10 mb-5 pl-10 lg:flex-row h-full">
                 {/* Tabla del pedido */}
-                <div className="flex flex-col lg:flex-row w-full mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
+                <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
                     <Table
                         removeWrapper
                         aria-label=" table with client async pagination"
@@ -680,7 +669,7 @@ const NewOrders = () => {
                             isLoading={isLoading && !items.length}
                             emptyContent={
                                 products.length === 0 &&
-                                <div className="flex flex-col items-center justify-center w-full h-full">
+                                <div className="flex flex-col items-center justify-center h-full">
                                     <p className="text-2xl font-bold text-gray-400"></p>
                                 </div>
                             }
@@ -694,8 +683,8 @@ const NewOrders = () => {
                     </Table>
                 </div>
                 {/* Tabla de los totales */}
-                <div className="flex flex-col w-full mt-14 h-full lg:w-1/2">
-                    <Table className='w-full pr-10 lg:pr-0' removeWrapper hideHeader selectionMode='none' border={true}>
+                <div className="flex flex-col mt-14 h-full lg:w-1/2">
+                    <Table className='' removeWrapper hideHeader selectionMode='none' border={true}>
                         <TableHeader
                             columns={[
                                 {
@@ -730,7 +719,7 @@ const NewOrders = () => {
                             </TableRow>
                         </TableBody>
                     </Table>
-                    <div className="flex flex-row justify-center w-full h-full mt-6 pr-32 lg:pr-0">
+                    <div className="flex flex-row justify-center mt-6 pr-32 lg:pr-0">
                         <Button className='w-1/2 mt-10 lg:w-1/4' color="primary" auto startContent={<MdSave />}>
                             Guardar Pedido
                         </Button>

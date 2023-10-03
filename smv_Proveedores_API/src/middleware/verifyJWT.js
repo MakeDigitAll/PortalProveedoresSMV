@@ -6,10 +6,10 @@ const verifyJWT = (req, res, next) => {
     if (req.path === '/login' || req.path === '/register' || req.path === '/refreshToken' || req.path === '/resendVerifyEmail' || req.path === '/logout') {
         return next();
       }
-    if (req.path.startsWith('/users/')) {
+    if (req.path.startsWith('/smv')) {
         return next();
       }
-    if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'Token is invalid' });;
+    if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'Token is invalid' });
     const tokken = authHeader.split(' ')[1];
     jwt.verify(
         tokken,
