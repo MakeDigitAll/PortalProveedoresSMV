@@ -11,6 +11,7 @@ import UsersPermissions from './views/Users/UsersPermissions';
 import Products from './views/Products/Products';
 import NewProducts from './views/Products/NewProducts';
 import NewOrders from './views/Orders/newOrders';
+import Orders from './views/Orders/Orders';
 import Error404 from './views/Error/Error404';
 import Unauthorized from './views/Error/Unauthorized';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -99,6 +100,19 @@ function App() {
           element: <NewOrders />,
           errorElement: <Error404 />,
         },
+        {
+          path: "/Orders/Edit/:id",
+          element: <NewOrders />,
+        },
+        {
+          path: "/Orders/View/:id",
+          element: <NewOrders />,
+        },
+        {
+          path: "/Orders",
+          element: <Orders />,
+          errorElement: <Error404 />,
+        }
       ],
     },
     {

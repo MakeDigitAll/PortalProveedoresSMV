@@ -8,7 +8,7 @@ import {
     Divider, link, Checkbox, Card,
 } from "@nextui-org/react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, getKeyValue } from "@nextui-org/react";
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination} from "@nextui-org/react";
 import Header from "../../components/header/headerC/Header";
 import { useNavigate, useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
@@ -23,7 +23,6 @@ import useAuth from '../../hooks/useAuth';
 import '../../App.css';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import { use } from 'i18next';
 
 const almacenes = [
     { value: 'Almacen 1', label: 'Almacen 1', deliveryData: 'Informacion de envio1' },
@@ -51,20 +50,20 @@ const NewOrders = () => {
     const [searchManofacturerCode, setSearchManofacturerCode] = React.useState("");
 
     const [order, setOrder] = useState({
-        responsibleId: ID,
+        providerId: ID,
         profileName: profileName,
-        costumer: "" || "",
+        costumer: "",
         orderDate: "" || new Date().toISOString().split('T')[0],
         orderType: "",
         productsOrder: [],
         subTotal: 0,
-        discount: "",
-        amountTotal: "",
+        discount: 0,
+        total: "",
         orderData: "",
         deliveryData: "",
-    //    costumerData: "" || "--datos del cliente--",
-        paymentMethod: "",
-        comments: "",
+        fulfilled: false,
+        paymentMethod: "" || "Transferencia/Deposito",
+        comments: "" || "--comentarios del pedido--",
     });
 
     const [products, setProducts] = useState([]);
@@ -77,13 +76,101 @@ const NewOrders = () => {
     const [isInputDisabled, setIsInputDisabled] = useState(false);
     const params = useParams();
 
+    //--------------------------------------------------------------------------------------------------
+    //                                ORDENES
+    //--------------------------------------------------------------------------------------------------
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const transformedProduct = transformProducts(order.productsOrder);
+        const newOrder = {
+            ...order,
+            providerId: ID,
+            orderDate: order.orderDate,
+            orderType: order.orderType,
+            productsOrder: transformedProduct,
+            subTotal: order.subTotal,
+            discount: order.discount,
+            fulfilled: order.fulfilled,
+            total: order.total,
+            orderData: order.orderData,
+            deliveryData: order.deliveryData,
+            paymentMethod: order.paymentMethod,
+            comments: order.comments,    
+        };
+
+        if (newOrder.orderType === "") {
+            toast.error("Seleccione el tipo de pedido");
+            return;
+        }
+
+        if (newOrder.orderData === "") {
+            toast.error("Seleccione el tipo de envio");
+            return;
+        }
+
+        if (newOrder.productsOrder.length === 0) {
+            toast.error("Agregue al menos un producto");
+            return;
+        }
+
+        if (newOrder.deliveryData === "") {
+            toast.error("Seleccione la información de envio");
+            return;
+        } 
+
+
+        if(editing){
+            console.log('editando');
+        }else{
+
+        try {
+            await axios.post("/orders/createOrder", newOrder, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                console.log(response.data);
+                toast.success("Pedido creado con éxito");
+                navigate(`/Orders`); 
+            })
+            .catch((error) => {
+                console.log(error);
+                toast.error("Error al crear el pedido");
+            });
+        } catch (error) {
+            console.log(error);
+            toast.error("Error al crear el pedido");
+        }
+
+        }
+    };
+
+
+    
+    const transformProducts = (productsOrder) => {
+        const transformedProductsOrder = productsOrder.map((product) => {
+            // Crear un nuevo objeto solo con id y quantity
+            const transformedProduct = {
+              id: product.id,
+              quantity: product.quantity,
+            };
+          
+            // Convertir el objeto a una cadena JSON con comillas dobles
+            return JSON.stringify(transformedProduct);
+          });
+
+            return transformedProductsOrder;
+    }
+
+
     const handleOrderChange = (event) => {
         switch (event.target.name) {
             case "discount":
-                if (event.target.value <= 100 && event.target.value >= 0) {
+                if (event.target.value <= 100 && event.target.value >= 0 && event.target.value.length <= 5) {
                     setOrder({
                         ...order,
-                        [event.target.name]: event.target.value
+                        [event.target.name]: event.target.value,
                     });
                 }
                 break;
@@ -170,6 +257,8 @@ const NewOrders = () => {
         });
       
         // Mapea los nuevos productos y agrega información adicional
+
+        // Agregar que solo adicione el id y la cantidad
         const newProductsOrder = newProducts.map((product) => {
           return {
             ...product,
@@ -359,7 +448,7 @@ const NewOrders = () => {
                 productQuantity: response.data.productQuantity,
                 amountPaid: response.data.amountPaid,
                 amountPending: response.data.amountPending,
-                amountTotal: response.data.amountTotal,
+                total: response.data.total,
                 orderData: response.data.orderData,
                 deliveryData: response.data.deliveryData,
                 costumerData: response.data.costumerData,
@@ -399,20 +488,17 @@ const NewOrders = () => {
         setOrder({
           ...order,
           subTotal: subtotalfixed,
-          amountTotal: totalfixed,
+          total: totalfixed,
         });
-      }, [order.productsOrder]);
+      }, [order.productsOrder, order.discount]);
       
-
-
-
     useEffect(() => {
         if (params.id) {
             loadOrder();
         }
     }, []);
 
-    console.log(selectedKeys);
+    //console.log(selectedKeys);
 
     return (
         <div className="flex flex-col w-full h-full">
@@ -438,7 +524,7 @@ const NewOrders = () => {
                             sx={{ display: "flex", alignItems: "center" }}
                             color="foreground"
                             href="#"
-                            onClick={() => navigate(`/products`)}
+                            onClick={() => navigate(`/Orders`)}
                         >
                             <MdSettings sx={{ mr: 0.5 }} fontSize="inherit" />
                             Pedidos
@@ -554,11 +640,12 @@ const NewOrders = () => {
                                         onClose();
                                     }}
                                 >
-                                    Cancel
+                                    Cancelar
                                 </Button>
                                 <Button
                                     auto
                                     type="success"
+                                    className="bg-green-500 hover:bg-green-600"
                                     onClick={() => {
                                         addProducts();
                                         onClose();
@@ -595,9 +682,6 @@ const NewOrders = () => {
             </div>
             <div className="flex flex-col mx-10 lg:flex-row justify-end">
                 <Textarea className='w-full lg:w-1/2 px-10' placeholder="Informacion de envio" maxRows={4} value={order.deliveryData} onChange={handleOrderChange} name="deliveryData" isDisabled={true} />
-            </div>
-
-            <div className="flex flex-col mx-10 mb-5 pr-10 lg:flex-row h-full">
             </div>
 
             <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-10 h-full">
@@ -669,8 +753,8 @@ const NewOrders = () => {
                         <label className="text-sm text-gray-500">Descuento</label>
                         <Input
                             className='w-full'
+                            type="number"
                             endContent="%"
-                            defaultValue={0}
                             placeholder='0 - 100'
                             value={order.discount}
                             onChange={handleOrderChange}
@@ -713,7 +797,7 @@ const NewOrders = () => {
                             }}
                             aria-label=" table with client async pagination"
                             classNames={{
-                                wrapper: "max-h-[400px]",
+                                wrapper: "max-h-[100px]",
                             }}
                         >
                             <TableHeader
@@ -772,20 +856,20 @@ const NewOrders = () => {
                             </TableRow>
                             <TableRow>
                                 <TableCell className='text-right'>Descuento</TableCell>
-                                <TableCell className='text-center'>{order.discount || 0}%</TableCell>
+                                <TableCell className='text-center'>${(order.subTotal * (order.discount / 100)).toFixed(2) || 0}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className='text-right'>Impuestos</TableCell>
-                                <TableCell className='text-center'>${(order.amountTotal * 0.16).toFixed(2) || '0.00'}</TableCell>
+                                <TableCell className='text-center'>${(order.total * 0.16).toFixed(2) || '0.00'}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className='text-right'>Total</TableCell>
-                                <TableCell className='text-center'>${order.amountTotal || 0}</TableCell>
+                                <TableCell className='text-center'>${order.total || 0}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
                     <div className="flex flex-row justify-center mt-6 pr-32 lg:pr-0">
-                        <Button className='w-1/2 mt-10 lg:w-1/4' color="primary" auto startContent={<MdSave />}>
+                        <Button className='w-1/2 mt-10 lg:w-1/4' color="primary" auto startContent={<MdSave /> } onClick={handleSubmit}>
                             Guardar Pedido
                         </Button>
                     </div>

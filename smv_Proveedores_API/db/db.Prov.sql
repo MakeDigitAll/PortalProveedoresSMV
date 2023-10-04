@@ -158,36 +158,35 @@ create table "ProductsAvailability" (
 
 create table "pvOrders" (
     "id" serial primary key,
-    "responsibleId" int not null,
-    "costumerId" varchar(100) not null,
+    "folio" INTEGER DEFAULT 10000 UNIQUE CHECK ("folio" >= 10000 AND "folio" <= 9999999)
+    "providerId" int not null,
     "orderDate" timestamp not null,
     "orderType" varchar(100) not null,
     "facture" varchar(50) DEFAULT CONCAT('C-', LPAD(TO_HEX(FLOOR(RANDOM() * 10000000000)::bigint), 10, '0')) UNIQUE,
+    "orderStatus" varchar(100) not null default 'Nuevo',
+    "orderData" varchar(100) not null,
+    "deliveryData" varchar(100) not null,
+    "status" varchar(100) not null default 'Nuevo',
+    "paymentMethod" varchar(100) not null,
+    "productsOrder" JSONB,
+    "amountPaid" float not null,
+    "amountPending" float not null,
+    "discount" float not null,
+    "subtotal" float not null,
+    "total" float not null,
+    "comments" varchar(100),
     "fulfilled" boolean default false,
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
 );
 
-create table "pvOrdersDetails" (
-    "id" serial primary key,
-    "orderId" int not null,
-    "productQuantity" integer[] not null,
-    "amountPaid" float not null,
-    "amountPending" float not null,
-    "discount" float not null,
-    "Total" float not null,
-    "orderData" varchar(100) not null,
-    "deliveryData" varchar(100) not null,
-    "paymentMethod" varchar(100) not null,
-    "comments" varchar(100),
-    "created_At" timestamp default current_timestamp,
-    "updated_At" timestamp default current_timestamp,
-    "isDeleted" boolean default false
-);
+alter table "pvOrders"
+add column "folio" INTEGER DEFAULT 10000 UNIQUE CHECK ("folio" >= 10000 AND "folio" <= 9999999);
 
-alter table "pvOrdersDetails"
-add constraint fk_orderDetails_order foreign key ("orderId") references "pvOrders" ("id");
+
+alter table "pvOrders"
+add constraint fk_order_provider foreign key ("providerId") references "providersProfile" ("id");	
 
 
 

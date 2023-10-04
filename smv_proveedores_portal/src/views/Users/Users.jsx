@@ -57,6 +57,7 @@ const Users = () => {
     async function fetch() {
       try {
         const response = await axios.get(`/users/all/${pvId}`);
+        console.log(response.data);
         const images = await Promise.all(
           response.data.map((user) => {
             return axios.get(`/users/image/${user.profileId}`, {
