@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { Input, Link, Button, Textarea, User, Spinner, Radio, RadioGroup } from "@nextui-org/react";
 import { MdShoppingCart } from "react-icons/md";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
+import { TbDotsVertical, TbPlus, TbReload, TbTrash } from "react-icons/tb";
 import { MdArrowBack, MdSettings, MdSave } from 'react-icons/md';
 import { RiDashboard2Fill } from "react-icons/ri";
 import { ToastContainer, toast } from "react-toastify";
@@ -23,18 +23,19 @@ import useAuth from '../../hooks/useAuth';
 import '../../App.css';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import { use } from 'i18next';
 
 const almacenes = [
-    { value: 'Almacen 1', label: 'Almacen 1' },
-    { value: 'Almacen 2', label: 'Almacen 2' },
-    { value: 'Almacen 3', label: 'Almacen 3' },
-    { value: 'Almacen 4', label: 'Almacen 4' },
-    { value: 'Almacen 5', label: 'Almacen 5' },
-    { value: 'Almacen 6', label: 'Almacen 6' },
-    { value: 'Almacen 7', label: 'Almacen 7' },
-    { value: 'Almacen 8', label: 'Almacen 8' },
-    { value: 'Almacen 9', label: 'Almacen 9' },
-    { value: 'Almacen 10', label: 'Almacen 10' }
+    { value: 'Almacen 1', label: 'Almacen 1', deliveryData: 'Informacion de envio1' },
+    { value: 'Almacen 2', label: 'Almacen 2', deliveryData: 'Informacion de envio2' },
+    { value: 'Almacen 3', label: 'Almacen 3', deliveryData: 'Informacion de envio3' },
+    { value: 'Almacen 4', label: 'Almacen 4', deliveryData: 'Informacion de envio4' },
+    { value: 'Almacen 5', label: 'Almacen 5', deliveryData: 'Informacion de envio5' },
+    { value: 'Almacen 6', label: 'Almacen 6', deliveryData: 'Informacion de envio6' },
+    { value: 'Almacen 7', label: 'Almacen 7', deliveryData: 'Informacion de envio7' },
+    { value: 'Almacen 8', label: 'Almacen 8', deliveryData: 'Informacion de envio8' },
+    { value: 'Almacen 9', label: 'Almacen 9', deliveryData: 'Informacion de envio9' },
+    { value: 'Almacen 10', label: 'Almacen 10', deliveryData: 'Informacion de envio10' },
 ];
 
 
@@ -50,27 +51,26 @@ const NewOrders = () => {
     const [searchManofacturerCode, setSearchManofacturerCode] = React.useState("");
 
     const [order, setOrder] = useState({
-        profileId: ID,
+        responsibleId: ID,
         profileName: profileName,
         costumer: "" || "",
         orderDate: "" || new Date().toISOString().split('T')[0],
         orderType: "",
-        // orderDetails
         productsOrder: [],
-        //amountPaid: "",
-        //amountPending: "",
+        subTotal: 0,
         discount: "",
         amountTotal: "",
         orderData: "",
         deliveryData: "",
-        costumerData: "" || "--datos del cliente--",
+    //    costumerData: "" || "--datos del cliente--",
         paymentMethod: "",
         comments: "",
     });
 
     const [products, setProducts] = useState([]);
     const [selectedProducts, setSelectedProducts] = useState([]);
-    const [selectedKeys, setSelectedKeys] = useState({});
+    const [selectedKeys, setSelectedKeys] = useState([]);
+    const [keysDelete, setKeysDelete] = useState([]);
     const [variable, setVariable] = useState('Nuevo pedido');
     const [isLoading, setLoading] = useState(false);
     const [editing, setEditing] = useState(false);
@@ -80,17 +80,21 @@ const NewOrders = () => {
     const handleOrderChange = (event) => {
         switch (event.target.name) {
             case "discount":
-                if (event.target.value <= 100) {
+                if (event.target.value <= 100 && event.target.value >= 0) {
                     setOrder({
                         ...order,
-                        [event.target.name]: event.target.value,
-                        //   amountTotal: order.amountTotal - event.target.value,
+                        [event.target.name]: event.target.value
                     });
-                } else {
-                    toast.error("El descuento no puede ser mayor a 100%", { autoClose: 1000 });
                 }
                 break;
+            case "orderType":
+                setOrder({
+                    ...order,
+                    [event.target.name]: event.target.value,
+                });
+                break;
             default:
+                
                 setOrder({
                     ...order,
                     [event.target.name]: event.target.value,
@@ -98,7 +102,6 @@ const NewOrders = () => {
                 break;
         }
     };
-
 
     //--------------------------------------------------------------------------------------------------
     //                                PRODUCTOS
@@ -153,39 +156,39 @@ const NewOrders = () => {
         }
     };
 
-    //funcion para agregar los productos seleccionados a la tabla de productos del pedido, incluir el campo de cantidad en 1
+   
     const addProducts = () => {
         const selectedProductsArray = Array.from(selectedProducts);
-        console.log(selectedProductsArray);
-
+        const selectedProductIDs = selectedProductsArray.map(Number);
+      
+        // Filtra los productos seleccionados que no están en el estado "order"
         const newProducts = products.filter((product) => {
-            return selectedProductsArray.includes(product.id);
-        }
-        );
-         console.log(newProducts);
+          return (
+            selectedProductIDs.includes(product.id) &&
+            !order.productsOrder.some((orderedProduct) => orderedProduct.id === product.id)
+          );
+        });
+      
+        // Mapea los nuevos productos y agrega información adicional
+        const newProductsOrder = newProducts.map((product) => {
+          return {
+            ...product,
+            quantity: 1
+          };
+        });
 
-        // const newProductsOrder = newProducts.map((product) => {
-        //     return {
-        //         ...product,
-        //         quantity: 1,
-        //         subtotal: product.price1,
-        //     };
-        // }
-        // );
-        // console.log(newProductsOrder);
+        // Actualiza el estado "order" solo con los productos nuevos y el subtotal
+        const newOrder = {
+          ...order,
+          productsOrder: [...order.productsOrder, ...newProductsOrder],
+        };
+      
+        // Establece el nuevo estado "order" y limpia la selección
+        setOrder(newOrder);
+        setSelectedProducts([]);
+      };
+      
 
-        // const newOrder = {
-        //     ...order,
-        //     productsOrder: [...order.productsOrder, ...newProductsOrder],
-        //     amountTotal: order.amountTotal + newProductsOrder.reduce((acc, product) => acc + product.price1, 0),
-        // };
-        // console.log(newOrder);
-
-        // setOrder(newOrder);
-
-        // setSelectedProducts([]);
-
-    };
 
 
 
@@ -314,7 +317,7 @@ const NewOrders = () => {
             case "subtotal":
                 return (
                     <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">${cellValue}</p>
+                        <p className="text-bold text-sm capitalize">${products.price1 * products.quantity || 0}</p>
                     </div>
                 );
             default:
@@ -378,6 +381,29 @@ const NewOrders = () => {
         }
     }
 
+    useEffect(() => {
+        const subtotal = order.productsOrder.reduce((acc, product) => {
+          return acc + product.price1 * product.quantity;
+        }, 0);
+
+        const subtotalfixed = subtotal.toFixed(2);
+
+        const impuestos = subtotal * 0.16;
+
+        const discount = subtotal * (order.discount / 100);
+      
+        const total = subtotal - impuestos - discount;
+
+        const totalfixed = total.toFixed(2);
+      
+        setOrder({
+          ...order,
+          subTotal: subtotalfixed,
+          amountTotal: totalfixed,
+        });
+      }, [order.productsOrder]);
+      
+
 
 
     useEffect(() => {
@@ -385,6 +411,8 @@ const NewOrders = () => {
             loadOrder();
         }
     }, []);
+
+    console.log(selectedKeys);
 
     return (
         <div className="flex flex-col w-full h-full">
@@ -555,7 +583,9 @@ const NewOrders = () => {
                         {almacenes.map((almacen) => (
                             <DropdownItem
                                 key={almacen.value}
-                                onClick={() => setOrder({ ...order, costumer: almacen.value })}
+                                onClick={() => 
+                                    setOrder({ ...order, costumer: almacen.value, deliveryData: almacen.deliveryData })
+                                }
                             >
                                 {almacen.label}
                             </DropdownItem>
@@ -599,10 +629,10 @@ const NewOrders = () => {
                         Agregar producto
                     </Button>
                 </div>
-                <div className="flex lg:w-1/2 mt-10 items-center justify-end">
+                <div className="flex lg:w-1/2 mt-10 items-end justify-start lg:justify-end">
                     <div>
                         <Checkbox
-                            className='w-full px-12 mt-3'
+                            className='w-full pl-12 mt-3'
                             checked={order.fulfilled}
                             onChange={(event) => {
                                 setOrder({ ...order, fulfilled: event.target.checked });
@@ -614,7 +644,7 @@ const NewOrders = () => {
                     <div>
                         <Dropdown>
                             <DropdownTrigger>
-                                <Input className='w-full px-14 mt-5' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
+                                <Input className='w-full px-5 mt-5' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem
@@ -636,11 +666,12 @@ const NewOrders = () => {
                         </Dropdown>
                     </div>
                     <div>
-                        <label className="text-sm text-gray-500 hidden lg:flex">Descuento</label>
+                        <label className="text-sm text-gray-500">Descuento</label>
                         <Input
                             className='w-full'
                             endContent="%"
                             defaultValue={0}
+                            placeholder='0 - 100'
                             value={order.discount}
                             onChange={handleOrderChange}
                             name="discount"
@@ -651,37 +682,71 @@ const NewOrders = () => {
             </div>
             <div className="flex flex-col mx-10 mb-5 pl-10 lg:flex-row h-full">
                 {/* Tabla del pedido */}
-                <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
-                    <Table
-                        removeWrapper
-                        aria-label=" table with client async pagination"
-                        classNames={{
-                            wrapper: "max-h-[400px]",
-                        }}
-                    >
-                        <TableHeader
-                            columns={columnsOrder}
-                            className='text-inherit '
+                {order.productsOrder.length === 0 ? (
+                    <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
+                        <Table
+                            removeWrapper
+                            aria-label=" table with client async pagination"
+                            classNames={{
+                                wrapper: "max-h-[400px]",
+                            }}
                         >
-                            {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
-                        </TableHeader>
-                        <TableBody items={order.productsOrder}
-                            isLoading={isLoading && !items.length}
-                            emptyContent={
-                                products.length === 0 &&
-                                <div className="flex flex-col items-center justify-center h-full">
-                                    <p className="text-2xl font-bold text-gray-400"></p>
-                                </div>
-                            }
+                            <TableHeader
+                                columns={columnsOrder}
+                                className='text-inherit '
+                            >
+                                {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
+                            </TableHeader>
+                            <TableBody>
+                            </TableBody>
+                        </Table>
+                    </div>
+
+                ) : (
+                    <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
+                        <Table
+                            removeWrapper
+                            selectionMode='multiple'
+                            selectedKeys={selectedKeys}
+                            onSelectionChange={(keys) => {
+                                setSelectedKeys(keys);
+                            }}
+                            aria-label=" table with client async pagination"
+                            classNames={{
+                                wrapper: "max-h-[400px]",
+                            }}
                         >
-                            {(item) => (
-                                <TableRow key={item.id}>
-                                    {(columnKey) => <TableCell>{renderCellOrder(item, columnKey)}</TableCell>}
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                            <TableHeader
+                                columns={columnsOrder}
+                                className='text-inherit '
+                            >
+                                {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
+                            </TableHeader>
+                            <TableBody items={order.productsOrder}
+                                isLoading={isLoading && !items.length}
+                                emptyContent={
+                                    products.length === 0 &&
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <p className="text-2xl font-bold text-gray-400"></p>
+                                    </div>
+                                }
+                            >
+                                {(item) => (
+                                    <TableRow key={item.id}>
+                                        {(columnKey) => <TableCell>{renderCellOrder(item, columnKey)}</TableCell>}
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                        {selectedKeys > 0 && (
+                            <div>
+                                <Button className='w-1/2 mt-10 lg:w-1/4' color="warning" auto startContent={<TbTrash />}>
+                                    Eliminar
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                )}
                 {/* Tabla de los totales */}
                 <div className="flex flex-col mt-14 h-full lg:w-1/2">
                     <Table className='' removeWrapper hideHeader selectionMode='none' border={true}>
@@ -703,19 +768,19 @@ const NewOrders = () => {
                         <TableBody>
                             <TableRow>
                                 <TableCell className='text-right'>SubTotal</TableCell>
-                                <TableCell className='text-center'>${order.amountTotal || 0}</TableCell>
+                                <TableCell className='text-center'>${order.subTotal || 0}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className='text-right'>Descuento</TableCell>
-                                <TableCell className='text-center'>{order.discount}%</TableCell>
+                                <TableCell className='text-center'>{order.discount || 0}%</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className='text-right'>Impuestos</TableCell>
-                                <TableCell className='text-center'>${order.amountTotal * 0.16 || 0}</TableCell>
+                                <TableCell className='text-center'>${(order.amountTotal * 0.16).toFixed(2) || '0.00'}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className='text-right'>Total</TableCell>
-                                <TableCell className='text-center'>${order.amountTotal - order.discount || 0}</TableCell>
+                                <TableCell className='text-center'>${order.amountTotal || 0}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
