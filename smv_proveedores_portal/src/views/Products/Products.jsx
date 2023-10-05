@@ -5,7 +5,7 @@ import {
   TableBody,
   TableColumn,
   TableRow,
-  TableCell, 
+  TableCell,
   Spinner,
   Pagination,
   Input, Button, User,
@@ -77,7 +77,7 @@ const Products = () => {
         return {
           ...product,
           image
-        } 
+        }
       })
       setProducts(products);
       setIsLoading(false);
@@ -574,7 +574,7 @@ const Products = () => {
 
       <div className="flex justify-between items-center p-4 w-11/12 ml-20">
         <div className="flex items-center flex-col lg:flex-row">
-        <label className="text-base mr-10 mb-10 lg:mb-0">Buscar por:</label>
+          <label className="text-base mr-10 mb-10 lg:mb-0">Buscar por:</label>
           <div className="flex items-center">
             <Input
               startContent={<MdSearch />}
@@ -619,7 +619,12 @@ const Products = () => {
           </Button>
         </div>
       </div>
-
+      
+      {isLoading ? (
+        <div className="flex justify-center items-center w-11/12 ml-20 mt-20">
+          <Spinner label="Cargando" />
+        </div>
+      ) : (
       <div className="flex justify-between items-center w-11/12 ml-20 mt-20">
         <Table
           isHeaderSticky
@@ -636,12 +641,12 @@ const Products = () => {
           <TableBody items={filterProducts(products)}
             isLoading={isLoading && !items.length}
             emptyContent={
-              isLoading ? (
-              <Spinner label="Cargando" />
-            ) : (
-              "No products found"
-            )}
-            
+              products.length === 0 ? (
+                "No products found"
+              ) : (
+                <Spinner label="Cargando" />
+              )}
+
           >
             {(item) => (
               <TableRow key={item.id}>
@@ -651,6 +656,7 @@ const Products = () => {
           </TableBody>
         </Table>
       </div>
+      )}
     </div>
   )
 }

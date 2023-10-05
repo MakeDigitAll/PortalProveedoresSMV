@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
-const { logger } = require('./middleware/logEvents');
+//const { logger } = require('./middleware/logEvents');
 const errorHandler = require('./middleware/errorHandler');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
@@ -17,7 +17,7 @@ const productsRoutes = require('./routes/products.routes');
 const orders = require('./routes/orders.routes');
 
 //configuraciones
-app.use(logger);
+//app.use(logger);
 app.use(credentials);
 app.use(cors(corsOptions));
 app.use(express.urlencoded({extended: false}));

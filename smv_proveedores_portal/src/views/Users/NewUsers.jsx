@@ -10,7 +10,7 @@ import { MdShoppingCart } from "react-icons/md";
 import { CircularProgress } from '@mui/material';
 import { ToastContainer, toast } from "react-toastify";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
-import { Input, Button, Link } from "@nextui-org/react";
+import { Input, Button, Link, Spinner } from "@nextui-org/react"; 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 import '../../App.css';
@@ -646,7 +646,7 @@ const NewUsers = () => {
 
             {loading ? (
                 <div className="flex justify-center items-center w-full h-full">
-                    <CircularProgress color="primary" />
+                    <Spinner color="primary" />
                 </div>
             ) : (
                 <div className="flex flex-col justify-center text-center items-center w-full h-full lg:flex-row">

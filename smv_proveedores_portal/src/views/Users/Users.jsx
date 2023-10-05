@@ -418,7 +418,7 @@ const Users = () => {
             <TableBody items={filterUsers(users)}
               emptyContent={
                 users.length === 0 ? (
-                  "No users found"
+                  "No users found" 
                 ) : (
                   <Spinner label="Cargando" />
                 )

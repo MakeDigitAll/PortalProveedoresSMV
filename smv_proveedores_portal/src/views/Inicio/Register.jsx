@@ -6,9 +6,10 @@ import {
     Button,
     CardBody,
     Image,
+    Spinner
 } from "@nextui-org/react";
 import { useTheme } from "next-themes";
-import {RadioGroup, Radio} from "@nextui-org/react";
+import { RadioGroup, Radio } from "@nextui-org/react";
 import { MdOutlineMailOutline } from 'react-icons/md';
 import { RiLockPasswordLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
@@ -206,7 +207,7 @@ const Register = () => {
                     withCredentials: true
                 }
             ).then((res) => {
-                if(res.status === 200){
+                if (res.status === 200) {
                     toast.success('Registro exitoso', ({
                         position: "bottom-right",
                         hideProgressBar: false,
@@ -217,9 +218,9 @@ const Register = () => {
                         autoClose: 5000,
                         theme: "colored",
                     }));
-            setLoading(false);
-            setUser({ email: "", password: "", confirmPassword: "" });
-            navigate('/');
+                    setLoading(false);
+                    setUser({ email: "", password: "", confirmPassword: "" });
+                    navigate('/');
                 }
             });
         } catch (err) {
@@ -262,159 +263,157 @@ const Register = () => {
     }
 
     return (
-<>
+        <>
             <Header />
             <main>
-            <ToastContainer/>
+                <ToastContainer />
                 {loading ? (
-                    <div className="flex justify-center">
-                        <div className="flex justify-center items-center">
-                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-                        </div>
+                    <div className="flex justify-center items-center w-11/12 ml-20 mt-20">
+                        <Spinner label="Cargando" />
                     </div>
                 ) : (
-                <form onChange={handleChange} onSubmit={handleSubmit}>
-                    <div className="flex justify-center">
-                        <Card
-                            style={{
-                                display: "flex",
-                                height: "600px",
-                                width: "400px",
-                                marginTop: "100px",
-                            }}
-                        >
-                            <CardBody
-                                css={{
-                                    marginTop: "20px",
-                                    marginRight: "20px",
+                    <form onChange={handleChange} onSubmit={handleSubmit}>
+                        <div className="flex justify-center">
+                            <Card
+                                style={{
+                                    display: "flex",
+                                    height: "600px",
+                                    width: "400px",
+                                    marginTop: "100px",
                                 }}
                             >
-                                <div className="flex justify-center" style={{ marginTop: '20px' }}>
-                                    <h4>{"Registro"}</h4>
-                                </div> 
-                                <div
-                                    className="flex justify-center"
-                                    style={{ marginTop: "20px" }}
+                                <CardBody
+                                    css={{
+                                        marginTop: "20px",
+                                        marginRight: "20px",
+                                    }}
                                 >
-                                    {imgLogo ? (
-                                        <Image
-                                            isZoomed
-                                            src="../../../public/make-dark.png"
-                                            alt=""
-                                            width={100}
-                                            height={100}
-                                        />
-                                    ) : (
-                                        <Image
-                                            isZoomed
-                                            src="../../../public/make-light.png"
-                                            alt=""
-                                            width={100}
-                                            height={100}
-                                        />
-                                    )}
-                                </div>
-                                <Spacer y={10} />
-                                <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
-                                    <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
-                                        <Input
-                                            id="email"
-                                            value={user.email}
-                                            onChange={handleChange}
-                                            key="outside"
-                                            size={"sm"}
-                                            type="email"
-                                            label="Email"
-                                            labelPlacement="inside"
-                                            name="email"
-                                        />
+                                    <div className="flex justify-center" style={{ marginTop: '20px' }}>
+                                        <h4>{"Registro"}</h4>
                                     </div>
-                                </div>
-                                <Spacer y={6} />
-                                <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
-                                    <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
-                                        <Input
-                                            id="password"
-                                            value={user.password}
-                                            onChange={handleChange}
-                                            size={"sm"}
-                                            type="password"
-                                            label="password"
-                                            labelPlacement="inside"
-                                            name="password"
-                                        />
+                                    <div
+                                        className="flex justify-center"
+                                        style={{ marginTop: "20px" }}
+                                    >
+                                        {imgLogo ? (
+                                            <Image
+                                                isZoomed
+                                                src="../../../public/make-dark.png"
+                                                alt=""
+                                                width={100}
+                                                height={100}
+                                            />
+                                        ) : (
+                                            <Image
+                                                isZoomed
+                                                src="../../../public/make-light.png"
+                                                alt=""
+                                                width={100}
+                                                height={100}
+                                            />
+                                        )}
                                     </div>
-                                </div>
-                                <Spacer y={6} />
-                                <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
-                                    <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
-                                        <Input
-                                            id="confirmPassword"
-                                            value={user.confirmPassword}
-                                            onChange={handleChange}
-                                            size={"sm"}
-                                            type="password"
-                                            label="confirmPassword"
-                                            labelPlacement="inside"
-                                            name="confirmPassword"
-                                        />
-                                    </div>
-                                </div>
-                                <RadioGroup
-                                    value={typeUser}
-                                    onChange={(e) => setTypeUser(e.target.value)}
-                                    style={{ marginTop: "20px" }}
-                                >
-                                    <Radio value="1">{"Proveedor"}</Radio>
-                                    <Radio value="2">{"Distributor"}</Radio>
-                                </RadioGroup>
-
-                                {typeUser === '2' && <Spacer y={1} />}
-                                {typeUser === '2' &&
-                                <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
-                                    <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
-                                        <Input
-                                            id="reference"
-                                            value={reference}
-                                            onChange={(e) => setReference(e.target.value)}
-                                            size={"sm"}
-                                            type="text"
-                                            label="reference"
-                                            name="reference"
-                                        />
-                                    </div>
-                                </div>
-                                }
-                                <br />
-                                <div
-                                    className="flex justify-start"
-                                    style={{ marginTop: "20px" }}
-                                ></div>
-                                {loading ? (
-                                    <div className="flex justify-center">
-                                        <div className="flex justify-center items-center">
-                                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+                                    <Spacer y={10} />
+                                    <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
+                                        <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
+                                            <Input
+                                                id="email"
+                                                value={user.email}
+                                                onChange={handleChange}
+                                                key="outside"
+                                                size={"sm"}
+                                                type="email"
+                                                label="Email"
+                                                labelPlacement="inside"
+                                                name="email"
+                                            />
                                         </div>
                                     </div>
-                                ) : (
-                                    <div
-                                    className="flex justify-center"
-                                    style={{ marginTop: "20px" }}
-                                >
-                                    <Button
-                                        type="submit"
-                                        size={"md"}
-                                        color="primary"
+                                    <Spacer y={6} />
+                                    <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
+                                        <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
+                                            <Input
+                                                id="password"
+                                                value={user.password}
+                                                onChange={handleChange}
+                                                size={"sm"}
+                                                type="password"
+                                                label="password"
+                                                labelPlacement="inside"
+                                                name="password"
+                                            />
+                                        </div>
+                                    </div>
+                                    <Spacer y={6} />
+                                    <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
+                                        <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
+                                            <Input
+                                                id="confirmPassword"
+                                                value={user.confirmPassword}
+                                                onChange={handleChange}
+                                                size={"sm"}
+                                                type="password"
+                                                label="confirmPassword"
+                                                labelPlacement="inside"
+                                                name="confirmPassword"
+                                            />
+                                        </div>
+                                    </div>
+                                    <RadioGroup
+                                        value={typeUser}
+                                        onChange={(e) => setTypeUser(e.target.value)}
+                                        style={{ marginTop: "20px" }}
                                     >
-                                        {"Registrarse"}
-                                    </Button>
-                                </div>
-                                )}
-                                
-                            </CardBody>
-                        </Card>
-                    </div>
-                </form>
+                                        <Radio value="1">{"Proveedor"}</Radio>
+                                        <Radio value="2">{"Distributor"}</Radio>
+                                    </RadioGroup>
+
+                                    {typeUser === '2' && <Spacer y={1} />}
+                                    {typeUser === '2' &&
+                                        <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
+                                            <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
+                                                <Input
+                                                    id="reference"
+                                                    value={reference}
+                                                    onChange={(e) => setReference(e.target.value)}
+                                                    size={"sm"}
+                                                    type="text"
+                                                    label="reference"
+                                                    name="reference"
+                                                />
+                                            </div>
+                                        </div>
+                                    }
+                                    <br />
+                                    <div
+                                        className="flex justify-start"
+                                        style={{ marginTop: "20px" }}
+                                    ></div>
+                                    {loading ? (
+                                        <div className="flex justify-center">
+                                            <div className="flex justify-center items-center">
+                                                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className="flex justify-center"
+                                            style={{ marginTop: "20px" }}
+                                        >
+                                            <Button
+                                                type="submit"
+                                                size={"md"}
+                                                color="primary"
+                                            >
+                                                {"Registrarse"}
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                </CardBody>
+                            </Card>
+                        </div>
+                    </form>
                 )}
             </main>
         </>
