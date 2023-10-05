@@ -4,7 +4,7 @@ const pool = require('../database')
 const getOrders = async (req, res) => { 
     try {
     const { id } = req.params;
-    const orders = await pool.query('SELECT * FROM "pvOrders" WHERE "providerId" = $1', [id]);
+    const orders = await pool.query('SELECT * FROM "pvOrders" WHERE "providerId" = $1 AND "isDeleted" = false ORDER BY "orderDate" DESC', [id]);
     res.status(200).json(orders.rows);
     } catch (error) { 
         res.status(500).json({ error: error.message }); 
@@ -21,10 +21,21 @@ const createOrder = async (req, res) => {
         res.status(200).json({ message: 'Pedido creado satisfactoriamente' });
    } 
     catch (error) {
-        res.status(500).json({ error: error.message });
+         res.status(500).json({ error: error.message });
     }  
-}  
+}
 
+
+const deleteOrder = async (req, res) => {
+    try {
+        const { id, pvId } = req.params;
+        await pool.query('UPDATE "pvOrders" SET "isDeleted" = true WHERE "id" = $1 AND "providerId" = $2', [id, pvId]);
+        res.status(200).json({ message: 'Pedido eliminado satisfactoriamente' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+ 
  
 
 
@@ -46,5 +57,6 @@ const getProductsOrders = async (req, res) => {
 module.exports = {
     getOrders,
     createOrder,
+    deleteOrder,
     getProductsOrders 
 }  

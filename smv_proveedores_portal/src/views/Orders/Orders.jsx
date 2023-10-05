@@ -33,10 +33,10 @@ const Orders = () => {
     const axios = useAxiosPrivate();
     const { auth } = useAuth();
     const ID = auth?.ID;
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
     const [order, setOrder] = useState([]);
-    const [delItem, setDelItem] = useState({});
+    const [DelItem, setDelItem] = useState({});
     const [isLoading, setLoading] = useState(true);
     const [searchFolio, setSearchFolio] = useState('');
     const [searchDate, setSearchDate] = useState('');
@@ -73,11 +73,34 @@ const Orders = () => {
     //                      Funcion de borrado
     //-----------------------------------------------------------------
 
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`/orders/deleteOrder/${id}/${ID}`);
+            window.location.reload();
+            toast.success("Pedido eliminado con éxito");
+        } catch (error) {
+            console.log(error);
+            toast.error("Error al eliminar el pedido");
+        }
+    };
+
+
     const handlerDel = (id, folio) => {
         setDelItem({ id, folio });
         onOpen();
     };
 
+    const handleDelClose = () => {
+        onClose();
+        setDelItem(null);
+    };
+
+
+    const handleDeleteItem = () => {
+        handleDelete(DelItem.id);
+        onClose();
+        setDelItem(null);
+    }
 
     //-----------------------------------------------------------------
     //                      Funcion de busqueda
@@ -90,21 +113,21 @@ const Orders = () => {
             return order.filter((order) => {
                 const folioMatch =
                     searchFolio === '' || order.folio.toString().includes(searchFolio);
-    
+
                 const dateMatch =
                     searchDate === '' ||
                     order.orderDate.includes(searchDate);
-    
+
                 const statusMatch =
                     searchStatus === '' || order.orderStatus.toLowerCase().includes(searchStatus.toLowerCase());
-    
+
                 return folioMatch && dateMatch && statusMatch;
             });
         }
     };
-    
-    
-    
+
+
+
 
 
     //-----------------------------------------------------------------
@@ -221,18 +244,6 @@ const Orders = () => {
         try {
             const response = await axios.get(`/orders/getOrder/${ID}`);
             const ordersData = response.data;
-
-            // const formattedOrders = ordersData.map(order => {
-            //     const fecha = new Date(order.orderDate);
-
-            //     const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()} ${fecha.getHours()}:${fecha.getMinutes()}`;
-
-            //     return {
-            //         ...order,
-            //         orderDate: fechaFormateada
-            //     };
-            // });
-            // setOrder(formattedOrders);
             setOrder(ordersData);
             setLoading(false);
         } catch (error) {
@@ -273,6 +284,45 @@ const Orders = () => {
                 </div>
             </div>
 
+            <Modal
+                size="xs"
+                isOpen={isOpen}
+                placement='auto'
+                aria-labelledby='modal-delete'
+                aria-describedby="modal-description"
+                isDismissable={false}
+                scrollBehavior="inside"
+                onOpenChange={onOpenChange}
+                backdrop='blur'
+            >
+                <ModalContent>
+                    {() => (
+                        <>
+                            <ModalHeader>Eliminar pedido</ModalHeader>
+                            <ModalBody>
+                                <p>¿Está seguro que desea eliminar el pedido <b>{DelItem?.folio}</b>?</p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    auto
+                                    onClick={handleDeleteItem}
+                                    className="text-inherit text-danger bg-transparent hover:bg-danger hover:text-white"
+                                >
+                                    Eliminar
+                                </Button>
+                                <Button
+                                    auto
+                                    onClick={handleDelClose}
+                                    className="text-inherit bg-transparent hover:bg-gray-400 hover:text-black">
+                                    Cancelar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+
+
             <div className="flex flex-col lg:flex-row lg:mx-20 mb-10">
                 <label className="text-base font-bold mt-10 mr-10">Buscar:</label>
                 <Input
@@ -297,7 +347,7 @@ const Orders = () => {
                     placement="bottom-start"
                     backdrop="blur"
                     width="300px"
-                    
+
                 >
                     <DropdownTrigger
                         style={{
@@ -344,16 +394,16 @@ const Orders = () => {
                         </DropdownSection>
                     </DropdownMenu>
                 </Dropdown>
-                    <Button
-                        auto
-                        startContent={<TbPlus />}
-                        className="mr-10 mt-10 text-inherit bg-primary justify-end lg:ml-20 m-auto"
-                        size="small"
-                        variant="success"
-                        onClick={() => navigate(`/Orders/New`)}
-                    >
-                        Nuevo pedido
-                    </Button>
+                <Button
+                    auto
+                    startContent={<TbPlus />}
+                    className="mr-10 mt-10 text-inherit bg-primary justify-end lg:ml-20 m-auto"
+                    size="small"
+                    variant="success"
+                    onClick={() => navigate(`/Orders/New`)}
+                >
+                    Nuevo pedido
+                </Button>
             </div>
             <div className="flex flex-col lg:mx-20">
                 <Table
@@ -374,9 +424,9 @@ const Orders = () => {
                         isLoading={isLoading}
                         emptyContent={
                             order.length === 0 ? (
-                                "No products found"
-                            ) : (
                                 <Spinner label="Cargando" />
+                            ) : (
+                                "No products found"
                             )
                         }
                     >

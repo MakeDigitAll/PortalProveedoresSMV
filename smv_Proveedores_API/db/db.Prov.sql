@@ -158,7 +158,7 @@ create table "ProductsAvailability" (
 
 create table "pvOrders" (
     "id" serial primary key,
-    "folio" INTEGER DEFAULT 10000 UNIQUE CHECK ("folio" >= 10000 AND "folio" <= 9999999)
+    "folio" INTEGER not null unique,
     "providerId" int not null,
     "orderDate" timestamp not null,
     "orderType" varchar(100) not null,
@@ -181,8 +181,15 @@ create table "pvOrders" (
     "isDeleted" boolean default false
 );
 
-alter table "pvOrders"
-add column "folio" INTEGER DEFAULT 10000 UNIQUE CHECK ("folio" >= 10000 AND "folio" <= 9999999);
+CREATE SEQUENCE folio_seq
+    START WITH 10000
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO CYCLE;
+
+ALTER TABLE "pvOrders"
+    ALTER COLUMN "folio"
+    SET DEFAULT nextval('folio_seq'::regclass);
 
 
 alter table "pvOrders"

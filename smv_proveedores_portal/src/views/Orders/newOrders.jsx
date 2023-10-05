@@ -278,6 +278,23 @@ const NewOrders = () => {
       };
       
 
+    const handleQuantityChange = (id, quantity) => {
+        const newProductsOrder = order.productsOrder.map((product) => {
+            if (product.id === id) {
+                return {
+                    ...product,
+                    quantity: quantity,
+                };
+            } else {
+                return product;
+            }
+        });
+        setOrder({
+            ...order,
+            productsOrder: newProductsOrder,
+        });
+    };
+
 
 
 
@@ -399,8 +416,14 @@ const NewOrders = () => {
                 );
             case "quantity":
                 return (
-                    <div className="flex items-center text-center">
-                        <p className="text-bold text-sm capitalize">{cellValue}</p>
+                    <div className="flex items-center text-center w-1/2">
+                        <Input
+                            type="number"
+                            value={products.quantity}
+                            onChange={(event) => handleQuantityChange(products.id, event.target.value)}
+                            name="quantity"
+                            isDisabled={isInputDisabled}
+                        />
                     </div>
                 );
             case "subtotal":
@@ -436,23 +459,19 @@ const NewOrders = () => {
         try {
             const response = await axios.get(`/orders/getOrder/${params.id}`);
             setOrder({
-                profileId: ID,
-                costumer: response.data.costumer,
-                socialReasonCostumer: response.data.socialReasonCostumer,
+                ...order,
+                costumer: response.data.costumer || "",
                 orderDate: response.data.orderDate,
-                constumerBalance: response.data.constumerBalance,
-                orderStatus: response.data.orderStatus,
+                orderType: response.data.orderType,
+             //   productsOrder: response.data.productsOrder,
+                subTotal: response.data.subTotal,
+                discount: response.data.discount,
                 fulfilled: response.data.fulfilled,
-                // orderDetails 
-                productId: response.data.productId,
-                productQuantity: response.data.productQuantity,
-                amountPaid: response.data.amountPaid,
-                amountPending: response.data.amountPending,
                 total: response.data.total,
                 orderData: response.data.orderData,
                 deliveryData: response.data.deliveryData,
-                costumerData: response.data.costumerData,
                 paymentMethod: response.data.paymentMethod,
+                comments: response.data.comments,
             });
             setEditing(true);
             let url = window.location.pathname;
@@ -681,6 +700,7 @@ const NewOrders = () => {
                 </Dropdown>
             </div>
             <div className="flex flex-col mx-10 lg:flex-row justify-end">
+                <Textarea className='w-full lg:w-1/2 px-10' placeholder="Comentarios" maxRows={4} value={order.comments} onChange={handleOrderChange} name="comments" isDisabled={isInputDisabled} />
                 <Textarea className='w-full lg:w-1/2 px-10' placeholder="Informacion de envio" maxRows={4} value={order.deliveryData} onChange={handleOrderChange} name="deliveryData" isDisabled={true} />
             </div>
 
