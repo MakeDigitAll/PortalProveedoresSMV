@@ -52,6 +52,10 @@ const Orders = () => {
             label: "Fecha",
         },
         {
+            key: "amountPending",
+            label: "Pendiente",
+        },
+        {
             key: "total",
             label: "Total",
         },
@@ -62,6 +66,10 @@ const Orders = () => {
         {
             key: "facture",
             label: "Factura",
+        },
+        {
+            key: "fulfilled",
+            label: "Surtido",
         },
         {
             key: "actions",
@@ -155,6 +163,12 @@ const Orders = () => {
                         <p className='text-base'>{moment(cellValue).format('DD/MM/YYYY HH:mm')}</p>
                     </div>
                 );
+            case "amountPending":
+                return (
+                    <div className="flex items-center">
+                        <p className='text-base'>${cellValue}</p>
+                    </div>
+                );
             case "total":
                 return (
                     <div className="flex items-center">
@@ -171,6 +185,17 @@ const Orders = () => {
                 return (
                     <div className="flex items-center">
                         <p className='text-base'>{cellValue}</p>
+                    </div>
+                );
+            case "fulfilled":
+                return (
+                    <div className="flex items-center">
+                        <Checkbox
+                            className='text-base'
+                            color="primary"
+                            checked={cellValue}
+                            isDisabled
+                        />
                     </div>
                 );
             case 'actions':

@@ -810,15 +810,15 @@ const NewOrders = () => {
                     <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
                         <Table
                             removeWrapper
-                            selectionMode='multiple'
-                            selectedKeys={selectedKeys}
-                            onSelectionChange={(keys) => {
-                                setSelectedKeys(keys);
-                            }}
-                            aria-label=" table with client async pagination"
-                            classNames={{
-                                wrapper: "max-h-[100px]",
-                            }}
+                            // selectionMode='multiple'
+                            // selectedKeys={selectedKeys}
+                            // onSelectionChange={(keys) => {
+                            //     setSelectedKeys(keys);
+                            // }}
+                            // aria-label=" table with client async pagination"
+                            // classNames={{
+                            //     wrapper: "max-h-[100px]",
+                            // }}
                         >
                             <TableHeader
                                 columns={columnsOrder}
