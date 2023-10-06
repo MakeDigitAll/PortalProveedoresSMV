@@ -19,7 +19,7 @@ import { RiDashboard2Fill, RiPencilLine } from "react-icons/ri";
 import { Input, Link, Button, Textarea, User, Spinner, Radio, RadioGroup } from "@nextui-org/react";
 import { MdShoppingCart } from "react-icons/md";
 import { TbDotsVertical, TbPlus, TbReload, TbTrash } from "react-icons/tb";
-import { MdArrowBack, MdSettings, MdSave, MdDelete, MdSearch } from "react-icons/md";
+import { MdFilterListAlt, MdDelete, MdSearch } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import moment from 'moment';
 import useAuth from '../../hooks/useAuth';
@@ -61,7 +61,7 @@ const Orders = () => {
         },
         {
             key: "orderStatus",
-            label: "Estado",
+            label: "estatus",
         },
         {
             key: "facture",
@@ -207,14 +207,15 @@ const Orders = () => {
                                     display: "flex",
                                     flexDirection: "column",
                                     alignItems: "center",
-                                    backgroundColor: "#292831",
+                                    backgroundColor: "inherit",
                                 }}
                             >
                                 <Button
                                     startContent={<TbDotsVertical />}
                                     size="sm"
+                                    className="text-inherit"
                                     variant="success"
-                                    color="foreground"
+                                    color="inherit"
                                     auto
                                 />
                             </DropdownTrigger>
@@ -348,8 +349,8 @@ const Orders = () => {
             </Modal>
 
 
-            <div className="flex flex-col lg:flex-row lg:mx-20 mb-10">
-                <label className="text-base font-bold mt-10 mr-10">Buscar:</label>
+            <div className="flex flex-col lg:flex-row lg:mx-20 mb-10 lg:mt-10 justify-center align-middle text-center items-center">
+                <label className="text-base font-bold mr-10">Buscar:</label>
                 <Input
                     startContent={<MdSearch />}
                     className='my-10 lg:w-1/5 w-1/2 mr-5'
@@ -370,7 +371,6 @@ const Orders = () => {
 
                 <Dropdown
                     placement="bottom-start"
-                    backdrop="blur"
                     width="300px"
 
                 >
@@ -379,17 +379,17 @@ const Orders = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            backgroundColor: "#292831",
+                            backgroundColor: "inherit",
                         }}
                     >
                         <Button
                             size="sm"
                             variant="success"
-                            color="foreground"
-                            className='my-10 lg:w-1/5 w-1/2 mr-5'
+                            color="inherit"
+                            className='my-10 lg:w-1/5 w-1/2 mr-1'
                             auto
                         >
-                            {searchStatus === '' ? 'Estado' : searchStatus}
+                            {searchStatus === '' ? 'Buscar por estatus' : searchStatus}
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu
@@ -400,7 +400,7 @@ const Orders = () => {
                             backgroundColor: "#292831",
                         }}
                     >
-                        <DropdownSection title="Buscar por estado">
+                        <DropdownSection title="Buscar por estatus">
                             <DropdownItem
                                 onClick={() => setSearchStatus('Nuevo')}
                             >
@@ -419,6 +419,22 @@ const Orders = () => {
                         </DropdownSection>
                     </DropdownMenu>
                 </Dropdown>
+
+                <Button
+                    auto
+                    startContent={<MdFilterListAlt />}
+                    className="mr-10 mt-10 text-inherit bg-primary justify-end m-auto"
+                    size="small"
+                    variant="secondary"
+                    onPress={() => {
+                        setSearchDate('');
+                        setSearchFolio('');
+                        setSearchStatus('');
+                    }
+                    }
+                >
+                    limpiar filtro
+                </Button>
                 <Button
                     auto
                     startContent={<TbPlus />}
