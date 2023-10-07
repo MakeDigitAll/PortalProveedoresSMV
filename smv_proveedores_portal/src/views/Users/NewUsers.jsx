@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../../components/header/Header';
-import Footer from '../../components/footer/Footer'
 import { useNavigate, useParams } from 'react-router-dom';
+import Header from '../../components/Header/headerC/Header';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { MdHomeFilled, MdSettings, MdSave, MdArrowBack } from 'react-icons/md';
+import { MdSettings, MdSave, MdArrowBack } from 'react-icons/md';
 import { RiDashboard2Fill } from 'react-icons/ri';
 import { MdShoppingCart } from "react-icons/md";
-import { CircularProgress } from '@mui/material';
 import { ToastContainer, toast } from "react-toastify";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
 import { Input, Button, Link, Spinner } from "@nextui-org/react"; 
@@ -477,7 +475,7 @@ const NewUsers = () => {
         }).catch(error => {
             console.log(error);
             setLoading(false);
-        });
+        }); 
     };
 
 

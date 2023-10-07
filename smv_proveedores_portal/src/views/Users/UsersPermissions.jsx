@@ -45,13 +45,16 @@ const UsersPermissions = () => {
 
         try {
             const result = await axios.get(`/users/permissions/${id}`);
+            const fetchImage = await axios.get(`/users/image/${id}`, {
+                responseType: 'blob',
+            });
             const cleanedString = result.data.permission.replace(/[{}"]/g, '');
             const rolesArrayWithStrings = cleanedString.split(',');
             const roles = [
                 {
                     id: result.data.userId,
                     username: result.data.profileName,
-                    avatar: result.data.avatar ? result.data.avatar : 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png',
+                    avatar: URL.createObjectURL(fetchImage.data),
                     pedidos: rolesArrayWithStrings[0],
                     finanzas: rolesArrayWithStrings[1],
                     productos: rolesArrayWithStrings[2],

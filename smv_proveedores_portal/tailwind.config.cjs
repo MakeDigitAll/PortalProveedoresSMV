@@ -17,7 +17,7 @@ export default {
         layout: {}, // light theme layout tokens
         colors: {
           foreground: "#333333",
-          background: "#DBDAD4",
+          background: "#E8DFAF",
           primary: "#F8F282",
           secondary: "#969696",
           accent: "#FF6347",
@@ -30,7 +30,7 @@ export default {
           divider: "#16160B",
           overlay: "#0C0C09",
           focus: "#56D4FF",
-          content1: "#BDBDBD",
+          content1: "#B9B78C",
           content2: "#585858",
           content3: "#2E2E2E",
           content4: "#1C1C1C",
@@ -41,7 +41,7 @@ export default {
         colors: {
           foreground: "#FFFFFF",
           background: "#1A1A1A",
-          primary: "#A9A000",
+          primary: "#8E7B32",
           secondary: "#2900B4",
           accent: "#F9F382",
           highlight: "#FF6347",

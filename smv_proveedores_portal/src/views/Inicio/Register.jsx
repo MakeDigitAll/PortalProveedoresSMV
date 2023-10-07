@@ -114,7 +114,7 @@ const Register = () => {
         if (user.password !== user.confirmPassword) {
             toast.error('las contraseñas no coinciden', ({
                 position: "bottom-right",
-                hideProgressBar: false,
+                hideProgressBar: false, 
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
@@ -145,6 +145,9 @@ const Register = () => {
                         withCredentials: true
                     }
                 );
+                setLoading(false);
+                setUser({ email: "", password: "", confirmPassword: "" });
+                navigate('/');
                 toast.success('Registro exitoso', ({
                     position: "bottom-right",
                     hideProgressBar: false,
@@ -155,9 +158,6 @@ const Register = () => {
                     autoClose: 5000,
                     theme: "colored",
                 }));
-                setLoading(false);
-                setUser({ email: "", password: "", confirmPassword: "" });
-                navigate('/');
             }
             catch (err) {
                 if (!err?.response) {

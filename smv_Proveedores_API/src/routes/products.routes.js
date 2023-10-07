@@ -24,7 +24,7 @@ router.get('/products/availability/:id', getDispobility);
 
 router.put('/products/availability/:id', updateDispobility);
 
-//router.get('/products/technicalSheet/:id', getTechnicalSheet);
+router.get('/products/technicalSheet/:id', getTechnicalSheet);
 
 router.put('/products/technicalSheet/:id', upload.single('technicalSheet'), technicalSheet);
 

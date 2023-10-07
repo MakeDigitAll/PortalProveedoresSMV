@@ -12,14 +12,14 @@ import {
   DropdownSection,
   User,
 } from "@nextui-org/react";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import useLogout from "../../../hooks/useLogout";
 import { RiMoonLine, RiNotification4Fill, RiSunLine } from "react-icons/ri";
 import { TbWorld } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
-import axiosInstance from '../../axios/axios';
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
 const lngs = {
   En: { nativeName: "English" },
@@ -27,6 +27,7 @@ const lngs = {
 };
 const Header = () => {
   const LogOut = useLogout();
+  const axios = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
   const [selectedKeys, setSelectedKeys] = React.useState(i18n.language);
@@ -49,7 +50,7 @@ const Header = () => {
   //-------------------------------------------------------------------------------------
   async function getImg() {
     try {
-      const responseImg = await axiosInstance.get(`/users/image/${auth.userId}`, {
+      const responseImg = await axios.get(`/users/image/${auth.userId}`, {
         responseType: 'blob',
       });
       const img = responseImg?.data;
@@ -69,7 +70,7 @@ const Header = () => {
   //-------------------------------------------------------------------------------------
 
 
-  const navigate = useNavigate();
+ //const navigate = useNavigate();
 
   return (
     <header className="bg-background shadow-md">
@@ -174,9 +175,9 @@ const Header = () => {
                     }}
                   />
                 </DropdownItem>
-                <DropdownItem key="settings" onPress={() => navigate(`/Profile`)}>
+                {/* <DropdownItem key="settings" onPress={() => navigate(`/Profile`)}>
                   {t("Perfil")}
-                </DropdownItem>
+                </DropdownItem> */}
               </DropdownSection>
 
               <DropdownSection aria-label="Preferences" showDivider>

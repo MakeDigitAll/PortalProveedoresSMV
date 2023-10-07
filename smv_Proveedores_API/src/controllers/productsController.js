@@ -174,8 +174,6 @@ const technicalSheet = async (req, res) => {
     try {
         const { id } = req.params;
         const technicalSheet = req.file.buffer;
-        const name = req.body.name;
-        const type = req.body.type;
 
         if (!technicalSheet) {
             return res.status(400).json({
@@ -183,7 +181,7 @@ const technicalSheet = async (req, res) => {
             });
         }
 
-        await pool.query('UPDATE "technicalSheetProducts" SET "tecnicalSheet" = $1, "name" = $2, "type" = $3 WHERE "productId" = $4', [technicalSheet, name, type, id]);
+        await pool.query('UPDATE "technicalSheetProducts" SET "tecnicalSheet" = $1 WHERE "productId" = $2', [technicalSheet, id]);
         res.status(200).json({
             message: 'Hoja tecnica actualizada correctamente'
         });
@@ -195,16 +193,16 @@ const technicalSheet = async (req, res) => {
     }
 }
 
-//const getTechnicalSheet = async (req, res) => {
- //   try {
-  //      const { id } = req.params;
-        ///const sheet = await pool.query('SELECT "tecnicalSheet" FROM "technicalSheetProducts" WHERE "productId" = $1', [id]);
-       // console.log(sheet.rows[0].tecnicalSheet);
-        //return res.send(sheet.rows[0].tecnicalSheet);
-   // } catch (error) {
-     //   res.status(400).json({ error: 'Error al obtener la hoja tecnica' });
-   // }
-//}
+const getTechnicalSheet = async (req, res) => {
+   try {
+       const { id } = req.params;
+       const sheet = await pool.query('SELECT "tecnicalSheet" FROM "technicalSheetProducts" WHERE "productId" = $1', [id]);
+       console.log(sheet.rows[0].tecnicalSheet);
+        return res.send(sheet.rows[0].tecnicalSheet);
+   } catch (error) {
+       res.status(400).json({ error: 'Error al obtener la hoja tecnica' });
+   }
+}
 
  
 
@@ -220,5 +218,5 @@ module.exports = {
     getDispobility,
     updateDispobility,
     technicalSheet,
-    //getTechnicalSheet
+    getTechnicalSheet
 }

@@ -145,9 +145,10 @@ const Home = () => {
               <CardBody>
                 <div className="flex flex-row">
                   <Image
-                    src={ba || auth.imgURL}
-                    width="100"
-                    height="100%"
+                    src={auth.imgURL ? auth.imgURL : ba }
+                    alt=""
+                    width={50}
+                    height={40}
                     className="rounded-full"
                   />
                   <h3 className="text-xl font-bold  mt-6 ml-10">{auth.username}</h3>
@@ -168,9 +169,6 @@ const Home = () => {
                   className="w-1/2"
                   onClick={() => {
                     toast.success("Sesión cerrada");
-                    setTimeout(() => {
-                      navigate("/logout");
-                    }, 2000);
                   }}
                 >
                   Cerrar sesión

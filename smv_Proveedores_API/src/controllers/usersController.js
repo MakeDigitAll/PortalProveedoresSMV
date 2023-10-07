@@ -219,6 +219,23 @@ const getImageUser = async (req, res) => {
   }
 }
 
+
+const getProfileUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const provider = await pool.query('SELECT * FROM "providersProfile" WHERE "id" = $1', [id]);
+    if (!provider.rows[0]) {
+      const user = await pool.query('SELECT * FROM "UsersProfile" WHERE "profileId" = $1', [id]);
+      return res.status(200).json(user.rows[0]);
+    }
+    return res.status(200).json(provider.rows[0]);
+  }
+  catch (error) {
+    res.status(400).json({ error: 'Error al obtener el perfil' });
+  }
+
+}
+
 // ----------------------  Controlador de usuarios (admin) -------------------------------
 module.exports = {
   getUserById,
@@ -231,5 +248,6 @@ module.exports = {
   getWaitingUsers,
   getAllUsers,
   confirmationUser,
-  declineUser
+  declineUser,
+  getProfileUser
 }

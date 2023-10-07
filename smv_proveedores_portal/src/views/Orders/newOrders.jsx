@@ -477,11 +477,11 @@ const NewOrders = () => {
             let url = window.location.pathname;
             let arr = url.split('/');
             if (arr[2] === 'Edit') {
-                setVariable('Editar producto');
+                setVariable('Editar pedido');
                 setIsInputDisabled(false);
             }
             if (arr[2] === 'View') {
-                setVariable('Ver producto');
+                setVariable('Ver pedido');
                 setIsInputDisabled(true);
             }
         } catch (error) {

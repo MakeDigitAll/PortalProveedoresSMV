@@ -7,14 +7,12 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { NextUIProvider } from '@nextui-org/react';
 import { AuthProvider } from './components/Protection/AuthProvider';
 import 'react-toastify/dist/ReactToastify.css';
-import Header from './components/header/headerC/Header';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <NextUIProvider>
         <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem={true}>
-          <Header />
           <App />
         </NextThemesProvider>
       </NextUIProvider>

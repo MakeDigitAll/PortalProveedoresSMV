@@ -141,7 +141,7 @@ const NewProducts = () => {
     const [variable, setVariable] = useState('Nuevo producto');
     const [CardType, setCardType] = useState('general');
     const imageProd = React.useRef(null);
-    //const technicalSheetPreview = React.useRef(null);
+    const technicalSheetPreview = React.useRef(null);
     const [image1, setImage1] = useState(null);
     const [image2, setImage2] = useState(null);
     const [image3, setImage3] = useState(null);
@@ -792,8 +792,6 @@ const NewProducts = () => {
     const handleTechnicalSheet = async (event) => {
         if (event.target.files[0] && event.target.files[0].type === 'application/pdf') {
             setTechnicalSheet(event.target.files[0]);
-            setNameTS(event.target.files[0].name);
-            setTypeTS(event.target.files[0].type);
         } else {
             toast.error('El archivo debe ser PDF', {
                 position: "bottom-right",

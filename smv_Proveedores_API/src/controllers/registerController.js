@@ -21,19 +21,20 @@ const handleNewUser = async (req, res) => {
 
 
     if (role === '2') {
-        const { pvId } = req.body;
-        if (!pvId) return res.status(400).json({ error: 'Se requiere el codigo de referencia de la empresa' });
+        const { reference } = req.body;
+        if (!reference) return res.status(400).json({ error: 'Se requiere el codigo de referencia de la empresa' });
 
         try {
 
 
             //---------------------------------------------------------------------------------------- Creacion de usuario
-            const referenceExist = await pool.query('SELECT * FROM "providersProfile" WHERE "id" = $1', [pvId]);
+            const referenceExist = await pool.query('SELECT * FROM "providersProfile" WHERE "referenceCode" = $1', [reference]);
             if (!referenceExist.rows[0]) return res.status(400).json({ error: 'El codigo de referencia no existe' });
 
             const hashedPassword = await encryptPassword(password);
             const result = await pool.query('INSERT INTO "userAuth" ("userName", "password", "isPasswordModified") VALUES ($1, $2, $3) RETURNING *', [username, hashedPassword, true]);
-            await pool.query('INSERT INTO "distributorsProfile" ("distributorId", "distributorName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, 'nombreProvisional', 'direccionProvisional', 'colProvisional', 'ciudadProvisional', 'estadoProvisional', 'cpProvisional', 'paisProvisional', 'contactoProvisional', '4920000000', username]);
+            await pool.query('INSERT INTO "UsersProfile" ("profileId", "profileName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, 'nombreProvisional', 'direccionProvisional', 'colProvisional', 'ciudadProvisional', 'Zacatecas', 'cpProvisional', 'México', 'contactoProvisional', '4920000000', username]);
+            await pool.query('INSERT INTO "userImage" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
 
             //---------------------------------------------------------------------------------------- Asignacion de permisos
 
@@ -71,7 +72,8 @@ const handleNewUser = async (req, res) => {
         const hashedPassword = await encryptPassword(password);
 
         const result = await pool.query('INSERT INTO "userAuth" ("userName", "password", "isPasswordModified") VALUES ($1, $2, $3) RETURNING *', [username, hashedPassword, true]);
-        await pool.query('INSERT INTO "providersProfile" ("providerId", "providerName", "socialReason", "address", "col", "rfc","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11, $12, $13)', [result.rows[0].id, 'nombreProvisional', 'razonSocialProvisional', 'direccionProvisional', 'colProvisional', 'rfcProvisional', 'ciudadProvisional', 'estadoProvisional', 'cpProvisional', 'paisProvisional', 'contactoProvisional', '4920000000', username]); 
+        await pool.query('INSERT INTO "providersProfile" ("providerId", "providerName", "socialReason", "address", "col", "rfc","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11, $12, $13)', [result.rows[0].id, 'nombreProvisional', 'razonSocialProvisional', 'direccionProvisional', 'colProvisional', 'rfcProvisional', 'ciudadProvisional', 'Zacatecas', 'cpProvisional', 'México', 'contactoProvisional', '4920000000', username]); 
+        await pool.query('INSERT INTO "userImage" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
         const role = '{4444}'
 
         await pool.query('INSERT INTO "Permissions" ("userId", "permission") VALUES ($1, $2)', [result.rows[0].id, role]);
