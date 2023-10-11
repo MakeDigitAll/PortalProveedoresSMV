@@ -170,7 +170,7 @@ const Home = () => {
                   onClick={() => {
                     toast.success("Sesión cerrada");
                   }}
-                >
+                > 
                   Cerrar sesión
                 </Button>
               </CardFooter>

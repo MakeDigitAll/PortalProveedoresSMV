@@ -98,40 +98,6 @@ const Header = () => {
           )}
         </div>
         <div className="flex flex-wrap place-content-end space-1">
-          <Badge
-            content="10"
-            shape="circle"
-            color="danger"
-            style={{ marginRight: "5px", marginTop: "2px" }}
-          >
-            <Dropdown placement="bottom-end">
-              <DropdownTrigger>
-                <Button
-                  size="sm"
-                  radius="full"
-                  isIconOnly
-                  aria-label="more than 99 notifications"
-                  variant="light"
-                >
-                  <RiNotification4Fill size={16} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Profile Actions"
-                variant="flat"
-                textValue=""
-              >
-                <DropdownItem key="profile" className="h-14 gap-2">
-                  <p className="font-semibold">
-                    {auth.username ? auth.username : "Usuario"}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {auth.ID ? auth.ID : "ID"}
-                  </p>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </Badge>
           <Dropdown
             showArrow
             radius="sm"
