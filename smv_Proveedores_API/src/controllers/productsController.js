@@ -197,7 +197,6 @@ const getTechnicalSheet = async (req, res) => {
    try {
        const { id } = req.params;
        const sheet = await pool.query('SELECT "tecnicalSheet" FROM "technicalSheetProducts" WHERE "productId" = $1', [id]);
-       console.log(sheet.rows[0].tecnicalSheet);
         return res.send(sheet.rows[0].tecnicalSheet);
    } catch (error) {
        res.status(400).json({ error: 'Error al obtener la hoja tecnica' });

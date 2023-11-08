@@ -578,10 +578,9 @@ const NewProducts = () => {
                             'Content-Type': 'application/json'
                         }
                     }).then((response) => {
-                        console.log(response);
                         if (response.status === 200) {
                             submitImages(response.data.idproduct);
-                            submitTechnicalSheet(response.data.id);
+                            submitTechnicalSheet(response.data.idproduct);
                             toast.success('Producto creado', {
                                 position: "bottom-right",
                                 hideProgressBar: false,
@@ -697,7 +696,7 @@ const NewProducts = () => {
 
     const submitImages = async (idprd) => {
         const idpd = idprd || params.id;
-    
+
         if (image1) {
             try {
                 const formData = new FormData();
@@ -785,7 +784,7 @@ const NewProducts = () => {
         } else {
             console.log('No se seleccionó imagen 4');
         }
-        
+
     };
 
 
@@ -837,25 +836,25 @@ const NewProducts = () => {
     const getImages = async () => {
         try {
             const imagePromises = [];
-    
+
             for (let position = 0; position < 4; position++) {
                 const response = await axios.get(`/products/image/${params.id}/${position + 1}`, {
                     responseType: 'blob',
                 });
-    
+
                 if (response.data.size > 0) {
                     const imageBlob = response.data;
                     imagePromises.push(setImage(position, imageBlob));
                 }
             }
-    
+
             await Promise.all(imagePromises);
         } catch (error) {
             console.log(error);
             setLoading(false);
         }
     };
-    
+
     const setImage = async (position, imageBlob) => {
         switch (position) {
             case 0:
@@ -1203,7 +1202,7 @@ const NewProducts = () => {
                         </CardHeader>
                         <CardBody className="flex flex-col justify-center items-center w-full">
                             {CardType.CardType === "general" && (
-                                <div>
+                                <div className='mx-4'>
                                     <div className="flex text-center justify-center items-center">
                                         <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
                                     </div>
@@ -1212,7 +1211,6 @@ const NewProducts = () => {
                                             className="w-1/2 mr-4 mt-4"
                                             label='Nombre del producto'
                                             labelPlacement='outside'
-                                            placeholder='Nombre del producto'
                                             name="productName"
                                             value={product.productName}
                                             onChange={handleInputChange}
@@ -1222,7 +1220,6 @@ const NewProducts = () => {
                                             className="w-1/2 mr-4 mt-4"
                                             label='Código de la empresa'
                                             labelPlacement='outside'
-                                            placeholder='Código de la empresa'
                                             name="companyCode"
                                             value={product.companyCode}
                                             onChange={handleInputChange}
@@ -1234,7 +1231,6 @@ const NewProducts = () => {
                                             className="w-full mr-4 mt-4"
                                             label='Código del fabricante'
                                             labelPlacement='outside'
-                                            placeholder='Código del fabricante'
                                             name="manofacturerCode"
                                             value={product.manofacturerCode}
                                             onChange={handleInputChange}
@@ -1248,7 +1244,6 @@ const NewProducts = () => {
                                                     className="w-1/2 mr-4 mt-4"
                                                     label='Marca'
                                                     labelPlacement='outside'
-                                                    placeholder='Marca'
                                                     name="brand"
                                                     value={product.brand || "selecciona una marca"}
                                                     onChange={handleInputChange}
@@ -1272,7 +1267,6 @@ const NewProducts = () => {
                                             className="w-1/2 mr-4 mt-4 inline-flex"
                                             label='Modelo'
                                             labelPlacement='outside'
-                                            placeholder='Modelo'
                                             name="model"
                                             value={product.model}
                                             onChange={handleInputChange}
@@ -1292,7 +1286,6 @@ const NewProducts = () => {
                                             type='number'
                                             label='Precio 1'
                                             labelPlacement='outside'
-                                            placeholder='Precio 1'
                                             name="price1"
                                             value={product.price1}
                                             onChange={handleInputChange}
@@ -1303,7 +1296,6 @@ const NewProducts = () => {
                                             type='number'
                                             label='Precio 2'
                                             labelPlacement='outside'
-                                            placeholder='Precio 2'
                                             name="price2"
                                             value={product.price2}
                                             onChange={handleInputChange}
@@ -1316,7 +1308,6 @@ const NewProducts = () => {
                                             type='number'
                                             label='Precio 3'
                                             labelPlacement='outside'
-                                            placeholder='Precio 3'
                                             name="price3"
                                             value={product.price3}
                                             onChange={handleInputChange}
@@ -1327,7 +1318,6 @@ const NewProducts = () => {
                                             type='number'
                                             label='Precio 4'
                                             labelPlacement='outside'
-                                            placeholder='Precio 4'
                                             name="price4"
                                             value={product.price4}
                                             onChange={handleInputChange}
@@ -1343,7 +1333,6 @@ const NewProducts = () => {
                                             type='number'
                                             label='Tarifa 1'
                                             labelPlacement='outside'
-                                            placeholder='Tarifa 1'
                                             name="rate1"
                                             value={product.rate1}
                                             onChange={handleInputChange}
@@ -1354,7 +1343,6 @@ const NewProducts = () => {
                                             type='number'
                                             label='Tarifa 2'
                                             labelPlacement='outside'
-                                            placeholder='Tarifa 2'
                                             name="rate2"
                                             value={product.rate2}
                                             onChange={handleInputChange}
@@ -1367,7 +1355,6 @@ const NewProducts = () => {
                                             type='number'
                                             label='Tarifa 3'
                                             labelPlacement='outside'
-                                            placeholder='Tarifa 3'
                                             name="rate3"
                                             value={product.rate3}
                                             onChange={handleInputChange}
@@ -1387,7 +1374,6 @@ const NewProducts = () => {
                                             label='Código SAT del producto'
                                             labelPlacement='outside'
                                             name="satProductCode"
-                                            placeholder='Código SAT del producto'
                                             value={product.satProductCode}
                                             onChange={handleInputChange}
                                             disabled={isInputDisabled}
@@ -1426,7 +1412,6 @@ const NewProducts = () => {
                                             label='Unidad de medida'
                                             labelPlacement='outside'
                                             name="unitMeasurement"
-                                            placeholder='Unidad de medida'
                                             value={product.unitMeasurement}
                                             onChange={handleInputChange}
                                             disabled={true}

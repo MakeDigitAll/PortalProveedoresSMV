@@ -76,7 +76,7 @@ const Header = () => {
     <header className="bg-background shadow-md">
       <div
         className="flex flex-row items-center justify-between"
-        style={{ marginLeft: "80px", marginRight: "80px", marginTop: '15px' }}
+        style={{ marginLeft: "80px", marginRight: "80px"}}
       >
         <div className="items-start">
           {imgLogo ? (

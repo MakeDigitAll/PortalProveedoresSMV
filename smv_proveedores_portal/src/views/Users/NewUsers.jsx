@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/Header/headerC/Header';
+import Header from '../../components/header/headerC/Header';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { MdSettings, MdSave, MdArrowBack } from 'react-icons/md';
@@ -8,7 +8,8 @@ import { RiDashboard2Fill } from 'react-icons/ri';
 import { MdShoppingCart } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
-import { Input, Button, Link, Spinner } from "@nextui-org/react"; 
+import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
+import { Input, Button, Link, Spinner, ScrollShadow } from "@nextui-org/react";
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 import '../../App.css';
@@ -475,7 +476,7 @@ const NewUsers = () => {
         }).catch(error => {
             console.log(error);
             setLoading(false);
-        }); 
+        });
     };
 
 
@@ -532,6 +533,7 @@ const NewUsers = () => {
         };
 
         return (
+
             <Dropdown
                 backdrop="blur"
             >
@@ -545,6 +547,7 @@ const NewUsers = () => {
                         {user.state || 'Selecciona un estado'}
                     </Button>
                 </DropdownTrigger>
+
                 <DropdownMenu
                     aria-label="Single selection example"
                     variant="flat"
@@ -553,6 +556,7 @@ const NewUsers = () => {
                     selectedKeys={value}
                     onSelectionChange={handleStateChange}
                 >
+
                     <DropdownSection>
                         {orderCountries[country].map((state) => (
                             <DropdownItem key={state} value={state}>
@@ -667,153 +671,158 @@ const NewUsers = () => {
                         )}
                     </div>
                     <div className='flex flex-col justify-center items-center w-2/4 h-full mr-10'>
-                        <div className="flex text-center justify-center">
-                            <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label="Nombre del usuario"
-                                labelPlacement='outside'
-                                placeholder='Nombre del usuario'
-                                name='profileName'
-                                value={user.profileName}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mt-4 mr-4"
-                                label="Dirección"
-                                labelPlacement='outside'
-                                placeholder='Dirección'
-                                name='address'
-                                value={user.address}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label="Colonia"
-                                labelPlacement='outside'
-                                placeholder='Colonia'
-                                name='col'
-                                value={user.col}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mt-4 mr-4"
-                                label="Ciudad"
-                                labelPlacement='outside'
-                                placeholder='Ciudad'
-                                name='city'
-                                value={user.city}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mt-4 mr-4"
-                                type='number'
-                                label="Código Postal"
-                                labelPlacement='outside'
-                                placeholder='Código Postal'
-                                name='postalCode'
-                                value={user.postalCode}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex align-middle justify-center">
-                            <label className="text-foreground font-bold text-lg text-center mt-4">País y Estado</label>
-                        </div>
-                        <div className="flex items-center">
-                            <CountryDropdown value={user.country} />
-                            {user.country !== '' && (
-                                <div className='flex text-center'>
-                                    <StateDropdown country={user.country} value={user.state} />
+                        <Card className="px-10">
+                            <CardHeader className="flex justify-center">
+                                <div className="flex text-center justify-center">
+                                    <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
                                 </div>
-                            )}
+                            </CardHeader>
+                            <CardBody>
+                                <div className="flex items-center">
+                                    <Input
+                                        className="w-60 mr-4 mt-4"
+                                        label="Nombre del usuario"
+                                        labelPlacement='outside'
+                                        name='profileName'
+                                        isRequired
+                                        value={user.profileName}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                    <Input
+                                        className="w-60 mt-4 mr-4"
+                                        label="Dirección"
+                                        labelPlacement='outside'
+                                        name='address'
+                                        value={user.address}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                </div>
+                                <div className="flex items-center">
+                                    <Input
+                                        className="w-60 mr-4 mt-4"
+                                        label="Colonia"
+                                        labelPlacement='outside'
+                                        name='col'
+                                        value={user.col}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                    <Input
+                                        className="w-60 mt-4 mr-4"
+                                        label="Ciudad"
+                                        labelPlacement='outside'
+                                        name='city'
+                                        value={user.city}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                </div>
+                                <div className="flex items-center">
+                                    <Input
+                                        className="w-60 mt-4 mr-4"
+                                        type='number'
+                                        label="Código Postal"
+                                        labelPlacement='outside'
+                                        name='postalCode'
+                                        value={user.postalCode}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                </div>
+                                <div className="flex align-middle justify-center">
+                                    <label className="text-foreground font-bold text-lg text-center mt-4">País y Estado</label>
+                                </div>
+                                <div className="flex items-center">
+                                    <CountryDropdown value={user.country} />
+                                    {user.country !== '' && (
+                                        <div className='flex text-center'>
+                                            <StateDropdown country={user.country} value={user.state} />
+                                        </div>
+                                    )}
 
-                        </div>
-                        <div className="flex align-middle justify-center">
-                            <label className="text-foreground font-bold text-lg text-center mt-4">Datos de Contacto</label>
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label="Contacto"
-                                labelPlacement='outside'
-                                placeholder='Contacto'
-                                name='contact'
-                                value={user.contact}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mt-4 mr-4"
-                                label="Teléfono"
-                                type='number'
-                                labelPlacement='outside'
-                                placeholder='Teléfono'
-                                name='phone'
-                                value={user.phone}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label="Correo electrónico"
-                                labelPlacement='outside'
-                                placeholder='Correo electrónico'
-                                name='email'
-                                value={user.email}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        {!isInputDisabled && (
-                            <div className="flex justify-center mt-4">
-                                <Button
-                                    auto
-                                    startContent={<MdSave />}
-                                    variant="success"
-                                    className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
-                                    size="sm"
-                                    onClick={handleSubmit}
-                                    disabled={loading}
-                                >
-                                    Guardar
-                                </Button>
-                            </div>
-                        )}
-                        {isInputDisabled && (
-                            <div className="flex justify-center mt-4">
-                                <Button
-                                    auto
-                                    startContent={<MdArrowBack />}
-                                    variant="success"
-                                    className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
-                                    size="sm"
-                                    onClick={() => navigate(`/users`)}
-                                    disabled={loading}
-                                >
-                                    Volver
-                                </Button>
+                                </div>
+                                <div className="flex align-middle justify-center">
+                                    <label className="text-foreground font-bold text-lg text-center mt-4">Datos de Contacto</label>
+                                </div>
+                                <div className="flex items-center">
+                                    <Input
+                                        className="w-60 mr-4 mt-4"
+                                        label="Contacto"
+                                        labelPlacement='outside'
+                                        name='contact'
+                                        isRequired
+                                        value={user.contact}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                    <Input
+                                        className="w-60 mt-4 mr-4"
+                                        isRequired
+                                        label="Teléfono"
+                                        type='Number'
+                                        labelPlacement='outside'
+                                        name='phone'
+                                        value={user.phone}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                </div>
+                                <div className="flex items-center">
+                                    <Input
+                                        className="w-60 mr-4 mt-4"
+                                        type='email'
+                                        label="Correo electrónico"
+                                        labelPlacement='outside'
+                                        name='email'
+                                        isRequired
+                                        value={user.email}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                </div>
+                            </CardBody>
+                            <CardFooter className="flex justify-center">
+                                {!isInputDisabled && (
+                                    <div className="flex justify-center mt-4">
+                                        <Button
+                                            auto
+                                            startContent={<MdSave />}
+                                            variant="success"
+                                            className="bg-primary hover:bg-secondary  text-inherit font-bold p-3 w-72 h-12 mt-10"
+                                            size="sm"
+                                            onClick={handleSubmit}
+                                            disabled={loading}
+                                        >
+                                            Guardar
+                                        </Button>
+                                    </div>
+                                )}
+                                {isInputDisabled && (
+                                    <div className="flex justify-center mt-4">
+                                        <Button
+                                            auto
+                                            startContent={<MdArrowBack />}
+                                            variant="success"
+                                            className="bg-primary hover:bg-secondary text-inherit font-bold p-3 w-72 h-12 mt-10"
+                                            size="sm"
+                                            onClick={() => navigate(`/users`)}
+                                            disabled={loading}
+                                        >
+                                            Volver
+                                        </Button>
 
-                            </div>
-                        )}
+                                    </div>
+                                )}
+                            </CardFooter>
+                        </Card>
                     </div>
                 </div>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default NewUsers;
+export default NewUsers
 

@@ -34,7 +34,7 @@ const handleNewUser = async (req, res) => {
             const hashedPassword = await encryptPassword(password);
             const result = await pool.query('INSERT INTO "userAuth" ("userName", "password", "isPasswordModified") VALUES ($1, $2, $3) RETURNING *', [username, hashedPassword, true]);
             await pool.query('INSERT INTO "UsersProfile" ("profileId", "profileName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, 'nombreProvisional', 'direccionProvisional', 'colProvisional', 'ciudadProvisional', 'Zacatecas', 'cpProvisional', 'México', 'contactoProvisional', '4920000000', username]);
-            await pool.query('INSERT INTO "userImage" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
+            await pool.query('INSERT INTO "userImages" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
 
             //---------------------------------------------------------------------------------------- Asignacion de permisos
 
@@ -73,7 +73,7 @@ const handleNewUser = async (req, res) => {
 
         const result = await pool.query('INSERT INTO "userAuth" ("userName", "password", "isPasswordModified") VALUES ($1, $2, $3) RETURNING *', [username, hashedPassword, true]);
         await pool.query('INSERT INTO "providersProfile" ("providerId", "providerName", "socialReason", "address", "col", "rfc","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11, $12, $13)', [result.rows[0].id, 'nombreProvisional', 'razonSocialProvisional', 'direccionProvisional', 'colProvisional', 'rfcProvisional', 'ciudadProvisional', 'Zacatecas', 'cpProvisional', 'México', 'contactoProvisional', '4920000000', username]); 
-        await pool.query('INSERT INTO "userImage" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
+        await pool.query('INSERT INTO "userImages" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
         const role = '{4444}'
 
         await pool.query('INSERT INTO "Permissions" ("userId", "permission") VALUES ($1, $2)', [result.rows[0].id, role]);

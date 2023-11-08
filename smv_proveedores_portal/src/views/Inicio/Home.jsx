@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from '../../hooks/useAuth';
 import "react-toastify/dist/ReactToastify.css";
-import ba from "../../../dist/Blank-Avatar.png";
+import ba from "../../../public/Blank-Avatar.png";
 const Home = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();

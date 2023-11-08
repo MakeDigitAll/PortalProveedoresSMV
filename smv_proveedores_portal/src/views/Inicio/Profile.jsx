@@ -5,7 +5,7 @@ import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { RiDashboard2Fill, RiPencilLine } from "react-icons/ri";
-import { MdArrowBack } from "react-icons/md";
+import { MdArrowBack, MdSave } from "react-icons/md";
 import Header from "../../components/header/headerC/Header";
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -20,7 +20,6 @@ const Profile = () => {
     const { auth } = useAuth();
     const navigate = useNavigate();
     const [image, setImage] = useState(null);
-    const [isInputDisabled, setIsInputDisabled] = useState(true);
     const [user, setUser] = useState({
         profileName: '',
         address: '',
@@ -72,6 +71,11 @@ const Profile = () => {
 
 
     const handleChange = (e) => {
+        const changeInputs = isInputDisabled;
+
+        if (changeInputs) {
+            setIsInputDisabled(true);
+        }
         setUser({
             ...user,
             [e.target.name]: e.target.value,
@@ -82,8 +86,6 @@ const Profile = () => {
     };
 
     const imageUser = React.useRef(null);
-
-
 
     const CountryDropdown = ({ value }) => {
 
@@ -328,6 +330,7 @@ const Profile = () => {
                                         labelPlacement='outside'
                                         placeholder='Nombre del usuario'
                                         name='profileName'
+                                        isRequired
                                         value={user.profileName}
                                         onChange={handleChange}
                                         disabled={isInputDisabled}
@@ -423,6 +426,7 @@ const Profile = () => {
                                         labelPlacement='outside'
                                         placeholder='Correo electrónico'
                                         name='email'
+                                        isRequired
                                         value={user.email}
                                         onChange={handleChange}
                                         disabled={isInputDisabled}
@@ -430,7 +434,7 @@ const Profile = () => {
                                 </div>
                             </CardBody>
                             <CardFooter className="flex justify-center">
-                                {!isInputDisabled && (
+                                {isInputDisabled && (
                                     <div className="flex justify-center mt-4">
                                         <Button
                                             auto
@@ -445,13 +449,13 @@ const Profile = () => {
                                         </Button>
                                     </div>
                                 )}
-                                {isInputDisabled && (
+                                {!isInputDisabled && (
                                     <div className="flex justify-center mt-4">
                                         <Button
                                             auto
                                             startContent={<MdArrowBack />}
                                             variant="success"
-                                            className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
+                                            className="bg-primary hover:bg-secondary text-inherit font-bold p-3 w-72 h-12 mt-10"
                                             size="sm"
                                             onClick={() => navigate(`/Home`)}
                                             disabled={loading}
