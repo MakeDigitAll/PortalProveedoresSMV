@@ -32,27 +32,28 @@ import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { IoMdEye } from "react-icons/io";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch, MdShoppingCart, MdDelete, MdChecklist } from "react-icons/md";
+import { MdAddCircleOutline, MdSearch, MdShoppingCart, MdDelete, MdChecklist } from "react-icons/md";
 
 import Header from "../../components/header/headerC/Header";
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import useAuth from '../../hooks/useAuth'
 
 const Users = () => {
-
+  
   const axios = useAxiosPrivate()
   const { auth } = useAuth()
   const pvId = auth.ID
   const [isLoading, setIsLoading] = React.useState(true);
   const [users, setUsers] = React.useState([]);
+  const [usersW, setUsersW] = React.useState([]);
   const navigate = useNavigate()
   const [searchName, setSearchName] = React.useState("");
   const [searchPhone, setSearchPhone] = React.useState("");
   const [searchCity, setSearchCity] = React.useState("");
-
+  
   const [DelItem, setDelItem] = React.useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
+  
   useEffect(() => {
     async function fetch() {
       try {
@@ -63,25 +64,33 @@ const Users = () => {
               responseType: "blob",
             });
           })
-        );
-        const users = response.data.map((users, index) => {
-          const isNullBlob = images[index].data.size === 0;
-          const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
-          return {
-            ...users,
-            image,
-          };
-        });
-        setUsers(users);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
+          );
+          const users = response.data.map((users, index) => {
+            const isNullBlob = images[index].data.size === 0;
+            const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
+            return {
+              ...users,
+              image,
+            }; 
+          });
+          setUsers(users);
+
+          await axios.get(`/users/waiting/${pvId}`)
+          .then(response => {
+            if (response.data.length > 0) {
+              setUsersW(response.data)
+            }
+          });
+
+        } catch (error) {
+          console.log(error);
+          setIsLoading(false);
+        }
       }
-    }
-    fetch();
+      fetch();
   }, []);
-
-
+  
+  
   const columns = [
     {
       key: 'profileName',
@@ -350,48 +359,47 @@ const Users = () => {
         </ModalContent>
       </Modal>
 
-      <div className="flex justify-between items-center p-4 w-11/12 ml-20">
-        <div className="flex items-center">
-          <div className="flex items-center">
+      <div className="flex p-4 ml-20">
+        <div className="flex items-start justify-start text-start">
             <label className="text-base mr-10">Buscar por:</label>
             <Input
               startContent={<MdSearch />}
-              className="mr-10"
-              size="small"
+              className="mr-10 w-1/5"
               placeholder="Nombre del usuario"
               value={searchName}
-              width="300px"
+              size="small"
               onChange={(e) => setSearchName(e.target.value)}
             />
-          </div>
-          <div className="flex items-center">
             <Input
               startContent={<MdSearch />}
-              className="mr-10"
+              className="mr-10 w-1/5"
               value={searchPhone}
               placeholder="Teléfono"
               size="small"
-              width="300px"
               onChange={(e) => setSearchPhone(e.target.value)}
             />
-          </div>
-          <div className="flex items-center">
             <Input
               startContent={<MdSearch />}
-              className="mr-10"
+              className="mr-10 w-1/5"
               value={searchCity}
               placeholder="Ciudad"
               size="small"
               width="300px"
               onChange={(e) => setSearchCity(e.target.value)}
             />
-          </div>
         </div>
-        <div className="flex items-center">
+        <div className="flex justify-end text-right items-end">
+          <Button
+            startContent={<MdAddCircleOutline />}
+            className="mr-10"
+            onClick={() => navigate(`/users/Waiting`)}
+          >
+            Agregar
+          </Button>
           <Button
             auto
             startContent={<TbPlus />}
-            className="mr-10 text-inherit bg-primary"
+            className="text-inherit bg-primary"
             size="small"
             variant="success"
             onClick={() => navigate(`/users/New`)}
@@ -407,10 +415,10 @@ const Users = () => {
         </div>
       ) : (
         <div className="flex justify-between items-center w-11/12 ml-20 mt-20">
-          <Table aria-label="Example table with dynamic content" color="foreground"
-            classNames={{
-              wrapper: "w-full max-h-[500px]",
-            }}>
+          <Table aria-label="Example table with dynamic content" color="foreground" 
+          classNames={{
+            wrapper: "w-full max-h-[500px]",
+          }}>
             <TableHeader
               columns={columns}
             >
@@ -419,7 +427,7 @@ const Users = () => {
             <TableBody items={filterUsers(users)}
               emptyContent={
                 users.length === 0 ? (
-                  "No users found"
+                  "No users found" 
                 ) : (
                   <Spinner label="Cargando" />
                 )
