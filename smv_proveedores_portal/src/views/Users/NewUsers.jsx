@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../../components/header/Header';
-import Footer from '../../components/footer/Footer'
 import { useNavigate, useParams } from 'react-router-dom';
+import Header from '../../components/header/headerC/Header';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { MdHomeFilled, MdSettings, MdSave, MdArrowBack } from 'react-icons/md';
+import { MdSettings, MdSave, MdArrowBack } from 'react-icons/md';
 import { RiDashboard2Fill } from 'react-icons/ri';
 import { MdShoppingCart } from "react-icons/md";
-import { CircularProgress } from '@mui/material';
 import { ToastContainer, toast } from "react-toastify";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
-import { Input, Button, Link, Spinner } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
+import { Input, Button, Link, Spinner, ScrollShadow } from "@nextui-org/react";
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 import '../../App.css';
@@ -549,6 +548,7 @@ const NewUsers = () => {
         };
 
         return (
+
             <Dropdown
                 backdrop="blur"
             >
@@ -562,6 +562,7 @@ const NewUsers = () => {
                         {user.state || 'Selecciona un estado'}
                     </Button>
                 </DropdownTrigger>
+
                 <DropdownMenu
                     aria-label="Single selection example"
                     variant="flat"
@@ -570,6 +571,7 @@ const NewUsers = () => {
                     selectedKeys={value}
                     onSelectionChange={handleStateChange}
                 >
+
                     <DropdownSection>
                         {orderCountries[country].map((state) => (
                             <DropdownItem key={state} value={state}>
@@ -684,76 +686,76 @@ const NewUsers = () => {
                         )}
                     </div>
                     <div className='flex flex-col justify-center items-center w-2/4 h-full mr-10'>
-                        <div className="flex text-center justify-center">
-                            <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label="Nombre del usuario"
-                                labelPlacement='outside'
-                                placeholder='Nombre del usuario'
-                                name='profileName'
-                                value={user.profileName}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mt-4 mr-4"
-                                label="Dirección"
-                                labelPlacement='outside'
-                                placeholder='Dirección'
-                                name='address'
-                                value={user.address}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mr-4 mt-4"
-                                label="Colonia"
-                                labelPlacement='outside'
-                                placeholder='Colonia'
-                                name='col'
-                                value={user.col}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                            <Input
-                                className="w-60 mt-4 mr-4"
-                                label="Ciudad"
-                                labelPlacement='outside'
-                                placeholder='Ciudad'
-                                name='city'
-                                value={user.city}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <Input
-                                className="w-60 mt-4 mr-4"
-                                type='number'
-                                label="Código Postal"
-                                labelPlacement='outside'
-                                placeholder='Código Postal'
-                                name='postalCode'
-                                value={user.postalCode}
-                                onChange={handleChange}
-                                disabled={isInputDisabled}
-                            />
-                        </div>
-                        <div className="flex align-middle justify-center">
-                            <label className="text-foreground font-bold text-lg text-center mt-4">País y Estado</label>
-                        </div>
-                        <div className="flex items-center">
-                            <CountryDropdown value={user.country} />
-                            {user.country !== '' && (
-                                <div className='flex text-center'>
-                                    <StateDropdown country={user.country} value={user.state} />
+                        <Card className="px-10">
+                            <CardHeader className="flex justify-center">
+                                <div className="flex text-center justify-center">
+                                    <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
                                 </div>
-                            )}
+                            </CardHeader>
+                            <CardBody>
+                                <div className="flex items-center">
+                                    <Input
+                                        className="w-60 mr-4 mt-4"
+                                        label="Nombre del usuario"
+                                        labelPlacement='outside'
+                                        name='profileName'
+                                        isRequired
+                                        value={user.profileName}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                    <Input
+                                        className="w-60 mt-4 mr-4"
+                                        label="Dirección"
+                                        labelPlacement='outside'
+                                        name='address'
+                                        value={user.address}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                </div>
+                                <div className="flex items-center">
+                                    <Input
+                                        className="w-60 mr-4 mt-4"
+                                        label="Colonia"
+                                        labelPlacement='outside'
+                                        name='col'
+                                        value={user.col}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                    <Input
+                                        className="w-60 mt-4 mr-4"
+                                        label="Ciudad"
+                                        labelPlacement='outside'
+                                        name='city'
+                                        value={user.city}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                </div>
+                                <div className="flex items-center">
+                                    <Input
+                                        className="w-60 mt-4 mr-4"
+                                        type='number'
+                                        label="Código Postal"
+                                        labelPlacement='outside'
+                                        name='postalCode'
+                                        value={user.postalCode}
+                                        onChange={handleChange}
+                                        disabled={isInputDisabled}
+                                    />
+                                </div>
+                                <div className="flex align-middle justify-center">
+                                    <label className="text-foreground font-bold text-lg text-center mt-4">País y Estado</label>
+                                </div>
+                                <div className="flex items-center">
+                                    <CountryDropdown value={user.country} />
+                                    {user.country !== '' && (
+                                        <div className='flex text-center'>
+                                            <StateDropdown country={user.country} value={user.state} />
+                                        </div>
+                                    )}
 
                         </div>
                         <div className="flex align-middle justify-center">
@@ -848,5 +850,5 @@ const NewUsers = () => {
     );
 };
 
-export default NewUsers;
-
+export default NewUsers
+s

@@ -14,7 +14,8 @@ const {
        getWaitingUsers,
        getAllUsers,
        confirmationUser,
-       declineUser
+       declineUser,
+       getProfileUser
 } = require('../controllers/usersController');
 
 
@@ -26,6 +27,8 @@ router.get('/users/all/:pvId', getAllUsers);
 router.get('/users/waiting/:pvId', getWaitingUsers);
 
 router.get('/users/permissions/:id', getPermissionsById);
+
+router.get('/users/profile/:id', getProfileUser);
 
 
 // // Routes POST

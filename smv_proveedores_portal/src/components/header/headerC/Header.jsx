@@ -12,14 +12,14 @@ import {
   DropdownSection,
   User,
 } from "@nextui-org/react";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import useLogout from "../../../hooks/useLogout";
 import { RiMoonLine, RiNotification4Fill, RiSunLine } from "react-icons/ri";
 import { TbWorld } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
-import axiosInstance from '../../axios/axios';
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
 const lngs = {
   En: { nativeName: "English" },
@@ -27,6 +27,7 @@ const lngs = {
 };
 const Header = () => {
   const LogOut = useLogout();
+  const axios = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
   const [selectedKeys, setSelectedKeys] = React.useState(i18n.language);
@@ -49,7 +50,7 @@ const Header = () => {
   //-------------------------------------------------------------------------------------
   async function getImg() {
     try {
-      const responseImg = await axiosInstance.get(`/users/image/${auth.userId}`, {
+      const responseImg = await axios.get(`/users/image/${auth.userId}`, {
         responseType: 'blob',
       });
       const img = responseImg?.data;
@@ -69,13 +70,13 @@ const Header = () => {
   //-------------------------------------------------------------------------------------
 
 
-  const navigate = useNavigate();
+ //const navigate = useNavigate();
 
   return (
     <header className="bg-background shadow-md">
       <div
         className="flex flex-row items-center justify-between"
-        style={{ marginLeft: "80px", marginRight: "80px", marginTop: '15px' }}
+        style={{ marginLeft: "80px", marginRight: "80px"}}
       >
         <div className="items-start">
           {imgLogo ? (
@@ -97,40 +98,6 @@ const Header = () => {
           )}
         </div>
         <div className="flex flex-wrap place-content-end space-1">
-          <Badge
-            content="10"
-            shape="circle"
-            color="danger"
-            style={{ marginRight: "5px", marginTop: "2px" }}
-          >
-            <Dropdown placement="bottom-end">
-              <DropdownTrigger>
-                <Button
-                  size="sm"
-                  radius="full"
-                  isIconOnly
-                  aria-label="more than 99 notifications"
-                  variant="light"
-                >
-                  <RiNotification4Fill size={16} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Profile Actions"
-                variant="flat"
-                textValue=""
-              >
-                <DropdownItem key="profile" className="h-14 gap-2">
-                  <p className="font-semibold">
-                    {auth.username ? auth.username : "Usuario"}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {auth.ID ? auth.ID : "ID"}
-                  </p>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </Badge>
           <Dropdown
             showArrow
             radius="sm"
@@ -174,9 +141,9 @@ const Header = () => {
                     }}
                   />
                 </DropdownItem>
-                <DropdownItem key="settings" onPress={() => navigate(`/Profile`)}>
+                {/* <DropdownItem key="settings" onPress={() => navigate(`/Profile`)}>
                   {t("Perfil")}
-                </DropdownItem>
+                </DropdownItem> */}
               </DropdownSection>
 
               <DropdownSection aria-label="Preferences" showDivider>

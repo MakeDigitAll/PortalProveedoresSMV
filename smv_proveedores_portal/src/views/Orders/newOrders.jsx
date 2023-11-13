@@ -477,11 +477,11 @@ const NewOrders = () => {
             let url = window.location.pathname;
             let arr = url.split('/');
             if (arr[2] === 'Edit') {
-                setVariable('Editar producto');
+                setVariable('Editar pedido');
                 setIsInputDisabled(false);
             }
             if (arr[2] === 'View') {
-                setVariable('Ver producto');
+                setVariable('Ver pedido');
                 setIsInputDisabled(true);
             }
         } catch (error) {
@@ -881,7 +881,7 @@ const NewOrders = () => {
                                 <TableCell className='text-center'>${(order.subTotal * (order.discount / 100)).toFixed(2) || 0}</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell className='text-right'>Impuestos</TableCell>
+                                <TableCell className='text-right'>Impuestos (16%)</TableCell>
                                 <TableCell className='text-center'>${(order.total * 0.16).toFixed(2) || '0.00'}</TableCell>
                             </TableRow>
                             <TableRow>

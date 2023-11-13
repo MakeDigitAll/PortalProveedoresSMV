@@ -352,14 +352,14 @@ const Products = () => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    backgroundColor: "#535353",
+                    backgroundColor: "inherit",
                   }}
                 >
                   <Button
                     startContent={<TbDotsVertical />}
                     size="sm"
                     variant="success"
-                    color="foreground"
+                    color="inherit"
                     auto
                   />
                 </DropdownTrigger>

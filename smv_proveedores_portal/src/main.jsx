@@ -9,7 +9,7 @@ import { AuthProvider } from './components/Protection/AuthProvider';
 import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  //<React.StrictMode>
     <AuthProvider>
       <NextUIProvider>
         <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem={true}>
@@ -17,5 +17,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </NextThemesProvider>
       </NextUIProvider>
     </AuthProvider>
-  </React.StrictMode>
+  //</React.StrictMode>
 );

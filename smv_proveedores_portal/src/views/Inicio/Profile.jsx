@@ -1,28 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Card,
-    Spacer,
-    Button,
-    CardBody,
-    Image,
-    Checkbox,
-    Link,
-    CardHeader,
-    Spinner,
-    Input,
-    Divider,
-    CardFooter,
-} from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
+import { Input, Button, Link, Spinner } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { RiDashboard2Fill, RiPencilLine } from "react-icons/ri";
-import { MdArrowDropDown, MdSearch, MdShoppingCart, MdDelete, MdChecklist } from "react-icons/md";
+import { MdArrowBack, MdSave } from "react-icons/md";
 import Header from "../../components/header/headerC/Header";
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import useAuth from '../../hooks/useAuth';
 import '../../App.css';
+import ba from '../../../public/Blank-Avatar.png';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+
+
 
 const Profile = () => {
     const { auth } = useAuth();
@@ -553,8 +545,20 @@ const Profile = () => {
         const getData = async () => {
             try {
                 await getImageUser();
-                const response = await axios.get(`/pv/${auth.userId}`);
-                setData(response.data);
+                const response = await axios.get(`/users/profile/${auth.userId}`);
+                console.log(response.data);
+                setUser({
+                    profileName: response.data.profileName || response.data.providerName,
+                    address: response.data.address,
+                    col: response.data.col,
+                    city: response.data.city,
+                    postalCode: response.data.postalCode,
+                    country: response.data.country,
+                    state: response.data.state,
+                    contact: response.data.contact,
+                    phone: response.data.phone,
+                    email: response.data.email,
+                });
                 setLoading(false);
             }
             catch (error) {
@@ -562,15 +566,13 @@ const Profile = () => {
             }
         }
         getData();
-    }
-        , []);
+    }, []);
 
     const getImageUser = async () => {
         try {
             axios.get(`/users/image/${auth.userId}`, {
                 responseType: 'blob',
             }).then(response => {
-                console.log(response.data.size);
                 if (response.data.size !== 0) {
                     setImage(response.data);
                 }
@@ -582,14 +584,10 @@ const Profile = () => {
         }
     }
 
-    const handleImage = (e) => {
-        setImage(e.target.files[0]);
-    }
-
-    const handleUpdateImage = async () => {
+    const handleImage = async (e) => {
         try {
             const formData = new FormData();
-            formData.append('image', image);
+            formData.append('image', e.target.files[0]);
             await axios.put(`/users/image/${auth.userId}`, formData);
             toast.success('Imagen actualizada');
             getImageUser();
@@ -851,8 +849,8 @@ const Profile = () => {
                     </div>
                 </div>
             )}
-        </div >
-    );
+        </div>
+    )
 }
 
 export default Profile;

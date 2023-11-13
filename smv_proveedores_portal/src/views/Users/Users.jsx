@@ -75,7 +75,6 @@ const Users = () => {
           setUsers(users);
           setIsLoading(false);
         } catch (error) {
-          console.log(error);
           setIsLoading(false);
         }
       }
@@ -219,14 +218,14 @@ const Users = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  backgroundColor: "#292831",
+                  backgroundColor: "inherit",
                 }}
               >
                 <Button
                   startContent={<TbDotsVertical />}
                   size="sm"
                   variant="success"
-                  color="foreground"
+                  color="inherit"
                   auto
                 />
               </DropdownTrigger>
@@ -360,6 +359,7 @@ const Users = () => {
               startContent={<MdSearch />}
               className="mr-10"
               placeholder="Nombre del usuario"
+              value={searchName}
               size="large"
               width="300px"
               onChange={(e) => setSearchName(e.target.value)}
@@ -369,6 +369,7 @@ const Users = () => {
             <Input
               startContent={<MdSearch />}
               className="mr-10"
+              value={searchPhone}
               placeholder="Teléfono"
               size="large"
               width="300px"
@@ -379,6 +380,7 @@ const Users = () => {
             <Input
               startContent={<MdSearch />}
               className="mr-10"
+              value={searchCity}
               placeholder="Ciudad"
               size="large"
               width="300px"

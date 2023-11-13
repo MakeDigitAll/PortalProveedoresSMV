@@ -411,3 +411,17 @@ END;
 
 $$ LANGUAGE plpgsql;
 
+
+
+
+--base de datos de prueba de conexion a otra base de datos
+
+create database prueba1;
+
+create table "prueba1" (
+    "id" serial primary key,
+    "name" varchar(100) not null,
+    "created_At" timestamp default current_timestamp,
+    "updated_At" timestamp default current_timestamp,
+    "isDeleted" boolean default false
+);

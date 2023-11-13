@@ -16,11 +16,11 @@ export default {
       light: {
         layout: {}, // light theme layout tokens
         colors: {
-          foreground: "#11181C",
-          background: "#D9D9D9",
-          primary: "#C86464",
+          foreground: "#333333",
+          background: "#f4f0dd",
+          primary: "#F8F282",
           secondary: "#969696",
-          accent: "#33292B",
+          accent: "#FF6347",
           highlight: "#0DB3FF",
           muted: "#797D7F",
           success: "#ffffff",
@@ -30,7 +30,7 @@ export default {
           divider: "#16160B",
           overlay: "#0C0C09",
           focus: "#56D4FF",
-          content1: "#BDBDBD",
+          content1: "#B9B78C",
           content2: "#585858",
           content3: "#2E2E2E",
           content4: "#1C1C1C",
@@ -39,12 +39,12 @@ export default {
       dark: {
         layout: {}, // dark theme layout tokens
         colors: {
-          foreground: "#ECEDEE",
+          foreground: "#FFFFFF",
           background: "#1A1A1A",
-          primary: "#FC2E61",
-          secondary: "#2900B4",
-          accent: "#8300B4",
-          highlight: "#B4008B",
+          primary: "#8E7B32",
+          secondary: "#645c3c",
+          accent: "#F9F382",
+          highlight: "#FF6347",
           muted: "#B42900",
           success: "#468e32",
           info: "#000000",
@@ -53,8 +53,8 @@ export default {
           divider: "#C8C8C8",
           overlay: "#0A0A0A",
           focus: "#000000",
-          content1: "#212121",
-          content2: "#000000",
+          content1: "#333333",
+          content2: "#CCCCCC",
           content3: "#000000",
           content4: "#000000",
         }, // dark theme colors
