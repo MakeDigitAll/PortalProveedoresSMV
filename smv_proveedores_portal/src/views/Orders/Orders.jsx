@@ -446,15 +446,14 @@ const Orders = () => {
                         {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
                     </TableHeader>
                     <TableBody items={handlerSearch(order)}
-                        isLoading={isLoading}
                         emptyContent={
                             order.length === 0 ? (
+                                "No orders found" 
+                              ) : (
                                 <Spinner label="Cargando" />
-                            ) : (
-                                "No products found"
-                            )
-                        }
-                    >
+                              )
+                            }
+                          >
                         {(item) => (
                             <TableRow key={item.id}>
                                 {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

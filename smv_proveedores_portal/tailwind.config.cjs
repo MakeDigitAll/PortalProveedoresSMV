@@ -46,7 +46,7 @@ export default {
           accent: "#8300B4",
           highlight: "#B4008B",
           muted: "#B42900",
-          success: "#000000",
+          success: "#468e32",
           info: "#000000",
           warning: "#000000",
           error: "#B40031",

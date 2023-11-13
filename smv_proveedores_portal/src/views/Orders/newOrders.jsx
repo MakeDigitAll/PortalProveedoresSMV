@@ -24,8 +24,9 @@ import '../../App.css';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
+
 const almacenes = [
-    { value: 'Almacen 1', label: 'Almacen 1', deliveryData: 'Informacion de envio1' },
+    { value: 'Almacen 1', label: 'Almacen 1', deliveryData: 'Numero de seguimiento: 1234567890, Estado de envio: En transito, Fecha de envio: 2023-11-12,Dirección de Envío: 123 Calle Principal, Ciudad Ejemplo, País, Método de Envío: Express, Información del Transportista: Transporte Rápido SA, Costo de Envío: $15.00, Notas de Envío: Dejar en la puerta si no hay respuesta. Historial de Eventos: 2023-11-12: Recibido en almacén de envío. | 2023-11-13: En ruta hacia la ubicación de entrega. | 2023-11-14: Entregado con éxito a la dirección especificada.'},
     { value: 'Almacen 2', label: 'Almacen 2', deliveryData: 'Informacion de envio2' },
     { value: 'Almacen 3', label: 'Almacen 3', deliveryData: 'Informacion de envio3' },
     { value: 'Almacen 4', label: 'Almacen 4', deliveryData: 'Informacion de envio4' },
@@ -63,7 +64,7 @@ const NewOrders = () => {
         deliveryData: "",
         fulfilled: false,
         paymentMethod: "" || "Transferencia/Deposito",
-        comments: "" || "--comentarios del pedido--",
+        comments: "",
     });
 
     const [products, setProducts] = useState([]);
@@ -418,7 +419,6 @@ const NewOrders = () => {
                 return (
                     <div className="flex items-center text-center w-1/2">
                         <Input
-                            type="number"
                             value={products.quantity}
                             onChange={(event) => handleQuantityChange(products.id, event.target.value)}
                             name="quantity"
@@ -770,10 +770,12 @@ const NewOrders = () => {
                         </Dropdown>
                     </div>
                     <div>
-                        <label className="text-sm text-gray-500">Descuento</label>
+                        <label className="text-sm text-success">Descuento</label>
                         <Input
                             className='w-full'
-                            type="number"
+                            color='success'
+                            size='sm'
+                            variant='bordered'
                             endContent="%"
                             placeholder='0 - 100'
                             value={order.discount}

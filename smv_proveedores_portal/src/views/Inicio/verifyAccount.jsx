@@ -21,13 +21,13 @@ const VerifyAccount = (props) => {
     useEffect(() => {
         const verifyAccount = async () => {
             try {
-                const response = await axiosInstance.post(`/users/${params.id}/verify/${params.token}`);
+                const response = await axiosInstance.post(`/smv/${params.id}/verify/${params.token}`);
                 if (response.status === 200) {
                     setValidUrl(true);
                     toast.success("¡Cuenta verificada correctamente!", {
                         position: "bottom-right",
                         hideProgressBar: false,
-                        closeOnClick: true,
+                        closeOnClick: true, 
                         pauseOnHover: true,
                         draggable: true,
                         progress: undefined,

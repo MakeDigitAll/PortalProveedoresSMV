@@ -10,7 +10,7 @@ import { MdShoppingCart } from "react-icons/md";
 import { CircularProgress } from '@mui/material';
 import { ToastContainer, toast } from "react-toastify";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
-import { Input, Button, Link, Spinner } from "@nextui-org/react"; 
+import { Input, Button, Link, Spinner } from "@nextui-org/react";
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 import '../../App.css';
@@ -81,6 +81,10 @@ const NewUsers = () => {
     const validateEmail = (value) => {
         return value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
     };
+
+    const validatePhone = (value) => {
+        return value.match(/^[0-9]{11}$/);
+    }
 
     //-------------------------------------------------------------Validaciones de campos---------------------------------------------
 
@@ -332,7 +336,18 @@ const NewUsers = () => {
                 }
             }).then(response => {
                 if (response.status === 200) {
-                    toast.success('Usuario actualizado');
+                    toast.success('Usuario actualizado',
+                        {
+                            position: "bottom-right",
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            autoClose: 10000,
+                            theme: "colored",
+                        }
+                    );
                     setLoading(false);
                     navigate('/users', { replace: true });
                 }
@@ -417,7 +432,7 @@ const NewUsers = () => {
                 }
                 break;
             case 'phone':
-                if (value.length > 10 || value.length < 0) {
+                if (validatePhone(value)) {
                     return;
                 }
                 break;
@@ -749,18 +764,18 @@ const NewUsers = () => {
                                 className="w-60 mr-4 mt-4"
                                 label="Contacto"
                                 labelPlacement='outside'
-                                placeholder='Contacto'
                                 name='contact'
+                                isRequired
                                 value={user.contact}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
                             <Input
                                 className="w-60 mt-4 mr-4"
+                                isRequired
                                 label="Teléfono"
-                                type='number'
+                                type="number"
                                 labelPlacement='outside'
-                                placeholder='Teléfono'
                                 name='phone'
                                 value={user.phone}
                                 onChange={handleChange}
@@ -770,22 +785,25 @@ const NewUsers = () => {
                         <div className="flex items-center">
                             <Input
                                 className="w-60 mr-4 mt-4"
+                                type='email'
                                 label="Correo electrónico"
                                 labelPlacement='outside'
-                                placeholder='Correo electrónico'
                                 name='email'
+                                isRequired
                                 value={user.email}
                                 onChange={handleChange}
                                 disabled={isInputDisabled}
                             />
                         </div>
+                    </CardBody>
+                    <CardFooter className="flex justify-center">
                         {!isInputDisabled && (
                             <div className="flex justify-center mt-4">
                                 <Button
                                     auto
                                     startContent={<MdSave />}
                                     variant="success"
-                                    className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
+                                    className="bg-primary hover:bg-secondary  text-inherit font-bold p-3 w-72 h-12 mt-10"
                                     size="sm"
                                     onClick={handleSubmit}
                                     disabled={loading}
@@ -800,7 +818,7 @@ const NewUsers = () => {
                                     auto
                                     startContent={<MdArrowBack />}
                                     variant="success"
-                                    className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
+                                    className="bg-primary hover:bg-secondary text-inherit font-bold p-3 w-72 h-12 mt-10"
                                     size="sm"
                                     onClick={() => navigate(`/users`)}
                                     disabled={loading}
@@ -810,10 +828,23 @@ const NewUsers = () => {
 
                             </div>
                         )}
+                        </CardFooter>
+                        </CardBody>
+                        </Card>
+                        </div>
+                        
+                        </div>
+
+
                     </div>
+
+                    <div className="flex justify-center mt-4">
                 </div>
-            )}
-        </div>
+                </div>
+                
+    )
+}
+        </div >
     );
 };
 

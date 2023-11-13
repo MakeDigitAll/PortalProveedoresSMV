@@ -33,7 +33,8 @@ const handleNewUser = async (req, res) => {
 
             const hashedPassword = await encryptPassword(password);
             const result = await pool.query('INSERT INTO "userAuth" ("userName", "password", "isPasswordModified") VALUES ($1, $2, $3) RETURNING *', [username, hashedPassword, true]);
-            await pool.query('INSERT INTO "distributorsProfile" ("distributorId", "distributorName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, 'nombreProvisional', 'direccionProvisional', 'colProvisional', 'ciudadProvisional', 'estadoProvisional', 'cpProvisional', 'paisProvisional', 'contactoProvisional', '4920000000', username]);
+            await pool.query('INSERT INTO "UsersProfile" ("profileId", "profileName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, 'nombreProvisional', 'direccionProvisional', 'colProvisional', 'ciudadProvisional', 'Zacatecas', '98000', 'México', 'contactoProvisional', '4920000000', username]);
+            await pool.query('INSERT INTO "userImages" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
 
             //---------------------------------------------------------------------------------------- Asignacion de permisos
 
