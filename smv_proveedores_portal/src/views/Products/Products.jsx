@@ -368,7 +368,6 @@ const Products = () => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    backgroundColor: "#292831",
                   }}
                 >
                   <DropdownSection title="Acciones"

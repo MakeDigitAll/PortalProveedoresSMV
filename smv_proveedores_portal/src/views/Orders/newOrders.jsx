@@ -63,7 +63,7 @@ const NewOrders = () => {
         deliveryData: "",
         fulfilled: false,
         paymentMethod: "" || "Transferencia/Deposito",
-        comments: "" || "--comentarios del pedido--",
+        comments: "",
     });
 
     const [products, setProducts] = useState([]);

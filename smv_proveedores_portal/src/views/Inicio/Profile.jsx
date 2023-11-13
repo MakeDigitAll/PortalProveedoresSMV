@@ -19,6 +19,7 @@ import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 const Profile = () => {
     const { auth } = useAuth();
     const navigate = useNavigate();
+    const [isInputDisabled, setIsInputDisabled] = useState(true);
     const [image, setImage] = useState(null);
     const [user, setUser] = useState({
         profileName: '',
@@ -103,7 +104,7 @@ const Profile = () => {
             >
                 <DropdownTrigger>
                     <Button
-                        className="w-60 mr-4 mt-4"
+                        className="w-60 mr-4 my-4"
                         placeholder='País'
                         name='country'
                         isDisabled={isInputDisabled}
@@ -144,7 +145,7 @@ const Profile = () => {
             >
                 <DropdownTrigger>
                     <Button
-                        className="w-60 mr-4 mt-4"
+                        className="w-60 mr-4 my-4"
                         placeholder='Estado'
                         name='state'
                         isDisabled={isInputDisabled}
@@ -325,7 +326,7 @@ const Profile = () => {
                             <CardBody>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mr-4 mt-4"
+                                        className="w-60 mr-4 my-4"
                                         label="Nombre del usuario"
                                         labelPlacement='outside'
                                         placeholder='Nombre del usuario'
@@ -336,7 +337,7 @@ const Profile = () => {
                                         disabled={isInputDisabled}
                                     />
                                     <Input
-                                        className="w-60 mt-4 mr-4"
+                                        className="w-60 my-4 mr-4"
                                         label="Dirección"
                                         labelPlacement='outside'
                                         placeholder='Dirección'
@@ -348,7 +349,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mr-4 mt-4"
+                                        className="w-60 mr-4 my-4"
                                         label="Colonia"
                                         labelPlacement='outside'
                                         placeholder='Colonia'
@@ -358,7 +359,7 @@ const Profile = () => {
                                         disabled={isInputDisabled}
                                     />
                                     <Input
-                                        className="w-60 mt-4 mr-4"
+                                        className="w-60 my-4 mr-4"
                                         label="Ciudad"
                                         labelPlacement='outside'
                                         placeholder='Ciudad'
@@ -370,7 +371,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mt-4 mr-4"
+                                        className="w-60 my-4 mr-4"
                                         type='number'
                                         label="Código Postal"
                                         labelPlacement='outside'
@@ -398,7 +399,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mr-4 mt-4"
+                                        className="w-60 mr-4 my-4"
                                         label="Contacto"
                                         labelPlacement='outside'
                                         placeholder='Contacto'
@@ -408,7 +409,7 @@ const Profile = () => {
                                         disabled={isInputDisabled}
                                     />
                                     <Input
-                                        className="w-60 mt-4 mr-4"
+                                        className="w-60 my-4 mr-4"
                                         label="Teléfono"
                                         type='number'
                                         labelPlacement='outside'
@@ -421,7 +422,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mr-4 mt-4"
+                                        className="w-60 mr-4 my-4"
                                         label="Correo electrónico"
                                         labelPlacement='outside'
                                         placeholder='Correo electrónico'
@@ -450,7 +451,7 @@ const Profile = () => {
                                     </div>
                                 )}
                                 {!isInputDisabled && (
-                                    <div className="flex justify-center mt-4">
+                                    <div className="flex justify-center my-4">
                                         <Button
                                             auto
                                             startContent={<MdArrowBack />}

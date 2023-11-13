@@ -39,7 +39,7 @@ import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import useAuth from '../../hooks/useAuth'
 
 const Users = () => {
-  
+
   const axios = useAxiosPrivate()
   const { auth } = useAuth()
   const pvId = auth.ID
@@ -49,10 +49,10 @@ const Users = () => {
   const [searchName, setSearchName] = React.useState("");
   const [searchPhone, setSearchPhone] = React.useState("");
   const [searchCity, setSearchCity] = React.useState("");
-  
+
   const [DelItem, setDelItem] = React.useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  
+
   useEffect(() => {
     async function fetch() {
       try {
@@ -63,25 +63,25 @@ const Users = () => {
               responseType: "blob",
             });
           })
-          );
-          const users = response.data.map((users, index) => {
-            const isNullBlob = images[index].data.size === 0;
-            const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
-            return {
-              ...users,
-              image,
-            }; 
-          });
-          setUsers(users);
-          setIsLoading(false);
-        } catch (error) {
-          setIsLoading(false);
-        }
+        );
+        const users = response.data.map((users, index) => {
+          const isNullBlob = images[index].data.size === 0;
+          const image = isNullBlob ? null : URL.createObjectURL(images[index].data);
+          return {
+            ...users,
+            image,
+          };
+        });
+        setUsers(users);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
       }
-      fetch();
+    }
+    fetch();
   }, []);
-  
-  
+
+
   const columns = [
     {
       key: 'profileName',
@@ -234,7 +234,6 @@ const Users = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  backgroundColor: "#292831",
                 }}
               >
                 <DropdownSection title="Acciones"
@@ -358,9 +357,9 @@ const Users = () => {
             <Input
               startContent={<MdSearch />}
               className="mr-10"
+              size="small"
               placeholder="Nombre del usuario"
               value={searchName}
-              size="large"
               width="300px"
               onChange={(e) => setSearchName(e.target.value)}
             />
@@ -371,7 +370,7 @@ const Users = () => {
               className="mr-10"
               value={searchPhone}
               placeholder="Teléfono"
-              size="large"
+              size="small"
               width="300px"
               onChange={(e) => setSearchPhone(e.target.value)}
             />
@@ -382,7 +381,7 @@ const Users = () => {
               className="mr-10"
               value={searchCity}
               placeholder="Ciudad"
-              size="large"
+              size="small"
               width="300px"
               onChange={(e) => setSearchCity(e.target.value)}
             />
@@ -408,10 +407,10 @@ const Users = () => {
         </div>
       ) : (
         <div className="flex justify-between items-center w-11/12 ml-20 mt-20">
-          <Table aria-label="Example table with dynamic content" color="foreground" 
-          classNames={{
-            wrapper: "w-full max-h-[500px]",
-          }}>
+          <Table aria-label="Example table with dynamic content" color="foreground"
+            classNames={{
+              wrapper: "w-full max-h-[500px]",
+            }}>
             <TableHeader
               columns={columns}
             >
@@ -420,7 +419,7 @@ const Users = () => {
             <TableBody items={filterUsers(users)}
               emptyContent={
                 users.length === 0 ? (
-                  "No users found" 
+                  "No users found"
                 ) : (
                   <Spinner label="Cargando" />
                 )
