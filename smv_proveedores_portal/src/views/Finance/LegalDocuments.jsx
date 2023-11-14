@@ -11,7 +11,7 @@ const LegalDocuments = () => {
     const handleDocumentPreview = () => {
         // Code to display the uploaded document preview
     }
-
+ 
     return (
         <>
             <Breadcrumbs
@@ -21,7 +21,7 @@ const LegalDocuments = () => {
             >
                 <BreadcrumbItem href="/">Home</BreadcrumbItem>
                 <BreadcrumbItem href="/finance">Finance</BreadcrumbItem>
-                <BreadcrumbItem href="/finance/legal-documents">
+                <BreadcrumbItem href="/finance/LegalDocuments">
                     Legal Documents
                 </BreadcrumbItem>
             </Breadcrumbs>
