@@ -80,14 +80,17 @@ function App() {
         {
           path: "/Products/New",
           element: <NewProducts />,
+          errorElement: <Error404 />,
         },
         {
           path: "/Products/Edit/:id",
           element: <NewProducts />,
+          errorElement: <Error404 />,
         },
         {
           path: "/Products/View/:id",
           element: <NewProducts />,
+          errorElement: <Error404 />,
         },
       ],
     },
@@ -103,6 +106,7 @@ function App() {
         {
           path: "/Orders/Edit/:id",
           element: <NewOrders />,
+          errorElement: <Error404 />,
         },
         {
           path: "/Orders/View/:id",
@@ -127,18 +131,22 @@ function App() {
         { 
           path: "/users/New",
           element: <NewUsers />,
+          errorElement: <Error404 />,
         },
         {
           path: "/users/Edit/:id",
           element: <NewUsers />, 
+          errorElement: <Error404 />,
         },
         {
           path: "/users/Permissions/:id",
           element: <UsersPermissions />,
+          errorElement: <Error404 />,
         },
         {
           path: "/users/View/:id",
           element: <NewUsers />,
+          errorElement: <Error404 />,
         },
       ],
     },

@@ -24,14 +24,17 @@ const auth = async (req, res) => {
 
         const permission = await pool.query('SELECT * FROM "Permissions" WHERE "userId" = $1', [user.userId]);
 
-        const accessToken = jwt.sign({ username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID, status: permission.rows[0].estatus }, token.secretKey, { expiresIn: '10m' });
+        const respRoles = permission.rows[0].permission;
+        const cleanedString = respRoles.replace(/[{}"]/g, '');
+        const rol = cleanedString.split(',');
+
+        const accessToken = jwt.sign({ username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID, status: permission.rows[0].estatus, roles: rol }, token.secretKey, { expiresIn: '10m' });
 
         const refreshToken = jwt.sign({ username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID }, token.refreshTokenSecretKey, { expiresIn: '2h' });
 
         res.status(200).json({
           accessToken: accessToken,
-          refreshToken: refreshToken,
-          roles: permission.rows[0].permission,
+          refreshToken: refreshToken
         });
 
       } else {

@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Header from '../../components/header/Header';
 import Cookies from 'js-cookie';
+import * as jose from 'jose'
 
 
 import axiosInstance from '../../components/axios/axios';
@@ -109,10 +110,6 @@ const Login = () => {
 
             const accessToken = response?.data?.accessToken;
             const refreshToken = response?.data?.refreshToken;
-            const respRoles = response?.data?.roles;
-            const status = response?.data?.status;
-            const cleanedString = respRoles.replace(/[{}"]/g, '');
-            const roles = cleanedString.split(',');
 
             const expiracionAT = new Date();
             expiracionAT.setHours(expiracionAT.getMinutes() + 10);
@@ -122,9 +119,12 @@ const Login = () => {
 
             Cookies.set('rT', refreshToken, { expires: expiracionRT });
             Cookies.set('aT', accessToken, { expires: expiracionAT });
-            localStorage.setItem('r', roles);
 
-            setAuth( { accessToken, roles, status } );
+            const decoded = jose.decodeJwt(accessToken);
+
+            
+
+            setAuth( { accessToken, roles: decoded?.roles, isVerified: decoded?.isVerified, username: decoded?.username, userId: decoded?.userId } );
             navigate('/Home', { replace: true });
             setloading(false);
         } catch (err) {

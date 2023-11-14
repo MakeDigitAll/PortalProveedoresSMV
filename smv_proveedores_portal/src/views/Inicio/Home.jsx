@@ -23,8 +23,7 @@ import ba from "../../../public/Blank-Avatar.png";
 const Home = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
-  const r = auth.roles;
-  const permissions = r.split(",");
+  const permissions = auth.roles;
 
   //interfaz principal, del proveedor
   // Se encuentra el menú de opciones, que se despliega al dar click en el botón de opciones
