@@ -1,4 +1,3 @@
-import useAxiosPrivate from "./useAxiosPrivate";
 import useAuth from "./useAuth";
 import Cookies from "js-cookie";
 
@@ -9,6 +8,7 @@ const useLogout = () => {
         Cookies.remove("rT");
         Cookies.remove("aT");
         setAuth({});
+        
     };
 
     return logout;

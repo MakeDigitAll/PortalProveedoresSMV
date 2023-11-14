@@ -85,7 +85,7 @@ const Home = () => {
               Usuarios
             </Button>
           </motion.div>
-          <motion.div
+          {/* <motion.div
             className="w-full h-5/6 flex"
             whileHover={{ scale: 1.1 }}
           >
@@ -99,7 +99,7 @@ const Home = () => {
             >
               Facturación
             </Button>
-          </motion.div>
+          </motion.div> */}
           <motion.div
             className="w-full h-5/6 flex"
             whileHover={{ scale: 1.1 }}
@@ -115,7 +115,7 @@ const Home = () => {
               Finanzas
             </Button>
           </motion.div>
-          <motion.div
+          {/* <motion.div
             className="w-full h-5/6 flex"
             whileHover={{ scale: 1.1 }}
           >
@@ -129,7 +129,7 @@ const Home = () => {
             >
               Legales
             </Button>
-          </motion.div>
+          </motion.div> */}
         </div>
         {/* Se utiliza el componente de nextui, card, para mostrar la interfaz principal del proveedor */}
         <div className=" w-5/6 ml-10 flex flex-col">
@@ -137,7 +137,7 @@ const Home = () => {
             className="w-full flex-col justify-center items-center hidden lg:flex" 
             whileHover={{ scale: 1.1 }}
           >
-            <Card className="w-5/6 h-5/6">
+            <Card className="w-5/6 ml-20 h-5/6">
               <CardHeader>
                 <h2 className="text-2xl font-bold">Bienvenido al portal de proveedores SMV</h2>
               </CardHeader>

@@ -137,7 +137,7 @@ const Login = () => {
                     draggable: true,
                     progress: undefined,
                     autoClose: 5000,
-                    theme: "colored",
+                    theme: "colored", 
                 });
 
             setloading(false);

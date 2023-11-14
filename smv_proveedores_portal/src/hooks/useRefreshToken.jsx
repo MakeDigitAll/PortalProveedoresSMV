@@ -32,7 +32,7 @@ const useRefreshToken = () => {
                 }
             });
 
-            Cookies.set('aT', response.data.accessToken, { expires: 1 });
+            //Cookies.set('aT', response.data.accessToken, { expires: 1 });
 
             return response.data.accessToken;
             

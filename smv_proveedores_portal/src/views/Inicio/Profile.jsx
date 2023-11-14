@@ -184,7 +184,6 @@ const Profile = () => {
             try {
                 await getImageUser();
                 const response = await axios.get(`/users/profile/${auth.userId}`);
-                console.log(response.data);
                 setUser({
                     profileName: response.data.profileName || response.data.providerName,
                     address: response.data.address,
@@ -301,7 +300,7 @@ const Profile = () => {
                 </div>
             ) : (
                 <div className="flex flex-col justify-center text-center items-center w-full h-full lg:flex-row">
-                    <div class=" lg:mt-10 lg:mb-10 lg:mr-10 mb-10 mt-10 flex flex-col justify-center items-center w-2/4 h-full lg:ml-10">
+                    <div className=" lg:mt-10 lg:mb-10 lg:mr-10 mb-10 mt-10 flex flex-col justify-center items-center w-2/4 h-full lg:ml-10">
                         <img
                             className="w-96 h-96 rounded-full object-cover"
                             src={imagePreview || image || ba}
