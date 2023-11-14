@@ -8,13 +8,6 @@ const useLogout = () => {
     const logout = async () => {
         Cookies.remove("rT");
         Cookies.remove("aT");
-        localStorage.removeItem("r");
-        localStorage.removeItem("iV");
-        localStorage.removeItem("ID");
-        localStorage.removeItem("img");
-        localStorage.removeItem("username");
-        localStorage.removeItem("imgURL");
-
         setAuth({});
     };
 

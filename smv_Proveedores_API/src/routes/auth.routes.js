@@ -2,13 +2,16 @@ const { Router } = require("express")
 const router = Router();
 const refreshTokenController = require("../controllers/refreshTokenController");
 
-const { auth, updatePasswordAuth, deleteAuth, verifyEmail, resendVerifyEmail} = require('../controllers/authController');
+const { auth, updatePasswordAuth, deleteAuth, verifyEmail, resendVerifyEmail, getPermissionsAuth} = require('../controllers/authController');
 const  handleNewUser = require('../controllers/registerController');
 
 
 //---------------------------------------------------------------------------------------
 //                                         AUTH
 //---------------------------------------------------------------------------------------
+
+router.get('/permissions/:id', getPermissionsAuth);
+
 
 router.post('/login', auth);
 

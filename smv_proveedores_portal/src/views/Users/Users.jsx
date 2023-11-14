@@ -74,6 +74,7 @@ const Users = () => {
             }; 
           });
           setUsers(users);
+          setIsLoading(false);
 
           await axios.get(`/users/waiting/${pvId}`)
           .then(response => {
@@ -368,6 +369,8 @@ const Users = () => {
               placeholder="Nombre del usuario"
               value={searchName}
               size="small"
+              isClearable
+              onClear={() => setSearchName("")}
               onChange={(e) => setSearchName(e.target.value)}
             />
             <Input
@@ -376,6 +379,8 @@ const Users = () => {
               value={searchPhone}
               placeholder="Teléfono"
               size="small"
+              isClearable
+              onClear={() => setSearchPhone("")}
               onChange={(e) => setSearchPhone(e.target.value)}
             />
             <Input
@@ -385,6 +390,8 @@ const Users = () => {
               placeholder="Ciudad"
               size="small"
               width="300px"
+              isClearable
+              onClear={() => setSearchCity("")}
               onChange={(e) => setSearchCity(e.target.value)}
             />
         </div>

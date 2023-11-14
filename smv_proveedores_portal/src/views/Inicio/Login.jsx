@@ -41,7 +41,7 @@ const Login = () => {
         } catch (err) {
             console.log(err);
         }
-    }, [navigate, setAuth]);
+    }, [navigate]);
 
 
     // ---------------------------------------------------------------------------------------------
@@ -110,33 +110,25 @@ const Login = () => {
             const accessToken = response?.data?.accessToken;
             const refreshToken = response?.data?.refreshToken;
             const respRoles = response?.data?.roles;
-            const ID = response?.data?.ID;
-            const userId = response?.data?.userId;
-            const username = response?.data?.username;
-            const isVerified = response?.data?.isVerified;
+            const status = response?.data?.status;
             const cleanedString = respRoles.replace(/[{}"]/g, '');
             const roles = cleanedString.split(',');
 
-            localStorage.setItem('r', roles);
-            localStorage.setItem('iV', isVerified);
-            localStorage.setItem('ID', ID);
-            localStorage.setItem('username', username);
-            localStorage.setItem('userId', userId);
-
             const expiracionAT = new Date();
-            expiracionAT.setHours(expiracionAT.getHours() + 1);
+            expiracionAT.setHours(expiracionAT.getMinutes() + 10);
 
             const expiracionRT = new Date();
-            expiracionRT.setHours(expiracionRT.getHours() + 24);
+            expiracionRT.setHours(expiracionRT.getHours() + 2);
 
             Cookies.set('rT', refreshToken, { expires: expiracionRT });
             Cookies.set('aT', accessToken, { expires: expiracionAT });
+            localStorage.setItem('r', roles);
 
-            setAuth( { roles, isVerified, ID, username, userId, accessToken } );
-            navigate('/Home');
+            setAuth( { accessToken, roles, status } );
+            navigate('/Home', { replace: true });
             setloading(false);
         } catch (err) {
-            if (!err?.response) {
+            console.log(err);
                 toast.error(err.message, {
                     position: "bottom-right",
                     hideProgressBar: false,
@@ -147,31 +139,7 @@ const Login = () => {
                     autoClose: 5000,
                     theme: "colored",
                 });
-            } else if (err.response?.status === 400) {
-                toast.error(err.response.data.error, {
-                    position: "bottom-right",
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    autoClose: 5000,
-                    theme: "colored",
-                });
-            } else if (err.response?.status === 401) {
-                toast.error(err.response.data.error, { theme: 'colored' });
-            } else {
-                toast.warning('Error al conectarse con el servidor', {
-                    position: "bottom-right",
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    autoClose: 5000,
-                    theme: "colored",
-                });
-            }
+
             setloading(false);
         }
     }
@@ -233,6 +201,7 @@ const Login = () => {
                                             value={user.email}
                                             onChange={handleChange}
                                             isClearable
+                                            onClear={() => setUser({ ...user, email: "" })}
                                             size={"sm"}
                                             type="email"
                                             label="Email"
@@ -248,6 +217,7 @@ const Login = () => {
                                             value={user.password}
                                             onChange={handleChange}
                                             isClearable
+                                            onClear={() => setUser({ ...user, password: "" })}
                                             size={"sm"}
                                             type="password"
                                             label="password"
