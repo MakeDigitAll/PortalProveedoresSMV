@@ -356,6 +356,8 @@ const Orders = () => {
                     placeholder="Buscar por folio"
                     size="small"
                     width="300px"
+                    isClearable
+                    onClear={() => setSearchFolio('')}
                     onChange={(e) => setSearchFolio(e.target.value)}
                 />
                 <Input
@@ -365,6 +367,8 @@ const Orders = () => {
                     type="date"
                     size="small"
                     width="300px"
+                    isClearable
+                    onClear={() => setSearchDate('')}
                     onChange={(e) => setSearchDate(e.target.value)}
                 />
 

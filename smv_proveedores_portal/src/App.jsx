@@ -12,6 +12,9 @@ import Products from './views/Products/Products';
 import NewProducts from './views/Products/NewProducts';
 import NewOrders from './views/Orders/newOrders';
 import Orders from './views/Orders/Orders';
+import Invoices from "./views/Finance/Invoices";
+import Finances from "./views/Finance/Finances";
+import LegalDocuments from "./views/Finance/LegalDocuments";
 import Error404 from './views/Error/Error404';
 import Unauthorized from './views/Error/Unauthorized';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -47,6 +50,21 @@ function App() {
     {
       path: "/unauthorized",
       element: <Unauthorized />,
+      errorElement: <Error404 />,
+    },
+    {
+      path: "/Finances",
+      element: <Finances />,
+      errorElement: <Error404 />,
+    },
+    {
+      path: "/Invoices",
+      element: <Invoices />,
+      errorElement: <Error404 />,
+    },
+    {
+      path: "/LegalDocuments",
+      element: <LegalDocuments />,
       errorElement: <Error404 />,
     },
        {

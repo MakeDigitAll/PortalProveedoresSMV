@@ -109,7 +109,7 @@ const Home = () => {
               startContent={<FaDollarSign />}
               className="w-full py-10 my-5 text-2xl"
               color="primary"
-              onClick={() => navigate("/Finanzas")}
+              onClick={() => navigate("/Finances")}
               disabled={permissions.includes("4444") ? false : true}
             >
               Finanzas
