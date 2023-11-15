@@ -474,7 +474,8 @@ const NewOrders = () => {
                 paymentMethod: response.data.paymentMethod,
                 comments: response.data.comments,
             });
-            let productsOrder = response.data.productsOrder;
+            let productsOrder = response.data.productsOrder.map(product => JSON.parse(product));
+            setSelectedProducts(productsOrder)
             console.log(productsOrder);
 
             setEditing(true);
@@ -779,7 +780,7 @@ const NewOrders = () => {
                             className='w-full'
                             type="number"
                             endContent="%"
-                            placeholder='0 - 100'
+                            placeholder='0 - 100' 
                             value={order.discount}
                             onChange={handleOrderChange}
                             name="discount"

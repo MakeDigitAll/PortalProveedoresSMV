@@ -715,6 +715,12 @@ const NewProducts = () => {
             } catch (error) {
                 console.log(error);
             }
+        } else if (image1 === null && editing) {
+            try {
+                await axios.delete(`/products/image/${idpd}/1`);
+            } catch (error) {
+                console.log(error);
+            }
         } else {
             console.log('No se seleccionó imagen 1');
         }
@@ -734,6 +740,12 @@ const NewProducts = () => {
                 }).catch((error) => {
                     console.log(error);
                 });
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (image2 === null && editing) {
+            try {
+                await axios.delete(`/products/image/${idpd}/2`);
             } catch (error) {
                 console.log(error);
             }
@@ -759,6 +771,12 @@ const NewProducts = () => {
             } catch (error) {
                 console.log(error);
             }
+        } else if (image3 === null && editing) {
+            try {
+                await axios.delete(`/products/image/${idpd}/3`);
+            } catch (error) {
+                console.log(error);
+            }
         } else {
             console.log('No se seleccionó imagen 3');
         }
@@ -778,6 +796,12 @@ const NewProducts = () => {
                 }).catch((error) => {
                     console.log(error);
                 });
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (image4 === null && editing) {
+            try {
+                await axios.delete(`/products/image/${idpd}/4`);
             } catch (error) {
                 console.log(error);
             }
@@ -975,11 +999,6 @@ const NewProducts = () => {
         }
     }, [image1, image2, image3, image4, selectedImage]);
 
-
-    console.log(image1);
-    console.log(image2);
-    console.log(image3);
-    console.log(image4);
 
     useEffect(() => {
         setTimeout(() => {
@@ -1206,7 +1225,7 @@ const NewProducts = () => {
                                     <div className="flex text-center justify-center items-center">
                                         <label className="text-foreground font-bold text-lg text-center mt-4">Datos Generales</label>
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex items-center mt-5">
                                         <Input
                                             className="w-1/2 mr-4 mt-4"
                                             label='Nombre del producto'
@@ -1226,7 +1245,7 @@ const NewProducts = () => {
                                             disabled={isInputDisabled}
                                         />
                                     </div>
-                                    <div className="flex items-start">
+                                    <div className="flex items-start mt-5">
                                         <Input
                                             className="w-full mr-4 mt-4"
                                             label='Código del fabricante'
@@ -1237,11 +1256,11 @@ const NewProducts = () => {
                                             disabled={isInputDisabled}
                                         />
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex items-center mt-5">
                                         <Dropdown>
                                             <DropdownTrigger>
                                                 <Input
-                                                    className="w-1/2 mr-4 mt-4"
+                                                    className="w-1/2 mr-4"
                                                     label='Marca'
                                                     labelPlacement='outside'
                                                     name="brand"
@@ -1264,7 +1283,7 @@ const NewProducts = () => {
                                             </DropdownMenu>
                                         </Dropdown>
                                         <Input
-                                            className="w-1/2 mr-4 mt-4 inline-flex"
+                                            className="w-1/2 mr-4 inline-flex"
                                             label='Modelo'
                                             labelPlacement='outside'
                                             name="model"
@@ -1302,7 +1321,7 @@ const NewProducts = () => {
                                             disabled={isInputDisabled}
                                         />
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex items-center mt-5">
                                         <Input
                                             className="w-1/2 mr-4 mt-4"
                                             type='number'
@@ -1349,7 +1368,7 @@ const NewProducts = () => {
                                             disabled={isInputDisabled}
                                         />
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex items-center mt-5">
                                         <Input
                                             className="w-full mr-4 mt-4"
                                             type='number'
