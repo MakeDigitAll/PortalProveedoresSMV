@@ -51,6 +51,18 @@ const Register = () => {
             reference: reference
         }
 
+        if(user.email === '' || user.password === '' || user.confirmPassword === '') return toast.error('Todos los campos son requeridos', ({
+            position: "bottom-right",
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            autoClose: 5000,
+            theme: "colored",
+        }));
+
+
         if (user.email === '') {
             toast.error('El email es requerido', ({
                 position: "bottom-right",
@@ -277,8 +289,8 @@ const Register = () => {
                             <Card
                                 style={{
                                     display: "flex",
-                                    height: "600px",
-                                    width: "400px",
+                                    height: "700px",
+                                    width: "450px",
                                     marginTop: "100px",
                                 }}
                             >
@@ -315,46 +327,51 @@ const Register = () => {
                                     </div>
                                     <Spacer y={10} />
                                     <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
-                                        <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
+                                        <div className="flex w-full flex-wrap items-center justify-center md:flex-nowrap md:mb-0 gap-4">
                                             <Input
                                                 id="email"
                                                 value={user.email}
+                                                className='w-11/12'
                                                 onChange={handleChange}
-                                                key="outside"
-                                                size={"sm"}
+                                                isClearable
+                                                onClear={() => setUser({ ...user, email: "" })}
                                                 type="email"
-                                                label="Email"
-                                                labelPlacement="inside"
+                                                label="correo electronico"
+                                                labelPlacement="outside"
                                                 name="email"
                                             />
                                         </div>
                                     </div>
                                     <Spacer y={6} />
-                                    <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
-                                        <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex w-full flex-wrap items-center justify-center md:flex-nowrap md:mb-0 gap-4">
                                             <Input
                                                 id="password"
                                                 value={user.password}
                                                 onChange={handleChange}
-                                                size={"sm"}
+                                                isClearable
+                                                className='w-11/12'
+                                                onClear={() => setUser({ ...user, password: "" })}
                                                 type="password"
-                                                label="password"
-                                                labelPlacement="inside"
+                                                label="contraseña"
+                                                labelPlacement="outside"
                                                 name="password"
                                             />
                                         </div>
                                     </div>
                                     <Spacer y={6} />
-                                    <div className="flex flex-col gap-2" style={{ marginTop: '20px' }}>
-                                        <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex w-full flex-wrap items-center justify-center md:flex-nowrap md:mb-0 gap-4">
                                             <Input
                                                 id="confirmPassword"
                                                 value={user.confirmPassword}
                                                 onChange={handleChange}
-                                                size={"sm"}
+                                                isClearable
+                                                className='w-11/12'
+                                                onClear={() => setUser({ ...user, confirmPassword: "" })}
                                                 type="password"
-                                                label="confirmPassword"
-                                                labelPlacement="inside"
+                                                label="confirmar contraseña"
+                                                labelPlacement="outside"
                                                 name="confirmPassword"
                                             />
                                         </div>
@@ -362,10 +379,10 @@ const Register = () => {
                                     <RadioGroup
                                         value={typeUser}
                                         onChange={(e) => setTypeUser(e.target.value)}
-                                        style={{ marginTop: "20px" }}
+                                        className='flex justify-center mt-7 items-center text-center'
                                     >
                                         <Radio value="1">{"Proveedor"}</Radio>
-                                        <Radio value="2">{"Distributor"}</Radio>
+                                        <Radio value="2">{"Dependiente"}</Radio>
                                     </RadioGroup>
 
                                     {typeUser === '2' && <Spacer y={1} />}
@@ -376,19 +393,18 @@ const Register = () => {
                                                     id="reference"
                                                     value={reference}
                                                     onChange={(e) => setReference(e.target.value)}
-                                                    size={"sm"}
+                                                    isClearable
+                                                    onClear={() => setReference("")}
                                                     type="text"
-                                                    label="reference"
+                                                    label="Codigo de referencia"
+                                                    labelPlacement='outside'
                                                     name="reference"
                                                 />
                                             </div>
                                         </div>
                                     }
                                     <br />
-                                    <div
-                                        className="flex justify-start"
-                                        style={{ marginTop: "20px" }}
-                                    ></div>
+    
                                     {loading ? (
                                         <div className="flex justify-center">
                                             <div className="flex justify-center items-center">
@@ -397,8 +413,7 @@ const Register = () => {
                                         </div>
                                     ) : (
                                         <div
-                                            className="flex justify-center"
-                                            style={{ marginTop: "20px" }}
+                                            className="flex justify-center mt-5"
                                         >
                                             <Button
                                                 type="submit"

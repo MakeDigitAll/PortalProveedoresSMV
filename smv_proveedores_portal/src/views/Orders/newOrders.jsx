@@ -20,6 +20,7 @@ import { MdArrowBack, MdSettings, MdSave } from 'react-icons/md';
 import { RiDashboard2Fill } from "react-icons/ri";
 import { ToastContainer, toast } from "react-toastify";
 import useAuth from '../../hooks/useAuth';
+import moment from 'moment';
 import '../../App.css';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
@@ -457,22 +458,25 @@ const NewOrders = () => {
 
     const loadOrder = async () => {
         try {
-            const response = await axios.get(`/orders/getOrder/${params.id}`);
+            const response = await axios.get(`/orders/getOrderById/${params.id}`);
+            console.log(response.data);
             setOrder({
                 ...order,
                 costumer: response.data.costumer || "",
-                orderDate: response.data.orderDate,
+                orderDate: moment(response.data.orderDate).format('YYYY-MM-DD'),
                 orderType: response.data.orderType,
-             //   productsOrder: response.data.productsOrder,
-                subTotal: response.data.subTotal,
-                discount: response.data.discount,
+                subTotal: Number(response.data.subtotal),
+                discount: Number(response.data.discount),
                 fulfilled: response.data.fulfilled,
-                total: response.data.total,
+                total: Number(response.data.total),
                 orderData: response.data.orderData,
                 deliveryData: response.data.deliveryData,
                 paymentMethod: response.data.paymentMethod,
                 comments: response.data.comments,
             });
+            let productsOrder = response.data.productsOrder;
+            console.log(productsOrder);
+
             setEditing(true);
             let url = window.location.pathname;
             let arr = url.split('/');

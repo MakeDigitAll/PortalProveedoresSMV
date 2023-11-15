@@ -310,6 +310,7 @@ const Profile = () => {
                         <input
                             className="w-96 bg-transparent p-2 rounded"
                             type="file"
+                            accept="image/*"
                             name="image"
                             ref={imageUser}
                             onChange={handleImage}

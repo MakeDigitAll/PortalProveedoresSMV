@@ -202,9 +202,9 @@ const Login = () => {
                                             onChange={handleChange}
                                             isClearable
                                             onClear={() => setUser({ ...user, email: "" })}
-                                            size={"sm"}
                                             type="email"
                                             label="Email"
+                                            labelPlacement='outside'
                                             name="email"
                                         />
                                     </div>
@@ -218,9 +218,9 @@ const Login = () => {
                                             onChange={handleChange}
                                             isClearable
                                             onClear={() => setUser({ ...user, password: "" })}
-                                            size={"sm"}
                                             type="password"
                                             label="password"
+                                            labelPlacement='outside'
                                             name="password"
                                         />
                                     </div>

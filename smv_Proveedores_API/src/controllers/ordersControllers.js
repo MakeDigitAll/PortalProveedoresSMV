@@ -9,7 +9,17 @@ const getOrders = async (req, res) => {
     } catch (error) { 
         res.status(500).json({ error: error.message }); 
     }
-}    
+}
+
+const getOrderById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const order = await pool.query('SELECT * FROM "pvOrders" WHERE "id" = $1', [id]);
+        res.status(200).json(order.rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
 
 const createOrder = async (req, res) => {
     try {
@@ -58,5 +68,6 @@ module.exports = {
     getOrders,
     createOrder,
     deleteOrder,
-    getProductsOrders 
+    getProductsOrders,
+    getOrderById
 }  
