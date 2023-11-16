@@ -466,9 +466,9 @@ const Orders = () => {
                         isLoading={isLoading}
                         emptyContent={
                             order.length === 0 ? (
-                                <Spinner label="Cargando" />
+                                "No orders found"
                             ) : (
-                                "No products found"
+                                <Spinner label="Cargando" />
                             )
                         }
                     >

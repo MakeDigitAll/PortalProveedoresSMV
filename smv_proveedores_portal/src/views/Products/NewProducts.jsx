@@ -1231,6 +1231,7 @@ const NewProducts = () => {
                                             label='Nombre del producto'
                                             labelPlacement='outside'
                                             name="productName"
+                                            isRequired
                                             value={product.productName}
                                             onChange={handleInputChange}
                                             disabled={isInputDisabled}
@@ -1240,6 +1241,7 @@ const NewProducts = () => {
                                             label='Código de la empresa'
                                             labelPlacement='outside'
                                             name="companyCode"
+                                            isRequired
                                             value={product.companyCode}
                                             onChange={handleInputChange}
                                             disabled={isInputDisabled}
@@ -1393,6 +1395,7 @@ const NewProducts = () => {
                                             label='Código SAT del producto'
                                             labelPlacement='outside'
                                             name="satProductCode"
+                                            isRequired
                                             value={product.satProductCode}
                                             onChange={handleInputChange}
                                             disabled={isInputDisabled}
@@ -1407,6 +1410,7 @@ const NewProducts = () => {
                                                     labelPlacement='outside'
                                                     selectionMode="single"
                                                     name="satUnitCode"
+                                                    isRequired
                                                     placeholder='Código de unidad SAT'
                                                     value={product.satUnitCode || "selecciona un código"}
                                                     onChange={handleInputChange}

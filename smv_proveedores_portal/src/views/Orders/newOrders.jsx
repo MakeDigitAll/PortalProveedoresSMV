@@ -4,28 +4,30 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
-     Checkbox,
+    Checkbox,
 } from "@nextui-org/react";
-import { Modal, 
-         ModalContent, 
-         ModalHeader, 
-         ModalBody, 
-         ModalFooter, 
-         useDisclosure 
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure
 } from "@nextui-org/react";
-import { Table, 
-         TableHeader, 
-         TableBody, 
-         TableColumn, 
-         TableRow, 
-         TableCell, 
-         Pagination 
+import {
+    Table,
+    TableHeader,
+    TableBody,
+    TableColumn,
+    TableRow,
+    TableCell,
+    Pagination
 } from "@nextui-org/react";
 import Header from "../../components/header/headerC/Header";
 import { useNavigate, useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Input, Link, Button, Textarea, User, Spinner} from "@nextui-org/react";
+import { Input, Link, Button, Textarea, User, Spinner } from "@nextui-org/react";
 import { MdShoppingCart } from "react-icons/md";
 import { TbPlus, TbTrash } from "react-icons/tb";
 import { MdSettings, MdSave } from 'react-icons/md';
@@ -38,16 +40,16 @@ import '../../App.css';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
 const almacenes = [
-    { value: 'Almacen 1', label: 'Almacen 1', deliveryData: 'Informacion de envio1' },
-    { value: 'Almacen 2', label: 'Almacen 2', deliveryData: 'Informacion de envio2' },
-    { value: 'Almacen 3', label: 'Almacen 3', deliveryData: 'Informacion de envio3' },
-    { value: 'Almacen 4', label: 'Almacen 4', deliveryData: 'Informacion de envio4' },
-    { value: 'Almacen 5', label: 'Almacen 5', deliveryData: 'Informacion de envio5' },
-    { value: 'Almacen 6', label: 'Almacen 6', deliveryData: 'Informacion de envio6' },
-    { value: 'Almacen 7', label: 'Almacen 7', deliveryData: 'Informacion de envio7' },
-    { value: 'Almacen 8', label: 'Almacen 8', deliveryData: 'Informacion de envio8' },
-    { value: 'Almacen 9', label: 'Almacen 9', deliveryData: 'Informacion de envio9' },
-    { value: 'Almacen 10', label: 'Almacen 10', deliveryData: 'Informacion de envio10' },
+    { value: 'Informacion de envio 1', label: 'Informacion de envio 1', deliveryData: 'Apodaca \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 2', label: 'Informacion de envio 2', deliveryData: 'Guadalupe \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 3', label: 'Informacion de envio 3', deliveryData: 'San Nicolas \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 4', label: 'Informacion de envio 4', deliveryData: 'Garcia \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 5', label: 'Informacion de envio 5', deliveryData: 'San Pedro \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 6', label: 'Informacion de envio 6', deliveryData: 'Santa Catarina \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 7', label: 'Informacion de envio 7', deliveryData: 'Juarez \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 8', label: 'Informacion de envio 8', deliveryData: 'Cadereyta \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 9', label: 'Informacion de envio 9', deliveryData: 'Santiago \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
+    { value: 'Informacion de envio 10', label: 'Informacion de envio 10', deliveryData: 'Allende \n Monterrey, Nuevo Leon \n Codigo postal: 64000 \n ' },
 ];
 
 
@@ -67,6 +69,7 @@ const NewOrders = () => {
         profileName: profileName,
         costumer: "",
         orderDate: "" || new Date().toISOString().split('T')[0],
+        estimatedDeliveryDate: "",
         orderType: "",
         productsOrder: [],
         subTotal: 0,
@@ -80,6 +83,7 @@ const NewOrders = () => {
     });
 
     const [products, setProducts] = useState([]);
+    const [productsList, setProductsList] = useState([]);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState([]);
     //const [keysDelete, setKeysDelete] = useState([]);
@@ -166,6 +170,7 @@ const NewOrders = () => {
                 id: product.id,
                 quantity: product.quantity,
                 price1: product.price1,
+                manofacturerCode: product.manofacturerCode
             };
 
             // Convertir el objeto a una cadena JSON con comillas dobles
@@ -189,6 +194,12 @@ const NewOrders = () => {
                 setOrder({
                     ...order,
                     [event.target.name]: event.target.value,
+                });
+                break;
+            case "estimatedDeliveryDate":
+                setOrder({
+                    ...order,
+                    [event.target.name]: moment(event.target.value).format('YYYY-MM-DD'),
                 });
                 break;
             default:
@@ -272,6 +283,7 @@ const NewOrders = () => {
                 id: product.id,
                 quantity: 1,
                 price1: product.price1,
+                manofacturerCode: product.manofacturerCode,
             };
         });
 
@@ -288,20 +300,21 @@ const NewOrders = () => {
 
 
     const handleQuantityChange = (id, quantity) => {
-        const newProductsOrder = order.productsOrder.map((product) => {
-            if (product.id === id) {
-                return {
-                    ...product,
-                    quantity: quantity,
-                };
-            } else {
-                return product;
-            }
-        });
-        setOrder({
-            ...order,
-            productsOrder: newProductsOrder,
-        });
+            const newProductsOrder = order.productsOrder.map((product) => {
+                if (product.id === id && quantity > 0) {
+                    return {
+                        ...product,
+                        quantity: quantity,
+                    };
+                } else {
+                    return product;
+                }
+            });
+            setOrder({
+                ...order,
+                productsOrder: newProductsOrder,
+            });
+            
     };
 
 
@@ -497,27 +510,52 @@ const NewOrders = () => {
     // obteind rest of the product data from the database and add it to the order.productsOrder with an useEffect
 
     useEffect(() => {
+        const updateProductInfo = async () => {
+            try {
+                const updatedProductsOrder = await Promise.all(
+                    order.productsOrder.map(async (product) => {
+                        // Busca el producto en el estado 'products'
+                        const matchingProduct = products.find((p) => p.id === product.id);
 
-        const subtotal = order.productsOrder.reduce((acc, product) => {
-            return acc + product.price1 * product.quantity;
-        }, 0);
+                        if (matchingProduct) {
+                            // Si se encuentra el producto, agrega los detalles necesarios
+                            return {
+                                ...matchingProduct,
+                                quantity: product.quantity,
+                                price1: product.price1,
+                                manofacturerCode: product.manofacturerCode,
+                            };
+                        }
+                    })
+                );
 
-        const subtotalfixed = subtotal.toFixed(2);
+                setProductsList(updatedProductsOrder);
 
-        const impuestos = subtotal * 0.16;
+                setOrder((prevOrder) => ({
+                    ...prevOrder,
+                    subTotal: calculateSubtotal(updatedProductsOrder),
+                    total: calculateTotal(updatedProductsOrder, prevOrder.discount),
+                }));
+            } catch (error) {
+                console.log(error);
+            }
+        };
 
-        const discount = subtotal * (order.discount / 100);
+        const calculateSubtotal = (products) => {
+            return products.reduce((acc, product) => acc + Number(product.price1) * Number(product.quantity), 0).toFixed(2);
+        };
 
-        const total = subtotal - impuestos - discount;
+        const calculateTotal = (products, discount) => {
+            const subtotal = calculateSubtotal(products);
+            const impuestos = subtotal * 0.16;
+            const discountAmount = subtotal * (discount / 100);
+            const total = subtotal - impuestos - discountAmount;
+            return total.toFixed(2);
+        };
 
-        const totalfixed = total.toFixed(2);
-
-        setOrder({
-            ...order,
-            subTotal: subtotalfixed,
-            total: totalfixed,
-        });
+        updateProductInfo();
     }, [order.productsOrder, order.discount]);
+
 
     useEffect(() => {
         if (params.id) {
@@ -677,7 +715,7 @@ const NewOrders = () => {
                 <Input className='w-full lg:w-1/2 px-10' placeholder="Usuario" label="Responsable" labelPlacement="outside" value={order.profileName} onChange={handleOrderChange} name="user" isDisabled={true} />
                 <Dropdown>
                     <DropdownTrigger>
-                        <Input className='lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione un almacen"} name="costumer" isDisabled={isInputDisabled} />
+                        <Input className='lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione Información de envio"} name="costumer" isDisabled={isInputDisabled} />
                     </DropdownTrigger>
                     <DropdownMenu>
                         {almacenes.map((almacen) => (
@@ -700,7 +738,8 @@ const NewOrders = () => {
 
             <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-10 h-full">
                 <div className="flex flex-row lg:w-1/2 mt-10">
-                    <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de pedido" label="Fecha de pedido" labelPlacement="outside" value={order.orderDate} onChange={handleOrderChange} name="orderDate" isDisabled={true} />
+                    <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de compra" label="Fecha de pedido" labelPlacement="outside" value={order.orderDate} onChange={handleOrderChange} name="orderDate" isDisabled={true} />
+                    <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de entrega" label="Fecha de entrega" labelPlacement="outside" value={order.estimatedDeliveryDate} onChange={handleOrderChange} name="estimatedDeliveryDate" isDisabled={isInputDisabled} />
                     <Dropdown>
                         <DropdownTrigger>
                             <Input className='w-1/3 pl-10 px-10 lg:mt-0' placeholder="Tipo de pedido" label="Tipo de pedido" labelPlacement="outside" value={order.orderType || "Seleccione el tipo de entrega"} name="orderType" isDisabled={isInputDisabled} />
@@ -816,26 +855,47 @@ const NewOrders = () => {
                         >
                             <TableHeader
                                 columns={columnsOrder}
-                                className='text-inherit '
+                                className='text-inherit text-center'
                             >
                                 {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
                             </TableHeader>
-                            <TableBody items={order.productsOrder}
+                            <TableBody
                                 isLoading={isLoading}
                                 emptyContent={
                                     products.length === 0 &&
                                     <div className="flex flex-col items-center justify-center h-full">
-                                        <p className="text-2xl font-bold text-gray-400"></p>
+                                        <p className="text-2xl font-bold text-gray-400"> No orders found</p>
                                     </div>
                                 }
                             >
-                                {(item) => (
-                                    <TableRow key={item.id}>
-                                        {(columnKey) => <TableCell>{renderCellOrder(item, columnKey)}</TableCell>}
+                                {productsList.map((product) => (
+                                    <TableRow>
+                                        <TableCell>
+                                            <User
+                                                avatarProps={{ radius: "lg", src: product.image }}
+                                                description={product.brand}
+                                                name={product.productName}
+                                            >
+                                                {product.model}
+                                            </User>
+                                        </TableCell>
+                                        <TableCell className='text-center'>{product.manofacturerCode}</TableCell>
+                                        <TableCell className='text-center'>{product.price1}</TableCell>
+                                        <TableCell className='text-center'>
+                                            <Input
+                                                type="number"
+                                                value={product.quantity}
+                                                onChange={(event) => handleQuantityChange(product.id, event.target.value)}
+                                                name="quantity"
+                                                isDisabled={isInputDisabled}
+                                            />
+                                        </TableCell>
+                                        <TableCell className='text-center'>${product.price1 * product.quantity || 0}</TableCell>
                                     </TableRow>
-                                )}
+                                ))}
 
-{/* 
+
+                                {/* 
 switch (columnKey) {
             case "productName":
                 return (
