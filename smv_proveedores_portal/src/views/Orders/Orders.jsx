@@ -425,7 +425,7 @@ const Orders = () => {
                 <Button
                     auto
                     startContent={<MdFilterListAlt />}
-                    className="mr-10 mt-10 text-inherit bg-highlight justify-end m-auto"
+                    className="mr-10 mt-10 text-inherit bg-[#AB6A00] justify-end m-auto"
                     size="small"
                     onPress={() => {
                         setSearchDate('');

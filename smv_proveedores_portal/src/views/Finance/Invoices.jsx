@@ -66,22 +66,25 @@ const Invoices = () => {
                             sx={{ display: "flex", alignItems: "center" }}
                             color="foreground"
                             href="#"
-                            onClick={() => navigate(`/Home`)}
+                            onClick={() => navigate(`/Finances`)}
                         >
                             <GiCash sx={{ mr: 0.5 }} fontSize="inherit" />
-                            Inicio
+                            Finanzas
                         </Link>
                         <Typography
                             sx={{ display: "flex", alignItems: "center" }}
                             className="text-foreground"
                         >
                             <GiCash sx={{ mr: 0.5 }} fontSize="inherit" />
-                            Finanzas
+                            Facturas
                         </Typography>
                     </Breadcrumbs>
                 </div>
             </div>
             <div className="flex p-4 ml-20">
+                <div className="flex w-full mr-20 p-4 flex-col items-center text-center justify-center full-w">
+                    </div>
+
             </div>
         </div>
     );

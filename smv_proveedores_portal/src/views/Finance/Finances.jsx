@@ -41,14 +41,11 @@ const Finances = () => {
       </div>
       <div className="flex p-4 ml-20">
         <div className="flex w-full mr-20 p-4 flex-col items-center text-center justify-center full-w">
-          <Button auto onPress={() => navigate("/Invoices")} className="w-1/2 py-10 my-5 text-2xl bg-highlight">
+          <Button auto onPress={() => navigate("/Invoices")} className="w-1/2 py-10 my-5 text-2xl bg-yellow-600">
             Facturación
           </Button>
-          <Button auto onPress={() => navigate("/LegalDocuments")} className="w-1/2 py-10 my-5 text-2xl bg-content2">
+          <Button auto onPress={() => navigate("/LegalDocuments")} className="w-1/2 py-10 my-5 text-2xl bg-yellow-800">
             Legales
-          </Button>
-          <Button auto onPress={() => navigate("/TermsAndConditions")} className="w-1/2 py-10 my-5 text-2xl bg-content3">
-            Terminos y condiciones
           </Button>
         </div>
       </div>

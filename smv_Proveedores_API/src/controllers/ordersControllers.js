@@ -61,7 +61,20 @@ const getProductsOrders = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-} 
+}
+
+const getProductsOrdersById = async (req, res) => {
+    try {
+    const { id } = req.params;
+    const products = await pool.query('SELECT "pvProducts"."manofacturerCode", "pvProducts"."productName", "pvProducts"."price1", "pvProducts"."id", "pvProducts"."model","pvProducts"."brand", "ProductsAvailability"."productStock" AS "existence" FROM "pvProducts" INNER JOIN "ProductsAvailability" ON "pvProducts"."id" = "ProductsAvailability"."productId" WHERE "pvProducts"."id" = $1', [id]);
+    res.status(200).json(products.rows[0]);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}	
+
+
 
  
 module.exports = {
@@ -69,5 +82,6 @@ module.exports = {
     createOrder,
     deleteOrder,
     getProductsOrders,
-    getOrderById
+    getOrderById,
+    getProductsOrdersById
 }  

@@ -4,19 +4,31 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
-    Spacer,
-    Divider, link, Checkbox, Card,
+     Checkbox,
 } from "@nextui-org/react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination} from "@nextui-org/react";
+import { Modal, 
+         ModalContent, 
+         ModalHeader, 
+         ModalBody, 
+         ModalFooter, 
+         useDisclosure 
+} from "@nextui-org/react";
+import { Table, 
+         TableHeader, 
+         TableBody, 
+         TableColumn, 
+         TableRow, 
+         TableCell, 
+         Pagination 
+} from "@nextui-org/react";
 import Header from "../../components/header/headerC/Header";
 import { useNavigate, useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Input, Link, Button, Textarea, User, Spinner, Radio, RadioGroup } from "@nextui-org/react";
+import { Input, Link, Button, Textarea, User, Spinner} from "@nextui-org/react";
 import { MdShoppingCart } from "react-icons/md";
-import { TbDotsVertical, TbPlus, TbReload, TbTrash } from "react-icons/tb";
-import { MdArrowBack, MdSettings, MdSave } from 'react-icons/md';
+import { TbPlus, TbTrash } from "react-icons/tb";
+import { MdSettings, MdSave } from 'react-icons/md';
 import { RiDashboard2Fill } from "react-icons/ri";
 import { ToastContainer, toast } from "react-toastify";
 import useAuth from '../../hooks/useAuth';
@@ -70,7 +82,7 @@ const NewOrders = () => {
     const [products, setProducts] = useState([]);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState([]);
-    const [keysDelete, setKeysDelete] = useState([]);
+    //const [keysDelete, setKeysDelete] = useState([]);
     const [variable, setVariable] = useState('Nuevo pedido');
     const [isLoading, setLoading] = useState(false);
     const [editing, setEditing] = useState(false);
@@ -97,7 +109,7 @@ const NewOrders = () => {
             orderData: order.orderData,
             deliveryData: order.deliveryData,
             paymentMethod: order.paymentMethod,
-            comments: order.comments,    
+            comments: order.comments,
         };
 
         if (newOrder.orderType === "") {
@@ -118,52 +130,50 @@ const NewOrders = () => {
         if (newOrder.deliveryData === "") {
             toast.error("Seleccione la información de envio");
             return;
-        } 
+        }
 
 
-        if(editing){
+        if (editing) {
             console.log('editando');
-        }else{
+        } else {
 
-        try {
-            await axios.post("/orders/createOrder", newOrder, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                console.log(response.data);
-                toast.success("Pedido creado con éxito");
-                navigate(`/Orders`); 
-            })
-            .catch((error) => {
+            try {
+                await axios.post("/orders/createOrder", newOrder, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    console.log(response.data);
+                    toast.success("Pedido creado con éxito");
+                    navigate(`/Orders`);
+                })
+                    .catch((error) => {
+                        console.log(error);
+                        toast.error("Error al crear el pedido");
+                    });
+            } catch (error) {
                 console.log(error);
                 toast.error("Error al crear el pedido");
-            });
-        } catch (error) {
-            console.log(error);
-            toast.error("Error al crear el pedido");
-        }
+            }
 
         }
     };
 
-
-    
     const transformProducts = (productsOrder) => {
         const transformedProductsOrder = productsOrder.map((product) => {
             // Crear un nuevo objeto solo con id y quantity
             const transformedProduct = {
-              id: product.id,
-              quantity: product.quantity,
+                id: product.id,
+                quantity: product.quantity,
+                price1: product.price1,
             };
-          
+
             // Convertir el objeto a una cadena JSON con comillas dobles
             return JSON.stringify(transformedProduct);
-          });
+        });
 
-            return transformedProductsOrder;
+        return transformedProductsOrder;
     }
-
 
     const handleOrderChange = (event) => {
         switch (event.target.name) {
@@ -182,7 +192,7 @@ const NewOrders = () => {
                 });
                 break;
             default:
-                
+
                 setOrder({
                     ...order,
                     [event.target.name]: event.target.value,
@@ -217,7 +227,6 @@ const NewOrders = () => {
 
     const loadProducts = async () => {
         try {
-            onOpen();
             setLoading(true);
             const response = await axios.get(`/orders/getProductsOrders/${ID}`);
             const images = await Promise.all(
@@ -236,7 +245,6 @@ const NewOrders = () => {
                 }
             })
             setProducts(products);
-            //console.log(products);
             setLoading(false);
         } catch (error) {
             console.log(error);
@@ -244,40 +252,40 @@ const NewOrders = () => {
         }
     };
 
-   
     const addProducts = () => {
         const selectedProductsArray = Array.from(selectedProducts);
         const selectedProductIDs = selectedProductsArray.map(Number);
-      
+
         // Filtra los productos seleccionados que no están en el estado "order"
         const newProducts = products.filter((product) => {
-          return (
-            selectedProductIDs.includes(product.id) &&
-            !order.productsOrder.some((orderedProduct) => orderedProduct.id === product.id)
-          );
+            return (
+                selectedProductIDs.includes(product.id) &&
+                !order.productsOrder.some((orderedProduct) => orderedProduct.id === product.id)
+            );
         });
-      
+
         // Mapea los nuevos productos y agrega información adicional
 
         // Agregar que solo adicione el id y la cantidad
         const newProductsOrder = newProducts.map((product) => {
-          return {
-            ...product,
-            quantity: 1
-          };
+            return {
+                id: product.id,
+                quantity: 1,
+                price1: product.price1,
+            };
         });
 
         // Actualiza el estado "order" solo con los productos nuevos y el subtotal
         const newOrder = {
-          ...order,
-          productsOrder: [...order.productsOrder, ...newProductsOrder],
+            ...order,
+            productsOrder: [...order.productsOrder, ...newProductsOrder],
         };
-      
+
         // Establece el nuevo estado "order" y limpia la selección
         setOrder(newOrder);
         setSelectedProducts([]);
-      };
-      
+    };
+
 
     const handleQuantityChange = (id, quantity) => {
         const newProductsOrder = order.productsOrder.map((product) => {
@@ -436,21 +444,8 @@ const NewOrders = () => {
             default:
                 return cellValue;
         }
-    }, []);
+    }, []); // cambiarlo a mapeo standar de js
 
-
-
-
-    const [page, setPage] = React.useState(1);
-    const rowsPerPage = 4;
-
-    const pages = Math.ceil(products.length / rowsPerPage);
-
-    const items = React.useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        return products.slice(start, end);
-    }, [page, rowsPerPage, products]);
 
     //--------------------------------------------------------------------------------------------------
     //                                PRODUCTOS
@@ -475,7 +470,11 @@ const NewOrders = () => {
                 comments: response.data.comments,
             });
             let productsOrder = response.data.productsOrder.map(product => JSON.parse(product));
-            setSelectedProducts(productsOrder)
+            setOrder({
+                ...order,
+                productsOrder: productsOrder,
+            });
+
             console.log(productsOrder);
 
             setEditing(true);
@@ -494,9 +493,13 @@ const NewOrders = () => {
         }
     }
 
+    // Into order.productsOrder we have the product id, quantity and price
+    // obteind rest of the product data from the database and add it to the order.productsOrder with an useEffect
+
     useEffect(() => {
+
         const subtotal = order.productsOrder.reduce((acc, product) => {
-          return acc + product.price1 * product.quantity;
+            return acc + product.price1 * product.quantity;
         }, 0);
 
         const subtotalfixed = subtotal.toFixed(2);
@@ -504,25 +507,24 @@ const NewOrders = () => {
         const impuestos = subtotal * 0.16;
 
         const discount = subtotal * (order.discount / 100);
-      
+
         const total = subtotal - impuestos - discount;
 
         const totalfixed = total.toFixed(2);
-      
+
         setOrder({
-          ...order,
-          subTotal: subtotalfixed,
-          total: totalfixed,
+            ...order,
+            subTotal: subtotalfixed,
+            total: totalfixed,
         });
-      }, [order.productsOrder, order.discount]);
-      
+    }, [order.productsOrder, order.discount]);
+
     useEffect(() => {
         if (params.id) {
             loadOrder();
         }
+        loadProducts();
     }, []);
-
-    //console.log(selectedKeys);
 
     return (
         <div className="flex flex-col w-full h-full">
@@ -600,8 +602,8 @@ const NewOrders = () => {
                             <ModalBody>
                                 <div className="flex flex-col m-10 w-11/12 h-full">
                                     <div className="flex flex-row h-1/2 lg:min-h-[100px]">
-                                        <Input className='w-full lg:w-1/2 px-10 mb-5' placeholder="Nombre del producto" label="Nombre del producto" labelPlacement="outside" value={searchName} onChange={handlesearchNameChange} name="productName" isDisabled={isInputDisabled} />
-                                        <Input className='w-full lg:w-1/2 px-10' placeholder="Codigo del fabricante" label="Codigo del fabricante" labelPlacement="outside" value={searchManofacturerCode} onChange={handlesearchManofacturerCodeChange} name="manofacturerCode" isDisabled={isInputDisabled} />
+                                        <Input className='w-full lg:w-1/2 px-10 mb-5' label="Nombre del producto" labelPlacement="outside" value={searchName} onChange={handlesearchNameChange} name="productName" isDisabled={isInputDisabled} />
+                                        <Input className='w-full lg:w-1/2 px-10' label="Codigo del fabricante" labelPlacement="outside" value={searchManofacturerCode} onChange={handlesearchManofacturerCodeChange} name="manofacturerCode" isDisabled={isInputDisabled} />
                                     </div>
                                     <div>
                                         {/* al seleccionar un item de la tabla todo el registro se guarda en un state */}
@@ -614,19 +616,6 @@ const NewOrders = () => {
                                                 setSelectedProducts(keys);
                                             }}
                                             isHeaderSticky
-                                            bottomContent={
-                                                <div className="flex justify-center">
-                                                    <Pagination
-                                                        isCompact
-                                                        showControls
-                                                        showShadow
-                                                        color="secondary"
-                                                        page={page}
-                                                        total={pages}
-                                                        onChange={(page) => setPage(page)}
-                                                    />
-                                                </div>
-                                            }
                                             classNames={{
                                                 wrapper: "max-h-[300px]",
                                             }}
@@ -638,7 +627,7 @@ const NewOrders = () => {
                                                 {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
                                             </TableHeader>
                                             <TableBody items={filterProducts(products)}
-                                                isLoading={isLoading && !items.length}
+                                                isLoading={isLoading}
                                                 emptyContent={
                                                     products.length === 0 ? (
                                                         <Spinner label="Cargando" />
@@ -694,7 +683,7 @@ const NewOrders = () => {
                         {almacenes.map((almacen) => (
                             <DropdownItem
                                 key={almacen.value}
-                                onClick={() => 
+                                onClick={() =>
                                     setOrder({ ...order, costumer: almacen.value, deliveryData: almacen.deliveryData })
                                 }
                             >
@@ -734,7 +723,7 @@ const NewOrders = () => {
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                    <Button className='w-1/4 mt-6' color="primary" auto onPress={loadProducts} startContent={<TbPlus />}>
+                    <Button className='w-1/4 mt-6' color="primary" auto onPress={onOpen} startContent={<TbPlus />}>
                         Agregar producto
                     </Button>
                 </div>
@@ -780,7 +769,7 @@ const NewOrders = () => {
                             className='w-full'
                             type="number"
                             endContent="%"
-                            placeholder='0 - 100' 
+                            placeholder='0 - 100'
                             value={order.discount}
                             onChange={handleOrderChange}
                             name="discount"
@@ -815,15 +804,15 @@ const NewOrders = () => {
                     <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
                         <Table
                             removeWrapper
-                            // selectionMode='multiple'
-                            // selectedKeys={selectedKeys}
-                            // onSelectionChange={(keys) => {
-                            //     setSelectedKeys(keys);
-                            // }}
-                            // aria-label=" table with client async pagination"
-                            // classNames={{
-                            //     wrapper: "max-h-[100px]",
-                            // }}
+                        // selectionMode='multiple'
+                        // selectedKeys={selectedKeys}
+                        // onSelectionChange={(keys) => {
+                        //     setSelectedKeys(keys);
+                        // }}
+                        // aria-label=" table with client async pagination"
+                        // classNames={{
+                        //     wrapper: "max-h-[100px]",
+                        // }}
                         >
                             <TableHeader
                                 columns={columnsOrder}
@@ -832,7 +821,7 @@ const NewOrders = () => {
                                 {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
                             </TableHeader>
                             <TableBody items={order.productsOrder}
-                                isLoading={isLoading && !items.length}
+                                isLoading={isLoading}
                                 emptyContent={
                                     products.length === 0 &&
                                     <div className="flex flex-col items-center justify-center h-full">
@@ -845,6 +834,49 @@ const NewOrders = () => {
                                         {(columnKey) => <TableCell>{renderCellOrder(item, columnKey)}</TableCell>}
                                     </TableRow>
                                 )}
+
+{/* 
+switch (columnKey) {
+            case "productName":
+                return (
+                    <User
+                        avatarProps={{ radius: "lg", src: products.image }}
+                        description={products.brand}
+                        name={products.productName}
+                    >
+                        {products.model}
+                    </User>
+                );
+            case "manofacturerCode":
+                return (
+                    <div className="flex items-center">
+                        <p className="text-bold text-sm capitalize">{cellValue}</p>
+                    </div>
+                );
+            case "price1":
+                return (
+                    <div className="flex items-center">
+                        <p className="text-bold text-sm capitalize">${cellValue}</p>
+                    </div>
+                );
+            case "quantity":
+                return (
+                    <div className="flex items-center text-center w-1/2">
+                        <Input
+                            type="number"
+                            value={products.quantity}
+                            onChange={(event) => handleQuantityChange(products.id, event.target.value)}
+                            name="quantity"
+                            isDisabled={isInputDisabled}
+                        />
+                    </div>
+                );
+            case "subtotal":
+                return (
+                    <div className="flex items-center">
+                        <p className="text-bold text-sm capitalize">${products.price1 * products.quantity || 0}</p>
+                    </div>
+                ); */}
                             </TableBody>
                         </Table>
                         {selectedKeys > 0 && (
@@ -894,7 +926,7 @@ const NewOrders = () => {
                         </TableBody>
                     </Table>
                     <div className="flex flex-row justify-center mt-6 pr-32 lg:pr-0">
-                        <Button className='w-1/2 mt-10 lg:w-1/4' color="primary" auto startContent={<MdSave /> } onClick={handleSubmit}>
+                        <Button className='w-1/2 mt-10 lg:w-1/4' color="primary" auto startContent={<MdSave />} onClick={handleSubmit}>
                             Guardar Pedido
                         </Button>
                     </div>
