@@ -104,6 +104,7 @@ const NewOrders = () => {
             ...order,
             providerId: ID,
             orderDate: order.orderDate,
+            estimatedDeliveryDate: order.estimatedDeliveryDate,
             orderType: order.orderType,
             productsOrder: transformedProduct,
             subTotal: order.subTotal,
@@ -237,8 +238,8 @@ const NewOrders = () => {
     };
 
     const loadProducts = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
             const response = await axios.get(`/orders/getProductsOrders/${ID}`);
             const images = await Promise.all(
                 response.data.map((product) => {
@@ -300,21 +301,21 @@ const NewOrders = () => {
 
 
     const handleQuantityChange = (id, quantity) => {
-            const newProductsOrder = order.productsOrder.map((product) => {
-                if (product.id === id && quantity > 0) {
-                    return {
-                        ...product,
-                        quantity: quantity,
-                    };
-                } else {
-                    return product;
-                }
-            });
-            setOrder({
-                ...order,
-                productsOrder: newProductsOrder,
-            });
-            
+        const newProductsOrder = order.productsOrder.map((product) => {
+            if (product.id === id && quantity > 0) {
+                return {
+                    ...product,
+                    quantity: Number(quantity),
+                };
+            } else {
+                return product;
+            }
+        });
+        setOrder({
+            ...order,
+            productsOrder: newProductsOrder,
+        });
+
     };
 
 
@@ -410,61 +411,12 @@ const NewOrders = () => {
         }
     }, []);
 
-    const renderCellOrder = React.useCallback((products, columnKey) => {
-        const cellValue = products[columnKey];
-
-        switch (columnKey) {
-            case "productName":
-                return (
-                    <User
-                        avatarProps={{ radius: "lg", src: products.image }}
-                        description={products.brand}
-                        name={products.productName}
-                    >
-                        {products.model}
-                    </User>
-                );
-            case "manofacturerCode":
-                return (
-                    <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">{cellValue}</p>
-                    </div>
-                );
-            case "price1":
-                return (
-                    <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">${cellValue}</p>
-                    </div>
-                );
-            case "quantity":
-                return (
-                    <div className="flex items-center text-center w-1/2">
-                        <Input
-                            type="number"
-                            value={products.quantity}
-                            onChange={(event) => handleQuantityChange(products.id, event.target.value)}
-                            name="quantity"
-                            isDisabled={isInputDisabled}
-                        />
-                    </div>
-                );
-            case "subtotal":
-                return (
-                    <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">${products.price1 * products.quantity || 0}</p>
-                    </div>
-                );
-            default:
-                return cellValue;
-        }
-    }, []); // cambiarlo a mapeo standar de js
-
-
     //--------------------------------------------------------------------------------------------------
     //                                PRODUCTOS
     //--------------------------------------------------------------------------------------------------
 
     const loadOrder = async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`/orders/getOrderById/${params.id}`);
             console.log(response.data);
@@ -472,6 +424,7 @@ const NewOrders = () => {
                 ...order,
                 costumer: response.data.costumer || "",
                 orderDate: moment(response.data.orderDate).format('YYYY-MM-DD'),
+                estimatedDeliveryDate: moment(response.data.estimatedDeliveryDate).format('YYYY-MM-DD'),
                 orderType: response.data.orderType,
                 subTotal: Number(response.data.subtotal),
                 discount: Number(response.data.discount),
@@ -488,8 +441,6 @@ const NewOrders = () => {
                 productsOrder: productsOrder,
             });
 
-            console.log(productsOrder);
-
             setEditing(true);
             let url = window.location.pathname;
             let arr = url.split('/');
@@ -501,6 +452,7 @@ const NewOrders = () => {
                 setVariable('Ver pedido');
                 setIsInputDisabled(true);
             }
+            setLoading(false);
         } catch (error) {
             toast.error('Error al cargar la orden');
         }
@@ -510,6 +462,14 @@ const NewOrders = () => {
     // obteind rest of the product data from the database and add it to the order.productsOrder with an useEffect
 
     useEffect(() => {
+        if (params.id) {
+            loadOrder();
+        }
+        loadProducts();
+    }, []);
+
+    useEffect(() => {
+        if (order.productsOrder.length === 0 || products.length === 0) return;
         const updateProductInfo = async () => {
             try {
                 const updatedProductsOrder = await Promise.all(
@@ -529,6 +489,7 @@ const NewOrders = () => {
                     })
                 );
 
+                console.log(updatedProductsOrder);
                 setProductsList(updatedProductsOrder);
 
                 setOrder((prevOrder) => ({
@@ -554,15 +515,8 @@ const NewOrders = () => {
         };
 
         updateProductInfo();
-    }, [order.productsOrder, order.discount]);
-
-
-    useEffect(() => {
-        if (params.id) {
-            loadOrder();
-        }
-        loadProducts();
-    }, []);
+    }
+        , [order.productsOrder, order.discount, products]);
 
     return (
         <div className="flex flex-col w-full h-full">
@@ -711,287 +665,251 @@ const NewOrders = () => {
             </Modal>
 
 
-            <div className="flex flex-col mx-10 mt-10 mb-1 lg:flex-row">
-                <Input className='w-full lg:w-1/2 px-10' placeholder="Usuario" label="Responsable" labelPlacement="outside" value={order.profileName} onChange={handleOrderChange} name="user" isDisabled={true} />
-                <Dropdown>
-                    <DropdownTrigger>
-                        <Input className='lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione Información de envio"} name="costumer" isDisabled={isInputDisabled} />
-                    </DropdownTrigger>
-                    <DropdownMenu>
-                        {almacenes.map((almacen) => (
-                            <DropdownItem
-                                key={almacen.value}
-                                onClick={() =>
-                                    setOrder({ ...order, costumer: almacen.value, deliveryData: almacen.deliveryData })
-                                }
-                            >
-                                {almacen.label}
-                            </DropdownItem>
-                        ))}
-                    </DropdownMenu>
-                </Dropdown>
-            </div>
-            <div className="flex flex-col mx-10 lg:flex-row justify-end">
-                <Textarea className='w-full lg:w-1/2 px-10' placeholder="Comentarios" maxRows={4} value={order.comments} onChange={handleOrderChange} name="comments" isDisabled={isInputDisabled} />
-                <Textarea className='w-full lg:w-1/2 px-10' placeholder="Informacion de envio" maxRows={4} value={order.deliveryData} onChange={handleOrderChange} name="deliveryData" isDisabled={true} />
-            </div>
-
-            <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-10 h-full">
-                <div className="flex flex-row lg:w-1/2 mt-10">
-                    <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de compra" label="Fecha de pedido" labelPlacement="outside" value={order.orderDate} onChange={handleOrderChange} name="orderDate" isDisabled={true} />
-                    <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de entrega" label="Fecha de entrega" labelPlacement="outside" value={order.estimatedDeliveryDate} onChange={handleOrderChange} name="estimatedDeliveryDate" isDisabled={isInputDisabled} />
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Input className='w-1/3 pl-10 px-10 lg:mt-0' placeholder="Tipo de pedido" label="Tipo de pedido" labelPlacement="outside" value={order.orderType || "Seleccione el tipo de entrega"} name="orderType" isDisabled={isInputDisabled} />
-                        </DropdownTrigger>
-                        <DropdownMenu>
-                            <DropdownItem
-                                onClick={() => setOrder({ ...order, orderType: "Directo a almacén" })}
-                            >
-                                Directo a almacén
-                            </DropdownItem>
-                            <DropdownItem
-                                onClick={() => setOrder({ ...order, orderType: "Acordar con el encargado de área" })}
-                            >
-                                Acordar con el encargado de área
-                            </DropdownItem>
-                            <DropdownItem
-                                onClick={() => setOrder({ ...order, orderType: "Pendiente" })}
-                            >
-                                Pendiente
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                    <Button className='w-1/4 mt-6' color="primary" auto onPress={onOpen} startContent={<TbPlus />}>
-                        Agregar producto
-                    </Button>
+            {isLoading ? (
+                <div className="flex flex-col items-center justify-center h-full">
+                    <Spinner label="Cargando" />
                 </div>
-                <div className="flex lg:w-1/2 mt-10 items-end justify-start lg:justify-end">
-                    <div>
-                        <Checkbox
-                            className='w-full pl-12 mt-3'
-                            checked={order.fulfilled}
-                            onChange={(event) => {
-                                setOrder({ ...order, fulfilled: event.target.checked });
-                            }}
-                        >
-                            Es recurrente
-                        </Checkbox>
-                    </div>
-                    <div>
+            ) : (
+                <div>
+                    <div className="flex flex-col mx-10 mt-10 mb-1 lg:flex-row">
+                        <Input className='w-full lg:w-1/2 px-10' placeholder="Usuario" label="Responsable" labelPlacement="outside" value={order.profileName} onChange={handleOrderChange} name="user" isDisabled={true} />
                         <Dropdown>
                             <DropdownTrigger>
-                                <Input className='w-full px-5 mt-5' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
+                                <Input className='lg:w-1/2 px-10' placeholder="Información de envio" label="Información de envio" labelPlacement="outside" value={order.costumer || "Seleccione Información de envio"} name="costumer" isDisabled={isInputDisabled} />
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem
-                                    onClick={() => setOrder({ ...order, orderData: "Directo a almacén" })}
-                                >
-                                    Directo a almacén
-                                </DropdownItem>
-                                <DropdownItem
-                                    onClick={() => setOrder({ ...order, orderData: "Acordar con el encargado de área" })}
-                                >
-                                    Acordar con el encargado de área
-                                </DropdownItem>
-                                <DropdownItem
-                                    onClick={() => setOrder({ ...order, orderData: "Pendiente" })}
-                                >
-                                    Pendiente
-                                </DropdownItem>
+                                {almacenes.map((almacen) => (
+                                    <DropdownItem
+                                        key={almacen.value}
+                                        onClick={() =>
+                                            setOrder({ ...order, costumer: almacen.value, deliveryData: almacen.deliveryData })
+                                        }
+                                    >
+                                        {almacen.label}
+                                    </DropdownItem>
+                                ))}
                             </DropdownMenu>
                         </Dropdown>
                     </div>
-                    <div>
-                        <label className="text-sm text-gray-500">Descuento</label>
-                        <Input
-                            className='w-full'
-                            type="number"
-                            endContent="%"
-                            placeholder='0 - 100'
-                            value={order.discount}
-                            onChange={handleOrderChange}
-                            name="discount"
-                            isDisabled={isInputDisabled}
-                        />
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-col mx-10 mb-5 pl-10 lg:flex-row h-full">
-                {/* Tabla del pedido */}
-                {order.productsOrder.length === 0 ? (
-                    <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
-                        <Table
-                            removeWrapper
-                            aria-label=" table with client async pagination"
-                            classNames={{
-                                wrapper: "max-h-[400px]",
-                            }}
-                        >
-                            <TableHeader
-                                columns={columnsOrder}
-                                className='text-inherit '
-                            >
-                                {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
-                            </TableHeader>
-                            <TableBody>
-                            </TableBody>
-                        </Table>
+                    <div className="flex flex-col mx-10 lg:flex-row justify-end">
+                        <Textarea className='w-full lg:w-1/2 px-10' placeholder="Comentarios" maxRows={4} value={order.comments} onChange={handleOrderChange} name="comments" isDisabled={isInputDisabled} />
+                        <Textarea className='w-full lg:w-1/2 px-10' placeholder="Informacion de envio" maxRows={4} value={order.deliveryData} onChange={handleOrderChange} name="deliveryData" isDisabled={true} />
                     </div>
 
-                ) : (
-                    <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
-                        <Table
-                            removeWrapper
-                        // selectionMode='multiple'
-                        // selectedKeys={selectedKeys}
-                        // onSelectionChange={(keys) => {
-                        //     setSelectedKeys(keys);
-                        // }}
-                        // aria-label=" table with client async pagination"
-                        // classNames={{
-                        //     wrapper: "max-h-[100px]",
-                        // }}
-                        >
-                            <TableHeader
-                                columns={columnsOrder}
-                                className='text-inherit text-center'
-                            >
-                                {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
-                            </TableHeader>
-                            <TableBody
-                                isLoading={isLoading}
-                                emptyContent={
-                                    products.length === 0 &&
-                                    <div className="flex flex-col items-center justify-center h-full">
-                                        <p className="text-2xl font-bold text-gray-400"> No orders found</p>
-                                    </div>
-                                }
-                            >
-                                {productsList.map((product) => (
-                                    <TableRow>
-                                        <TableCell>
-                                            <User
-                                                avatarProps={{ radius: "lg", src: product.image }}
-                                                description={product.brand}
-                                                name={product.productName}
-                                            >
-                                                {product.model}
-                                            </User>
-                                        </TableCell>
-                                        <TableCell className='text-center'>{product.manofacturerCode}</TableCell>
-                                        <TableCell className='text-center'>{product.price1}</TableCell>
-                                        <TableCell className='text-center'>
-                                            <Input
-                                                type="number"
-                                                value={product.quantity}
-                                                onChange={(event) => handleQuantityChange(product.id, event.target.value)}
-                                                name="quantity"
-                                                isDisabled={isInputDisabled}
-                                            />
-                                        </TableCell>
-                                        <TableCell className='text-center'>${product.price1 * product.quantity || 0}</TableCell>
-                                    </TableRow>
-                                ))}
-
-
-                                {/* 
-switch (columnKey) {
-            case "productName":
-                return (
-                    <User
-                        avatarProps={{ radius: "lg", src: products.image }}
-                        description={products.brand}
-                        name={products.productName}
-                    >
-                        {products.model}
-                    </User>
-                );
-            case "manofacturerCode":
-                return (
-                    <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">{cellValue}</p>
-                    </div>
-                );
-            case "price1":
-                return (
-                    <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">${cellValue}</p>
-                    </div>
-                );
-            case "quantity":
-                return (
-                    <div className="flex items-center text-center w-1/2">
-                        <Input
-                            type="number"
-                            value={products.quantity}
-                            onChange={(event) => handleQuantityChange(products.id, event.target.value)}
-                            name="quantity"
-                            isDisabled={isInputDisabled}
-                        />
-                    </div>
-                );
-            case "subtotal":
-                return (
-                    <div className="flex items-center">
-                        <p className="text-bold text-sm capitalize">${products.price1 * products.quantity || 0}</p>
-                    </div>
-                ); */}
-                            </TableBody>
-                        </Table>
-                        {selectedKeys > 0 && (
+                    <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-10 h-full">
+                        <div className="flex flex-row lg:w-1/2 mt-10">
+                            <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de compra" label="Fecha de pedido" labelPlacement="outside" value={order.orderDate} onChange={handleOrderChange} name="orderDate" isDisabled={true} />
+                            <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de entrega" label="Fecha de entrega" labelPlacement="outside" value={order.estimatedDeliveryDate} onChange={handleOrderChange} name="estimatedDeliveryDate" isDisabled={isInputDisabled} />
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Input className='w-1/3 pl-10 px-10 lg:mt-0' placeholder="Tipo de pedido" label="Tipo de pedido" labelPlacement="outside" value={order.orderType || "Seleccione el tipo de entrega"} name="orderType" isDisabled={isInputDisabled} />
+                                </DropdownTrigger>
+                                <DropdownMenu>
+                                    <DropdownItem
+                                        onClick={() => setOrder({ ...order, orderType: "Directo a almacén" })}
+                                    >
+                                        Directo a almacén
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        onClick={() => setOrder({ ...order, orderType: "Acordar con el encargado de área" })}
+                                    >
+                                        Acordar con el encargado de área
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        onClick={() => setOrder({ ...order, orderType: "Pendiente" })}
+                                    >
+                                        Pendiente
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Button className='w-1/4 mt-6' color="primary" auto onPress={onOpen} startContent={<TbPlus />}>
+                                Agregar producto
+                            </Button>
+                        </div>
+                        <div className="flex lg:w-1/2 mt-10 items-end justify-start lg:justify-end">
                             <div>
-                                <Button className='w-1/2 mt-10 lg:w-1/4' color="warning" auto startContent={<TbTrash />}>
-                                    Eliminar
-                                </Button>
+                                <Checkbox
+                                    className='w-full pl-12 mt-3'
+                                    checked={order.fulfilled}
+                                    onChange={(event) => {
+                                        setOrder({ ...order, fulfilled: event.target.checked });
+                                    }}
+                                >
+                                    Es recurrente
+                                </Checkbox>
+                            </div>
+                            <div>
+                                <Dropdown>
+                                    <DropdownTrigger>
+                                        <Input className='w-full px-5 mt-5' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
+                                    </DropdownTrigger>
+                                    <DropdownMenu>
+                                        <DropdownItem
+                                            onClick={() => setOrder({ ...order, orderData: "Directo a almacén" })}
+                                        >
+                                            Directo a almacén
+                                        </DropdownItem>
+                                        <DropdownItem
+                                            onClick={() => setOrder({ ...order, orderData: "Acordar con el encargado de área" })}
+                                        >
+                                            Acordar con el encargado de área
+                                        </DropdownItem>
+                                        <DropdownItem
+                                            onClick={() => setOrder({ ...order, orderData: "Pendiente" })}
+                                        >
+                                            Pendiente
+                                        </DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </div>
+                            <div>
+                                <label className="text-sm text-gray-500">Descuento</label>
+                                <Input
+                                    className='w-full'
+                                    type="number"
+                                    endContent="%"
+                                    placeholder='0 - 100'
+                                    value={order.discount}
+                                    onChange={handleOrderChange}
+                                    name="discount"
+                                    isDisabled={isInputDisabled}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex flex-col mx-10 mb-5 pl-10 lg:flex-row h-full">
+                        {/* Tabla del pedido */}
+                        {order.productsOrder.length === 0 ? (
+                            <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
+                                <Table
+                                    removeWrapper
+                                    aria-label=" table with client async pagination"
+                                    classNames={{
+                                        wrapper: "max-h-[400px]",
+                                    }}
+                                >
+                                    <TableHeader
+                                        columns={columnsOrder}
+                                        className='text-inherit '
+                                    >
+                                        {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
+                                    </TableHeader>
+                                    <TableBody>
+                                    </TableBody>
+                                </Table>
+                            </div>
+
+                        ) : (
+                            <div className="flex flex-col lg:flex-row mt-6 pr-32 lg:pr-24 h-full lg:w-1/2 ">
+                                <Table
+                                    removeWrapper
+                                // selectionMode='multiple'
+                                // selectedKeys={selectedKeys}
+                                // onSelectionChange={(keys) => {
+                                //     setSelectedKeys(keys);
+                                // }}
+                                // aria-label=" table with client async pagination"
+                                // classNames={{
+                                //     wrapper: "max-h-[100px]",
+                                // }}
+                                >
+                                    <TableHeader
+                                        columns={columnsOrder}
+                                        className='text-inherit text-center'
+                                    >
+                                        {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
+                                    </TableHeader>
+                                    <TableBody
+                                        isLoading={isLoading}
+                                        emptyContent={
+                                            products.length === 0 &&
+                                            <div className="flex flex-col items-center justify-center h-full">
+                                                <p className="text-2xl font-bold text-gray-400"> No orders found</p>
+                                            </div>
+                                        }
+                                    >
+                                        {productsList.map((product) => (
+                                            <TableRow>
+                                                <TableCell>
+                                                    <User
+                                                        avatarProps={{ radius: "lg", src: product.image }}
+                                                        description={product.brand}
+                                                        name={product.productName}
+                                                    >
+                                                        {product.model}
+                                                    </User>
+                                                </TableCell>
+                                                <TableCell className='text-center'>{product.manofacturerCode}</TableCell>
+                                                <TableCell className='text-center'>{product.price1}</TableCell>
+                                                <TableCell className='text-center'>
+                                                    <Input
+                                                        type="number"
+                                                        value={product.quantity}
+                                                        onChange={(event) => handleQuantityChange(product.id, event.target.value)}
+                                                        name="quantity"
+                                                        isDisabled={isInputDisabled}
+                                                    />
+                                                </TableCell>
+                                                <TableCell className='text-center'>${product.price1 * product.quantity || 0}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                {selectedKeys > 0 && (
+                                    <div>
+                                        <Button className='w-1/2 mt-10 lg:w-1/4' color="warning" auto startContent={<TbTrash />}>
+                                            Eliminar
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         )}
-                    </div>
-                )}
-                {/* Tabla de los totales */}
-                <div className="flex flex-col mt-14 h-full lg:w-1/2">
-                    <Table className='' removeWrapper hideHeader selectionMode='none' border={true}>
-                        <TableHeader
-                            columns={[
-                                {
-                                    key: "name",
-                                    label: "Nombre",
-                                },
-                                {
-                                    key: "value",
-                                    label: "Valor",
-                                },
-                            ]}
-                        >
-                            {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-                        </TableHeader>
+                        {/* Tabla de los totales */}
+                        <div className="flex flex-col mt-14 h-full lg:w-1/2">
+                            <Table className='' removeWrapper hideHeader selectionMode='none' border={true}>
+                                <TableHeader
+                                    columns={[
+                                        {
+                                            key: "name",
+                                            label: "Nombre",
+                                        },
+                                        {
+                                            key: "value",
+                                            label: "Valor",
+                                        },
+                                    ]}
+                                >
+                                    {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+                                </TableHeader>
 
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className='text-right'>SubTotal</TableCell>
-                                <TableCell className='text-center'>${order.subTotal || 0}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className='text-right'>Descuento</TableCell>
-                                <TableCell className='text-center'>${(order.subTotal * (order.discount / 100)).toFixed(2) || 0}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className='text-right'>Impuestos (16%)</TableCell>
-                                <TableCell className='text-center'>${(order.total * 0.16).toFixed(2) || '0.00'}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className='text-right'>Total</TableCell>
-                                <TableCell className='text-center'>${order.total || 0}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                    <div className="flex flex-row justify-center mt-6 pr-32 lg:pr-0">
-                        <Button className='w-1/2 mt-10 lg:w-1/4' color="primary" auto startContent={<MdSave />} onClick={handleSubmit}>
-                            Guardar Pedido
-                        </Button>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell className='text-right'>SubTotal</TableCell>
+                                        <TableCell className='text-center'>${order.subTotal || 0}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className='text-right'>Descuento</TableCell>
+                                        <TableCell className='text-center'>${(order.subTotal * (order.discount / 100)).toFixed(2) || 0}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className='text-right'>Impuestos (16%)</TableCell>
+                                        <TableCell className='text-center'>${(order.total * 0.16).toFixed(2) || '0.00'}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className='text-right'>Total</TableCell>
+                                        <TableCell className='text-center'>${order.total || 0}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                            <div className="flex flex-row justify-center mt-6 pr-32 lg:pr-0">
+                                <Button className='w-1/2 mt-10 lg:w-1/4' color="primary" auto startContent={<MdSave />} onClick={handleSubmit}>
+                                    Guardar Pedido
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

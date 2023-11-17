@@ -5,25 +5,25 @@ import {
     DropdownSection,
     DropdownMenu,
     DropdownItem,
-    Spacer,
-    Divider, link, Checkbox, Card,
 } from "@nextui-org/react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, Chip } from "@nextui-org/react";
 import Header from "../../components/header/headerC/Header";
 import { useNavigate, useParams } from 'react-router-dom';
+import { GiCash } from "react-icons/gi";
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import FacturaComponent from '../../components/Invoices/InvoiceComponent';
 import { IoMdEye } from "react-icons/io";
-import { RiDashboard2Fill, RiPencilLine } from "react-icons/ri";
-import { Input, Link, Button, Textarea, User, Spinner, Radio, RadioGroup } from "@nextui-org/react";
+import { RiDashboard2Fill} from "react-icons/ri";
+import { Link, Button, Spinner} from "@nextui-org/react";
 import { MdShoppingCart } from "react-icons/md";
-import { TbDotsVertical, TbPlus, TbReload, TbTrash } from "react-icons/tb";
-import { MdFilterListAlt, MdDelete, MdSearch } from "react-icons/md";
+import { TbDotsVertical } from "react-icons/tb";
+import {  MdDelete,} from "react-icons/md";
+import { IoIosPrint } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import { ReactToPrint } from 'react-to-print';
 import useAuth from '../../hooks/useAuth';
+import moment from 'moment';
 import '../../App.css';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
@@ -33,18 +33,48 @@ const Invoices = () => {
     const { auth } = useAuth();
     const axios = useAxiosPrivate();
     const [invoices, setInvoices] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchInvoices = async () => {
-            const invoicesData = await getInvoices();
-            setInvoices(invoicesData);
+            const invoicesData = await axios.get(`/invoices/all`);
+            console.log(invoicesData.data);
+            setInvoices(invoicesData.data);
+            setIsLoading(false);
         };
         fetchInvoices();
     }, []);
 
-    const renderCell = React.useCallback((order, column) => {
-        const cellValue = order[column];
+    const columns = [
+        {
+            key: "folio",
+            label: "Folio",
+        },
+        {
+            key: "orderDate",
+            label: "Fecha",
+        },
+        {
+            key: "total",
+            label: "Total",
+        },
+        {
+            key: "orderStatus",
+            label: "estatus",
+        },
+        {
+            key: "facture",
+            label: "Factura",
+        },
+        {
+            key: "actions",
+            label: "Acciones",
+        },
+    ];
+
+    const renderCell = React.useCallback((invoice, column) => {
+        const cellValue = invoice[column];
         switch (column) {
             case "folio":
                 return (
@@ -58,7 +88,7 @@ const Invoices = () => {
                         <p className='text-base'>{moment(cellValue).format('DD/MM/YYYY HH:mm')}</p>
                     </div>
                 );
-            case "amountPending":
+            case "estimatedDeliveryDate":
                 return (
                     <div className="flex items-center">
                         <p className='text-base'>${cellValue}</p>
@@ -74,17 +104,6 @@ const Invoices = () => {
                 return (
                     <div className="flex items-center">
                         <p className='text-base'>{cellValue}</p>
-                    </div>
-                );
-            case "fulfilled":
-                return (
-                    <div className="flex items-center">
-                        <Checkbox
-                            className='text-base'
-                            color="primary"
-                            checked={cellValue}
-                            isDisabled
-                        />
                     </div>
                 );
             case 'actions':
@@ -120,18 +139,18 @@ const Invoices = () => {
                                     <DropdownItem
                                         startContent={<IoMdEye />}
                                         onClick={() => {
-                                            navigate(`/Orders/View/${order.id}`)
+                                            navigate(`/Orders/View/${invoices.id}`)
                                         }}
                                     >
-                                        Ver
+                                        Ver Pedido
                                     </DropdownItem>
                                 </DropdownSection>
-                                <DropdownSection title="Eliminar">
+                                <DropdownSection title="Opciones">
                                     <DropdownItem
-                                        className='text-danger'
-                                        color='danger'
-                                        startContent={<MdDelete />}
-                                        onPress={() => handlerDel(order.id, order.folio)}
+                                        className='text-inherit'
+                                        color='success'
+                                        startContent={<IoIosPrint />}
+                                        onPress={() => handlerDel(invoice.id, invoice)}
                                     >
                                         Imprimir
                                     </DropdownItem>
@@ -141,7 +160,7 @@ const Invoices = () => {
                     </div>
                 );
             default:
-                return <p>{value}</p>;
+                return <p>{cellValue}</p>;
         }
     }, []);
 
@@ -184,8 +203,10 @@ const Invoices = () => {
                         </Typography>
                     </Breadcrumbs>
                 </div>
-            </div>
-            <FacturaComponent factureData={invoices} />
+            </div> 
+            {isLoading ? (
+                <div> <Spinner label="Cargando" /></div>
+            ) : (
             <div className="flex p-4 ml-20">
                 <div className="flex w-full mr-20 p-4 flex-col items-center text-center justify-center full-w">
                 <Table
@@ -197,16 +218,16 @@ const Invoices = () => {
                     }}
                 >
                     <TableHeader
-                        columns={columns}
+                        columns={columns} 
                         className='text-inherit '
                     >
                         {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
                     </TableHeader>
-                    <TableBody items={Invoices}
+                    <TableBody items={invoices}
                         isLoading={isLoading}
                         emptyContent={
-                            order.length === 0 ? (
-                                "No orders found"
+                            invoices.length === 0 ? (
+                                "No Invoices found"
                             ) : (
                                 <Spinner label="Cargando" />
                             )
@@ -222,6 +243,8 @@ const Invoices = () => {
                 </div>
 
             </div>
+            )}
+
         </div>
     );
 };

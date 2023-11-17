@@ -34,7 +34,7 @@ const LegalDocuments = () => {
                                 underline="hover"
                                 sx={{ display: "flex", alignItems: "center" }}
                                 color="foreground"
-                                href="#"
+                                href="/Home"
                                 onClick={() => navigate(`/Home`)}
                             >
                                 <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
@@ -45,7 +45,7 @@ const LegalDocuments = () => {
                                 underline="hover"
                                 sx={{ display: "flex", alignItems: "center" }}
                                 color="foreground"
-                                href="#"
+                                href="/Finances"
                                 onClick={() => navigate(`/Finances`)}
                             >
                                 <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
