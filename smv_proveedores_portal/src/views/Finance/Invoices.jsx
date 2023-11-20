@@ -150,7 +150,7 @@ const Invoices = () => {
                                         className='text-inherit'
                                         color='success'
                                         startContent={<IoIosPrint />}
-                                        onPress={() => handlerDel(invoice.id, invoice)}
+                                        onPress={() => handlerDel(invoices.id, invoice)}
                                     >
                                         Imprimir
                                     </DropdownItem>

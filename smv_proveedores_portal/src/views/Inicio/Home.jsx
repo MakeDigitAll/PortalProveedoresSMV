@@ -74,7 +74,7 @@ const Home = () => {
             className="w-full h-5/6 flex"
             whileHover={{ scale: 1.1 }}
           >
-            <Spacer y={1} />
+            <Spacer y={1} /> 
             <Button
               startContent={<PiUserFill />}
               className="w-full py-10 my-5 text-2xl"
@@ -109,8 +109,8 @@ const Home = () => {
               startContent={<FaDollarSign />}
               className="w-full py-10 my-5 text-2xl"
               color="primary"
-              onClick={() => navigate("/Finances")}
-              disabled={permissions.includes("4444") ? false : true}
+              onClick={() => navigate("/Finances")} 
+              disabled={permissions.includes("2002") || permissions.includes("4444") ? false : true}
             >
               Finanzas
             </Button>
@@ -189,11 +189,11 @@ const Home = () => {
               </CardHeader>
               <CardBody>
                 <div className="flex flex-col">
-                  <p>1. Pedido 1</p>
-                  <p>2. Pedido 2</p>
-                  <p>3. Pedido 3</p>
-                  <p>4. Pedido 4</p>
-                  <p>5. Pedido 5</p>
+                  <p>1. Pedido 1000</p>
+                  <p>2. Pedido 1002</p>
+                  <p>3. Pedido 1003</p>
+                  <p>4. Pedido 1004</p>
+                  <p>5. Pedido 1005</p>
                 </div>
               </CardBody>
             </Card>
