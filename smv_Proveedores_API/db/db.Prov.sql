@@ -154,8 +154,6 @@ create table "ProductsAvailability" (
 );
 
 
---tal vez se elimine esta tabla y se agregue el campo "estatus" a la tabla providerOrders
-
 create table "pvOrders" (
     "id" serial primary key unique not null,
     "folio" INTEGER not null unique,
@@ -177,6 +175,21 @@ create table "pvOrders" (
     "total" float,
     "comments" varchar(100),
     "fulfilled" boolean default false,
+    "created_At" timestamp default current_timestamp,
+    "updated_At" timestamp default current_timestamp,
+    "isDeleted" boolean default false
+);
+
+
+--- Tabla para el log de cambios en la base de datos
+
+create table "providersLog" (
+    "id" serial primary key,
+    "responsibleUser" varchar(100),
+    "affectedTable" varchar(100) not null,
+    "action" varchar(100) not null,
+    "oldData" JSONB,
+    "newData" JSONB,
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
@@ -245,3 +258,155 @@ alter table "technicalSheetProducts"
 add constraint fk_tecSheet_prod foreign key ("productId") references "pvProducts" ("id");
 
 ------------------------------------------------------------------------------------   Llaves foraneas   ------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------   Funciones (Bitacora)   ------------------------------------------------------------------------------------------------------------
+
+
+
+CREATE OR REPLACE FUNCTION update_provider_profile(
+	_id INT,
+    provider_name VARCHAR(100),
+    social_reason VARCHAR(100),
+    discount_sale INT,
+    _address VARCHAR(100),
+    _col VARCHAR(100),
+    _rfc VARCHAR(100),
+    _city VARCHAR(100),
+    _state VARCHAR(100),
+    postal_code VARCHAR(100),
+    _country VARCHAR(100),
+    _contact VARCHAR(200),
+    _phone VARCHAR(100),
+    _email VARCHAR(100),
+    responsible_user VARCHAR(100)
+)
+RETURNS VOID AS $$
+DECLARE
+    provId INT;
+    old_data JSONB;
+    new_data JSONB;
+BEGIN
+    old_data := to_jsonb(t)
+    FROM "providersProfile" t
+    WHERE "id" = _id;
+
+    UPDATE "providersProfile"
+    SET
+        "providerName" = provider_name,
+        "socialReason" = social_reason,
+        "discountSale" = discount_sale,
+        "address" = _address,
+        "col" = _col,
+        "rfc" = _rfc,
+        "city" = _city,
+        "state" = _state,
+        "postalCode" = postal_code,
+        "country" = _country,
+        "contact" = _contact,
+        "phone" = _phone,
+        "email" = _email,
+        "updated_At" = current_timestamp
+    WHERE "id" = _id RETURNING "providerId" INTO provId;
+
+    new_data := jsonb_build_object(
+        'id', _id,
+        'providerId', provId,
+        'providerName', provider_name,
+        'socialReason', social_reason,
+        'discountSale', discount_sale,
+        'address', _address,
+        'col', _col,
+        'rfc', _rfc,
+        'city', _city,
+        'state', _state,
+        'postalCode', postal_code,
+        'country', _country,
+        'contact', _contact,
+        'phone', _phone,
+        'email', _email
+    );
+
+    INSERT INTO "providersLog" ("responsibleUser", "affectedTable", "action", "oldData", "newData")
+    VALUES (responsible_user, 'providersProfile', 'update', old_data, new_data);
+
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION insert_provider_profile(
+    provider_id INT,
+    provider_name VARCHAR(100),
+    social_reason VARCHAR(100),
+    discount_sale INT,
+    _address VARCHAR(100),
+    _col VARCHAR(100),
+    _rfc VARCHAR(100),
+    _city VARCHAR(100),
+    _state VARCHAR(100),
+    postal_code VARCHAR(100),
+    _country VARCHAR(100),
+    _contact VARCHAR(200),
+    _phone VARCHAR(100),
+    _email VARCHAR(100),
+    responsible_user VARCHAR(100)
+)
+RETURNS INT AS $$
+DECLARE
+    new_id INT;
+    new_data JSONB;
+BEGIN
+    INSERT INTO "providersProfile" ("providerId", "providerName", "socialReason", "discountSale", "address", "col", "rfc", "city", "state", "postalCode", "country", "contact", "phone", "email")
+    VALUES (provider_id, provider_name, social_reason, discount_sale, _address, _col, _rfc, _city, _state, postal_code, _country, _contact, _phone, _email) RETURNING "id" INTO new_id;
+    
+    new_data := jsonb_build_object(
+        'id', new_id,
+        'providerId', provider_id,
+        'providerName', provider_name,
+        'socialReason', social_reason,
+        'discountSale', discount_sale,
+        'address', _address,
+        'col', _col,
+        'rfc', _rfc,
+        'city', _city,
+        'state', _state,
+        'postalCode', postal_code,
+        'country', _country,
+        'contact', _contact,
+        'phone', _phone,
+        'email', _email
+    );
+    
+    INSERT INTO "providersLog" ("responsibleUser", "affectedTable", "action", "oldData", "newData")
+    VALUES (responsible_user, 'providersProfile', 'insert', '{}'::JSONB, new_data);
+    
+    RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION delete_provider_profile(
+    _id INT,
+    responsible_user VARCHAR(100)
+)
+RETURNS VOID AS $$
+DECLARE
+    old_data JSONB;
+BEGIN
+    old_data := to_jsonb(t)
+    FROM "providersProfile" t
+    WHERE "id" = _id;
+
+    UPDATE "providersProfile"
+    SET "isDeleted" = true, "updated_At" = current_timestamp
+    WHERE "id" = _id;
+
+    INSERT INTO "providersLog" ("responsibleUser", "affectedTable", "action", "oldData", "newData")
+    VALUES (responsible_user, 'providersProfile', 'delete', old_data, '{}'::JSONB);
+
+    RETURN;
+END;
+
+$$ LANGUAGE plpgsql;
