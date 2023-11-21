@@ -420,14 +420,15 @@ const NewOrders = () => {
         try {
             const response = await axios.get(`/orders/getOrderById/${params.id}`);
             console.log(response.data);
+            let productsOrder = response.data.productsOrder.map(product => JSON.parse(product));
             setOrder({
                 ...order,
-                costumer: response.data.costumer || "",
                 orderDate: moment(response.data.orderDate).format('YYYY-MM-DD'),
                 estimatedDeliveryDate: moment(response.data.estimatedDeliveryDate).format('YYYY-MM-DD'),
                 orderType: response.data.orderType,
                 subTotal: Number(response.data.subtotal),
                 discount: Number(response.data.discount),
+                productsOrder: productsOrder,
                 fulfilled: response.data.fulfilled,
                 total: Number(response.data.total),
                 orderData: response.data.orderData,
@@ -435,12 +436,6 @@ const NewOrders = () => {
                 paymentMethod: response.data.paymentMethod,
                 comments: response.data.comments,
             });
-            let productsOrder = response.data.productsOrder.map(product => JSON.parse(product));
-            setOrder({
-                ...order,
-                productsOrder: productsOrder,
-            });
-
             setEditing(true);
             let url = window.location.pathname;
             let arr = url.split('/');

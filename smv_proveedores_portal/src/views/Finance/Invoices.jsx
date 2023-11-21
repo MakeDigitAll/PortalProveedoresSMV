@@ -6,7 +6,7 @@ import {
     DropdownMenu,
     DropdownItem,
 } from "@nextui-org/react";
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, Chip } from "@nextui-org/react";
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, Chip, Input} from "@nextui-org/react";
 import Header from "../../components/header/headerC/Header";
 import { useNavigate, useParams } from 'react-router-dom';
 import { GiCash } from "react-icons/gi";
@@ -14,11 +14,11 @@ import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import FacturaComponent from '../../components/Invoices/InvoiceComponent';
 import { IoMdEye } from "react-icons/io";
-import { RiDashboard2Fill} from "react-icons/ri";
-import { Link, Button, Spinner} from "@nextui-org/react";
+import { RiDashboard2Fill } from "react-icons/ri";
+import { Link, Button, Spinner } from "@nextui-org/react";
 import { MdShoppingCart } from "react-icons/md";
 import { TbDotsVertical } from "react-icons/tb";
-import {  MdDelete,} from "react-icons/md";
+import { MdDelete, } from "react-icons/md";
 import { IoIosPrint } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import { ReactToPrint } from 'react-to-print';
@@ -28,13 +28,24 @@ import '../../App.css';
 
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
-
 const Invoices = () => {
     const { auth } = useAuth();
     const axios = useAxiosPrivate();
     const [invoices, setInvoices] = useState([]);
+    const [searchDate, setSearchDate] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+
+    const filterinvoices = (invoices) => {
+        if (searchDate === '') {
+            return invoices;
+        }
+        return invoices.filter((invoice) => {
+            return moment(invoice.orderDate).format('YYYY-MM-DD:HH:mm').includes(searchDate);
+        });
+    };
+    
+
 
     useEffect(() => {
         const fetchInvoices = async () => {
@@ -60,10 +71,6 @@ const Invoices = () => {
             label: "Total",
         },
         {
-            key: "orderStatus",
-            label: "estatus",
-        },
-        {
             key: "facture",
             label: "Factura",
         },
@@ -86,12 +93,6 @@ const Invoices = () => {
                 return (
                     <div className="flex items-center">
                         <p className='text-base'>{moment(cellValue).format('DD/MM/YYYY HH:mm')}</p>
-                    </div>
-                );
-            case "estimatedDeliveryDate":
-                return (
-                    <div className="flex items-center">
-                        <p className='text-base'>${cellValue}</p>
                     </div>
                 );
             case "total":
@@ -134,18 +135,7 @@ const Invoices = () => {
                                     alignItems: "center",
                                 }}
                             >
-                                <DropdownSection title="Acciones"
-                                >
-                                    <DropdownItem
-                                        startContent={<IoMdEye />}
-                                        onClick={() => {
-                                            navigate(`/Orders/View/${invoices.id}`)
-                                        }}
-                                    >
-                                        Ver Pedido
-                                    </DropdownItem>
-                                </DropdownSection>
-                                <DropdownSection title="Opciones">
+                                <DropdownSection title="Acciones">
                                     <DropdownItem
                                         className='text-inherit'
                                         color='success'
@@ -159,8 +149,6 @@ const Invoices = () => {
                         </Dropdown>
                     </div>
                 );
-            default:
-                return <p>{cellValue}</p>;
         }
     }, []);
 
@@ -203,46 +191,53 @@ const Invoices = () => {
                         </Typography>
                     </Breadcrumbs>
                 </div>
-            </div> 
+            </div>
             {isLoading ? (
                 <div> <Spinner label="Cargando" /></div>
             ) : (
-            <div className="flex p-4 ml-20">
-                <div className="flex w-full mr-20 p-4 flex-col items-center text-center justify-center full-w">
-                <Table
-                    aria-label=" table with pagination"
-                    color={'default'}
-                    isHeaderSticky
-                    classNames={{
-                        wrapper: "max-h-[500px]",
-                    }}
-                >
-                    <TableHeader
-                        columns={columns} 
-                        className='text-inherit '
-                    >
-                        {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
-                    </TableHeader>
-                    <TableBody items={invoices}
-                        isLoading={isLoading}
-                        emptyContent={
-                            invoices.length === 0 ? (
-                                "No Invoices found"
-                            ) : (
-                                <Spinner label="Cargando" />
-                            )
-                        }
-                    >
-                        {(item) => (
-                            <TableRow key={item.id}>
-                                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-                </div>
+                <div className="flex flex-col p-4 ml-20">
+                    <div className="flex mr-20 p-5 flex-row">
+                        <label className="text-base mr-4 w-32">Filtrar por fecha de pedido: </label>
+                        <Input
+                            type="date"
+                            value={searchDate}
+                            onChange={(e) => setSearchDate(e.target.value)}
+                            className="w-1/3"
+                            isClearable
+                            onClear={() => setSearchDate('')}
+                        />
+                        </div>
+                    <div className="flex w-full mr-20 p-4 flex-col items-center text-center justify-center full-w">
+                        <Table
+                            aria-label=" table with pagination"
+                            color={'default'}
+                            isHeaderSticky
+                            classNames={{
+                                wrapper: "max-h-[500px]",
+                            }}
+                        >
+                            <TableHeader
+                                columns={columns}
+                                className='text-inherit '
+                            >
+                                {(column) => <TableColumn key={column.key} align={column.uid === "actions" ? "center" : "start"}>{column.label}</TableColumn>}
+                            </TableHeader>
+                            <TableBody items={filterinvoices(invoices)}
+                                isLoading={isLoading}
+                                emptyContent={
+                                    "No Invoices found"
+                                }
+                            >
+                                {(item) => (
+                                    <TableRow key={item.id}>
+                                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
 
-            </div>
+                </div>
             )}
 
         </div>
