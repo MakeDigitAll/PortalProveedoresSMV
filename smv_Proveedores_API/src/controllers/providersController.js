@@ -65,9 +65,69 @@ const deleteProvider = async (req, res) => {
 
 
 //---------------------------------------------------------------------------------------
+//                                       Legal Documents
+//---------------------------------------------------------------------------------------
+
+const legalDocuments = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const response = await pool.query('SELECT * FROM "legalDocuments" WHERE "providerId" = $1', [id]);
+    res.status(200).json(response.rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Error en al obtener documentos' });
+  }
+}
+
+const insertDocument = async (req, res) => {
+  try {
+    const {id, documentName } = req.params;
+    const file = req.file.buffer;
+    const response = await pool.query('select * from "legalDocuments" where "providerId" = $1 and "documentName" = $2', [id, documentName]);
+    if (response.rows.length > 0) {
+      res.status(400).json({ message: 'El documento ya existe' });
+    } else {
+      await pool.query('insert into "legalDocuments" ("providerId", "documentName", "document") values ($1, $2, $3)', [id, documentName, file]);
+      res.status(200).json({ message: 'Documento agregado correctamente' });
+    }
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+    console.log(error);
+  }
+}
+
+
+const updateDocument = async (req, res) => {
+  try {
+    const {id, documentName } = req.params;
+    const { file } = req.file.buffer;
+    await pool.query('update "legalDocuments" set "document" = $1 where "providerId" = $2 and "documentName" = $3', [file, id, documentName]);
+      res.status(200).json({ message: 'Documento actualizado correctamente' });
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+}
+
+const deleteDocument = async (req, res) => {
+  try {
+    const {id, documentName } = req.params;
+    await pool.query('delete from "legalDocuments" where "providerId" = $1 and "documentName" = $2', [id, documentName]);
+    res.status(200).json({ message: 'Documento eliminado correctamente' });
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+}
+
+//---------------------------------------------------------------------------------------
 
 module.exports = {
   getProviderById,
   updateProvider,
-  deleteProvider
+  deleteProvider,
+  legalDocuments,
+  insertDocument,
+  updateDocument,
+  deleteDocument
 }
