@@ -181,6 +181,19 @@ create table "pvOrders" (
 );
 
 
+create table legalDocuments (
+    "id" serial primary key,
+    "providerId" int not null,
+    "documentName" varchar(100) not null,
+    "document" BYTEA,
+    "created_At" timestamp default current_timestamp,
+    "updated_At" timestamp default current_timestamp,
+    "isDeleted" boolean default false
+);
+
+
+
+
 --- Tabla para el log de cambios en la base de datos
 
 create table "providersLog" (
