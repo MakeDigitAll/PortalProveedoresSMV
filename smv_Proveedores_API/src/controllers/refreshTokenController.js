@@ -18,7 +18,7 @@ const refreshTokenController = async (req, res) => {
 
       jwt.verify(rT, token.refreshTokenSecretKey, (err, user) => {
         if (err) return res.sendStatus(403);
-        const accessToken = jwt.sign({ username: user.user, roles: user.roles}, token.secretKey, { expiresIn: '1h' });
+        const accessToken = jwt.sign({ rfc: user.rfc, socialReason: user.socialReason, username: user.user, roles: user.roles}, token.secretKey, { expiresIn: '1h' });
         res.status(200).json({ accessToken: accessToken});
       });
 

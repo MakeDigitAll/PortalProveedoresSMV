@@ -69,26 +69,6 @@ function App() {
           element: <Profile />,
           errorElement: <Error404 />,
         },
-
-
-        {
-          path: "/Finances",
-          element: <Finances />,
-          errorElement: <Error404 />,
-        },
-        {
-          path: "/Invoices",
-          element: <Invoices />,
-          errorElement: <Error404 />,
-        },
-        {
-          path: "/LegalDocuments",
-          element: <LegalDocuments />,
-          errorElement: <Error404 />,
-        },
-
-
-        
       ],
     },
     {
@@ -173,10 +153,41 @@ function App() {
         },
       ],
     },
+    {
+      path: "/",
+      element: <RequireAuth allowedRoles={[ROLES.FINANZAS, ROLES.FACTURACION, ROLES.PROVIDER]} />,
+      children: [  
+        {
+          path: "/Finances",
+          element: <Finances />,
+          errorElement: <Error404 />,
+        },
+      ],
+    },
+    {
+      path: "/",
+      element: <RequireAuth allowedRoles={[ROLES.FACTURACION, ROLES.PROVIDER]} />,
+      children: [
+        {
+          path: "/Invoices",
+          element: <Invoices />,
+          errorElement: <Error404 />,
+        },
+      ],
+    },
+    {
+      path: "/",
+      element: <RequireAuth allowedRoles={[ROLES.FINANZAS, ROLES.PROVIDER]} />,
+      children: [
+        {
+          path: "/LegalDocuments",
+          element: <LegalDocuments />,
+          errorElement: <Error404 />,
+        }
+      ],
+    },
   ]},
   ]);
-
-
 
 
 return (

@@ -27,7 +27,9 @@ const PersistLogin = () => {
                 isVerified: decoded?.isVerified,
                 username: decoded?.username,
                 accessToken: accessToken,
-                userId: decoded?.userId
+                userId: decoded?.userId,
+                socialReason: decoded?.socialReason,
+                rfc: decoded?.rfc,
             });
             setIsLoading(false);
 

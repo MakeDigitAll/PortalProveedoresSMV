@@ -28,9 +28,9 @@ const auth = async (req, res) => {
         const cleanedString = respRoles.replace(/[{}"]/g, '');
         const rol = cleanedString.split(',');
 
-        const accessToken = jwt.sign({ username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID, status: permission.rows[0].estatus, roles: rol }, token.secretKey, { expiresIn: '10m' });
+        const accessToken = jwt.sign({ rfc: user.rfc, socialReason: user.socialReason, username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID, status: permission.rows[0].estatus, roles: rol }, token.secretKey, { expiresIn: '10m' });
 
-        const refreshToken = jwt.sign({ username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID }, token.refreshTokenSecretKey, { expiresIn: '2h' });
+        const refreshToken = jwt.sign({ rfc: user.rfc, socialReason: user.socialReason, username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID }, token.refreshTokenSecretKey, { expiresIn: '2h' });
 
         res.status(200).json({
           accessToken: accessToken,
@@ -69,6 +69,8 @@ const getAuth = async (username) => {
         password: response.rows[0].password,
         isVerified: response.rows[0].isVerified,
         userId: response.rows[0].id,
+        socialReason: idProv.rows[0].socialReason,
+        rfc: idProv.rows[0].rfc,
         ID: idProv.rows[0].id
       };
 
@@ -77,9 +79,11 @@ const getAuth = async (username) => {
 
     const resp = {
       user: Pv.rows[0].providerName,
+      socialReason: Pv.rows[0].socialReason,
       password: response.rows[0].password,
       isVerified: response.rows[0].isVerified,
       userId: response.rows[0].id,
+      rfc: Pv.rows[0].rfc,
       ID: Pv.rows[0].id
     };
     return resp;

@@ -49,7 +49,7 @@ const Home = () => {
               className="w-full py-10 my-5 text-2xl"
               color="primary"
               onClick={() => navigate("/orders")}
-              disabled={permissions.includes("2002") || permissions.includes("4444") ? false : true}
+              disabled={permissions.includes("2001") || permissions.includes("4444") ? false : true}
             >
               Pedidos
             </Button>
@@ -65,7 +65,7 @@ const Home = () => {
               className="w-full py-10 my-5 text-2xl"
               color="primary"
               onClick={() => navigate("/products")}
-              disabled={permissions.includes("2001") || permissions.includes("4444") ? false : true}
+              disabled={permissions.includes("2003") || permissions.includes("4444") ? false : true}
             >
               Productos
             </Button>
@@ -85,21 +85,6 @@ const Home = () => {
               Usuarios
             </Button>
           </motion.div>
-          {/* <motion.div
-            className="w-full h-5/6 flex"
-            whileHover={{ scale: 1.1 }}
-          >
-            <Spacer y={1} />
-            <Button
-              startContent={<BiReceipt />}
-              className="w-full py-10 my-5 text-2xl"
-              color="primary"
-              onClick={() => navigate("/Facturacion")}
-              disabled={permissions.includes("4444") ? false : true}
-            >
-              Facturación
-            </Button>
-          </motion.div> */}
           <motion.div
             className="w-full h-5/6 flex"
             whileHover={{ scale: 1.1 }}
@@ -110,26 +95,11 @@ const Home = () => {
               className="w-full py-10 my-5 text-2xl"
               color="primary"
               onClick={() => navigate("/Finances")} 
-              disabled={permissions.includes("2002") || permissions.includes("4444") ? false : true}
+              disabled={permissions.includes("2002") || permissions.includes("2004")  || permissions.includes("4444")? false : true}
             >
               Finanzas
             </Button>
           </motion.div>
-          {/* <motion.div
-            className="w-full h-5/6 flex"
-            whileHover={{ scale: 1.1 }}
-          >
-            <Spacer y={1} />
-            <Button
-              startContent={<FaBalanceScale />}
-              className="w-full py-10 my-5 text-2xl"
-              color="primary"
-              onClick={() => navigate("/Legales")}
-              disabled={permissions.includes("4444") ? false : true}
-            >
-              Legales
-            </Button>
-          </motion.div> */}
         </div>
         {/* Se utiliza el componente de nextui, card, para mostrar la interfaz principal del proveedor */}
         <div className=" w-5/6 ml-10 flex flex-col">
