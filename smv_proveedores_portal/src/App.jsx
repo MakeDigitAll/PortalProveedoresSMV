@@ -52,21 +52,6 @@ function App() {
       element: <Unauthorized />,
       errorElement: <Error404 />,
     },
-    {
-      path: "/Finances",
-      element: <Finances />,
-      errorElement: <Error404 />,
-    },
-    {
-      path: "/Invoices",
-      element: <Invoices />,
-      errorElement: <Error404 />,
-    },
-    {
-      path: "/LegalDocuments",
-      element: <LegalDocuments />,
-      errorElement: <Error404 />,
-    },
        {
          element: <PersistLogin />,
          children: [
@@ -84,6 +69,26 @@ function App() {
           element: <Profile />,
           errorElement: <Error404 />,
         },
+
+
+        {
+          path: "/Finances",
+          element: <Finances />,
+          errorElement: <Error404 />,
+        },
+        {
+          path: "/Invoices",
+          element: <Invoices />,
+          errorElement: <Error404 />,
+        },
+        {
+          path: "/LegalDocuments",
+          element: <LegalDocuments />,
+          errorElement: <Error404 />,
+        },
+
+
+        
       ],
     },
     {

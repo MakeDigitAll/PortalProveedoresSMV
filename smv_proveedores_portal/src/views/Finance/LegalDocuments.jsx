@@ -32,11 +32,46 @@ const LegalDocuments = () => {
 
     const loadDocuments = async () => {
         try {
-            const response = await axios.get(`/pv/${auth.ID}/documents`);
-            console.log(response.data);
+            const response = await axios.get(`/pv/${auth.ID}/documents/contrato_compra_venta`, {
+                responseType: 'blob',
+            });
+            if (response.data) {
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                setDocument(blob)
+                setDocumentPreview(URL.createObjectURL(blob));
+            }
         }
-        catch (error) {  
+        catch (error) {
+            console.log(error);
         }
+        try {
+            const response = await axios.get(`/pv/${auth.ID}/documents/politicas_compra_venta`, {
+                responseType: 'blob',
+            });
+            if (response.data) {
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                setDocument2(blob)
+                setDocumentPreview2(URL.createObjectURL(blob));
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        try {
+            const response = await axios.get(`/pv/${auth.ID}/documents/poliza_seguro`, {
+                responseType: 'blob',
+            });
+            if (response.data) {
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                setDocument3(blob)
+                setDocumentPreview3(URL.createObjectURL(blob));
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+
     }
 
     useEffect(() => {
@@ -44,33 +79,32 @@ const LegalDocuments = () => {
     }, [])
 
 
-    const handleDocumentUpload = (file, documentType) => {
+    const handleDocumentUpload = async (file, documentType) => {
         if (file) {
             if (file.size > 10000000) {
                 toast.error("El tamaño del archivo no puede ser mayor a 10MB");
             } else {
                 if (file.type === "application/pdf") {
                     switch (documentType) {
-                        case 1:
+                        case 'contrato_compra_venta':
                             setDocument(file);
                             setDocumentPreview(URL.createObjectURL(file));
-                            uploadDocument(file, documentType);
+                            await uploadDocument(file, documentType);
                             toast.success("Documento cargado correctamente");
                             break;
-                        case 2:
+                        case 'politicas_compra_venta':
                             setDocument2(file);
                             setDocumentPreview2(URL.createObjectURL(file));
-                            uploadDocument(file, documentType);
+                            await uploadDocument(file, documentType);
                             break;
-                        case 3:
+                        case 'poliza_seguro':
                             setDocument3(file);
                             setDocumentPreview3(URL.createObjectURL(file));
-                            uploadDocument(file, documentType);
+                            await uploadDocument(file, documentType);
                             break;
                         default:
                             break;
                     }
-                    toast.success("Documento cargado correctamente");
                 } else {
                     toast.error("El formato del archivo debe ser PDF");
                 }
@@ -80,10 +114,10 @@ const LegalDocuments = () => {
 
     const uploadDocument = async (file, documentType) => {
         const formData = new FormData();
+        console.log("updateDocument");
         formData.append("file", file);
-        formData.append("documentType", documentType);
         try {
-            const response = await axios.post(`/pv/${auth.ID}/documents/${file.name}`, formData, {
+            const response = await axios.post(`/pv/${auth.ID}/documents/${documentType}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -112,7 +146,7 @@ const LegalDocuments = () => {
                             >
                                 <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
                                 Inicio
-                            </Link> 
+                            </Link>
                             <Link
                                 className="text-foreground"
                                 underline="hover"
@@ -137,15 +171,15 @@ const LegalDocuments = () => {
                 <div className="flex flex-col items-center justify-center w-full h-full">
                     <div className="flex flex-row items-center justify-center w-1/2 h-1/2">
                         <div>
-                            <input type="file" accept="application/pdf" onChange={(e) => handleDocumentUpload(e.target.files[0], 1)} />
+                            <input type="file" accept="application/pdf" onChange={(e) => handleDocumentUpload(e.target.files[0], 'contrato_compra_venta')} />
                             {viewDocument === true && documentPreview !== null ? (
                                 <div className="flex flex-col items-center justify-center">
-                                <embed src={documentPreview} width="500" height="375" type="application/pdf" />
-                                <Button onClick={() => setViewDocument(false)}>Cerrar</Button>
+                                    <embed src={documentPreview} width="500" height="375" type="application/pdf" />
+                                    <Button onClick={() => setViewDocument(false)}>Cerrar</Button>
                                 </div>
                             ) : null}
                             {viewDocument === false && documentPreview !== null ? (
-                            <Button onClick={() => setViewDocument(true)}>Ver documento</Button>
+                                <Button onClick={() => setViewDocument(true)}>Ver documento</Button>
                             ) : null}
                         </div>
                         <div className="ml-10">
@@ -154,16 +188,16 @@ const LegalDocuments = () => {
                     </div>
                     <div className="flex flex-row items-center justify-center mt-10 w-1/2 h-1/2">
                         <div>
-                            <input type="file" accept="application/pdf" onChange={(e) => handleDocumentUpload(e.target.files[0], 2)} />
+                            <input type="file" accept="application/pdf" onChange={(e) => handleDocumentUpload(e.target.files[0], 'politicas_compra_venta')} />
 
                             {viewDocument2 === true && documentPreview2 !== null ? (
                                 <div className="flex flex-col items-center justify-center">
-                                <embed src={documentPreview2} width="500" height="375" type="application/pdf" />
-                                <Button onClick={() => setViewDocument2(false)}>Cerrar</Button>
+                                    <embed src={documentPreview2} width="500" height="375" type="application/pdf" />
+                                    <Button onClick={() => setViewDocument2(false)}>Cerrar</Button>
                                 </div>
                             ) : null}
                             {viewDocument2 === false && documentPreview2 !== null ? (
-                            <Button onClick={() => setViewDocument2(true)}>Ver documento</Button>
+                                <Button onClick={() => setViewDocument2(true)}>Ver documento</Button>
                             ) : null}
                         </div>
                         <div className="ml-10">
@@ -172,15 +206,15 @@ const LegalDocuments = () => {
                     </div>
                     <div className="flex flex-row items-center justify-center mt-10 w-1/2 h-1/2">
                         <div>
-                            <input type="file" accept="application/pdf" onChange={(e) => handleDocumentUpload(e.target.files[0], 3)} />
+                            <input type="file" accept="application/pdf" onChange={(e) => handleDocumentUpload(e.target.files[0], 'poliza_seguro')} />
                             {viewDocument3 === true && documentPreview3 !== null ? (
                                 <div className="flex flex-col items-center justify-center">
-                                <embed src={documentPreview3} width="500" height="375" type="application/pdf" />
-                                <Button onClick={() => setViewDocument3(false)}>Cerrar</Button>
+                                    <embed src={documentPreview3} width="500" height="375" type="application/pdf" />
+                                    <Button onClick={() => setViewDocument3(false)}>Cerrar</Button>
                                 </div>
                             ) : null}
                             {viewDocument3 === false && documentPreview3 !== null ? (
-                            <Button onClick={() => setViewDocument3(true)}>Ver documento</Button>
+                                <Button onClick={() => setViewDocument3(true)}>Ver documento</Button>
                             ) : null}
                         </div>
                         <div className="ml-28">

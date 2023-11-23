@@ -184,8 +184,7 @@ create table "pvOrders" (
 create table "legalDocuments" (
     "id" serial primary key,
     "providerId" int not null,
-    "ducumentType" varchar(100) not null,
-    "documentName" varchar(100) not null,
+    "documentType" varchar(100) not null,
     "document" BYTEA,
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
