@@ -224,7 +224,6 @@ const Orders = () => {
                                     display: "flex",
                                     flexDirection: "column",
                                     alignItems: "center",
-                                    backgroundColor: "#292831",
                                 }}
                             >
                                 <DropdownSection title="Acciones"
@@ -355,8 +354,10 @@ const Orders = () => {
                     startContent={<MdSearch />}
                     className='my-10 lg:w-1/5 w-1/2 mr-5'
                     placeholder="Buscar por folio"
-                    size="sm"
+                    size="small"
                     width="300px"
+                    isClearable
+                    onClear={() => setSearchFolio('')}
                     onChange={(e) => setSearchFolio(e.target.value)}
                 />
                 <Input
@@ -364,8 +365,10 @@ const Orders = () => {
                     className='my-10 lg:w-1/5 w-1/2 mr-5'
                     placeholder="Buscar por fecha"
                     type="date"
-                    size="sm"
+                    size="small"
                     width="300px"
+                    isClearable
+                    onClear={() => setSearchDate('')}
                     onChange={(e) => setSearchDate(e.target.value)}
                 />
 
@@ -384,9 +387,9 @@ const Orders = () => {
                     >
                         <Button
                             size="sm"
-                            variant="success"
+                            variant="bordered"
                             color="inherit"
-                            className='my-10 lg:w-1/5 w-1/2 mr-1'
+                            className='my-10 lg:w-1/12 w-1/2 mr-1'
                             auto
                         >
                             {searchStatus === '' ? 'Buscar por estatus' : searchStatus}
@@ -397,7 +400,6 @@ const Orders = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            backgroundColor: "#292831",
                         }}
                     >
                         <DropdownSection title="Buscar por estatus">
@@ -423,9 +425,8 @@ const Orders = () => {
                 <Button
                     auto
                     startContent={<MdFilterListAlt />}
-                    className="mr-10 mt-10 text-inherit bg-primary justify-end m-auto"
+                    className="mr-10 mt-10 text-inherit bg-[#AB6A00] justify-end m-auto"
                     size="small"
-                    variant="secondary"
                     onPress={() => {
                         setSearchDate('');
                         setSearchFolio('');
@@ -465,9 +466,9 @@ const Orders = () => {
                         isLoading={isLoading}
                         emptyContent={
                             order.length === 0 ? (
-                                <Spinner label="Cargando" />
+                                "No orders found"
                             ) : (
-                                "No products found"
+                                <Spinner label="Cargando" />
                             )
                         }
                     >

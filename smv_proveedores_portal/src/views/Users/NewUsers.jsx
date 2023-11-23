@@ -680,7 +680,7 @@ const NewUsers = () => {
                             <CardBody>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mr-4 mt-4"
+                                        className="w-60 mr-4 my-4"
                                         label="Nombre del usuario"
                                         labelPlacement='outside'
                                         name='profileName'
@@ -690,7 +690,7 @@ const NewUsers = () => {
                                         disabled={isInputDisabled}
                                     />
                                     <Input
-                                        className="w-60 mt-4 mr-4"
+                                        className="w-60 my-4 mr-4"
                                         label="Dirección"
                                         labelPlacement='outside'
                                         name='address'
@@ -701,7 +701,7 @@ const NewUsers = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mr-4 mt-4"
+                                        className="w-60 mr-4 my-4"
                                         label="Colonia"
                                         labelPlacement='outside'
                                         name='col'
@@ -710,7 +710,7 @@ const NewUsers = () => {
                                         disabled={isInputDisabled}
                                     />
                                     <Input
-                                        className="w-60 mt-4 mr-4"
+                                        className="w-60 my-4 mr-4"
                                         label="Ciudad"
                                         labelPlacement='outside'
                                         name='city'
@@ -721,7 +721,7 @@ const NewUsers = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mt-4 mr-4"
+                                        className="w-60 my-4 mr-4"
                                         type='number'
                                         label="Código Postal"
                                         labelPlacement='outside'
@@ -748,7 +748,7 @@ const NewUsers = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mr-4 mt-4"
+                                        className="w-60 mr-4 my-4"
                                         label="Contacto"
                                         labelPlacement='outside'
                                         name='contact'
@@ -758,7 +758,7 @@ const NewUsers = () => {
                                         disabled={isInputDisabled}
                                     />
                                     <Input
-                                        className="w-60 mt-4 mr-4"
+                                        className="w-60 my-4 mr-4"
                                         isRequired
                                         label="Teléfono"
                                         type='Number'
@@ -771,7 +771,7 @@ const NewUsers = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Input
-                                        className="w-60 mr-4 mt-4"
+                                        className="w-60 mr-4 my-4"
                                         type='email'
                                         label="Correo electrónico"
                                         labelPlacement='outside'

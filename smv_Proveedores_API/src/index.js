@@ -15,6 +15,7 @@ const authRoutes = require('./routes/auth.routes');
 const usersRoutes = require('./routes/users.routes');
 const productsRoutes = require('./routes/products.routes');
 const orders = require('./routes/orders.routes');
+const invoices = require('./routes/Invoices.routes');
 
 //configuraciones
 //app.use(logger);
@@ -36,6 +37,7 @@ app.use(authRoutes);
 app.use(usersRoutes);
 app.use(productsRoutes);
 app.use(orders);
+app.use(invoices);
 
 //manejo de errores
 app.all('*', (req, res) => {

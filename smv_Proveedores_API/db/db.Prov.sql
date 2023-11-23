@@ -2,7 +2,7 @@ create database "smv_Proveedores";
 
 \c smv_Proveedores;
 
-create table "providersProfile" (
+create table "providersProfile" ( --checar los not null acorde a la documentacion  
     "id" serial primary key,
     "providerId" int not null,
     "providerName" varchar(100) not null,
@@ -16,8 +16,8 @@ create table "providersProfile" (
     "state" varchar(100),
     "postalCode" varchar(100),
     "country" varchar(100),
-    "contact" varchar(200),
-    "phone" varchar(100) not null,
+    "contact" varchar(200) not null,
+    "phone" varchar(100),
     "email" varchar(100) not null,
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
@@ -154,28 +154,55 @@ create table "ProductsAvailability" (
 );
 
 
---tal vez se elimine esta tabla y se agregue el campo "estatus" a la tabla providerOrders
-
 create table "pvOrders" (
-    "id" serial primary key,
+    "id" serial primary key unique not null,
     "folio" INTEGER not null unique,
-    "providerId" int not null,
-    "orderDate" timestamp not null,
-    "orderType" varchar(100) not null,
+    "providerId" int,
+    "orderDate" timestamp,
+    "estimatedDeliveryDate" timestamp,
+    "orderType" varchar(100),
     "facture" varchar(50) DEFAULT CONCAT('C-', LPAD(TO_HEX(FLOOR(RANDOM() * 10000000000)::bigint), 10, '0')) UNIQUE,
     "orderStatus" varchar(100) not null default 'Nuevo',
-    "orderData" varchar(100) not null,
+    "orderData" varchar(100),
     "deliveryData" varchar(100) not null,
     "status" varchar(100) not null default 'Nuevo',
-    "paymentMethod" varchar(100) not null,
+    "paymentMethod" varchar(100),
     "productsOrder" JSONB,
-    "amountPaid" float not null,
-    "amountPending" float not null,
-    "discount" float not null,
-    "subtotal" float not null,
-    "total" float not null,
+    "amountPaid" float,
+    "amountPending" float,
+    "discount" float,
+    "subtotal" float,
+    "total" float,
     "comments" varchar(100),
     "fulfilled" boolean default false,
+    "created_At" timestamp default current_timestamp,
+    "updated_At" timestamp default current_timestamp,
+    "isDeleted" boolean default false
+);
+
+
+create table "legalDocuments" (
+    "id" serial primary key,
+    "providerId" int not null,
+    "documentType" varchar(100) not null,
+    "document" BYTEA,
+    "created_At" timestamp default current_timestamp,
+    "updated_At" timestamp default current_timestamp,
+    "isDeleted" boolean default false
+);
+
+
+
+
+--- Tabla para el log de cambios en la base de datos
+
+create table "providersLog" (
+    "id" serial primary key,
+    "responsibleUser" varchar(100),
+    "affectedTable" varchar(100) not null,
+    "action" varchar(100) not null,
+    "oldData" JSONB,
+    "newData" JSONB,
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
@@ -190,24 +217,6 @@ CREATE SEQUENCE folio_seq
 ALTER TABLE "pvOrders"
     ALTER COLUMN "folio"
     SET DEFAULT nextval('folio_seq'::regclass);
-
-
-alter table "pvOrders"
-add constraint fk_order_provider foreign key ("providerId") references "providersProfile" ("id");	
-
-
-
-create table "providersLog" (
-    "id" serial primary key,
-    "responsibleUser" varchar(100),
-    "affectedTable" varchar(100) not null,
-    "action" varchar(100) not null,
-    "oldData" JSONB,
-    "newData" JSONB,
-    "created_At" timestamp default current_timestamp,
-    "updated_At" timestamp default current_timestamp,
-    "isDeleted" boolean default false
-);
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -262,6 +271,10 @@ alter table "technicalSheetProducts"
 add constraint fk_tecSheet_prod foreign key ("productId") references "pvProducts" ("id");
 
 ------------------------------------------------------------------------------------   Llaves foraneas   ------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------   Funciones (Bitacora)   ------------------------------------------------------------------------------------------------------------
+
 
 
 CREATE OR REPLACE FUNCTION update_provider_profile(
@@ -410,18 +423,3 @@ BEGIN
 END;
 
 $$ LANGUAGE plpgsql;
-
-
-
-
---base de datos de prueba de conexion a otra base de datos
-
-create database prueba1;
-
-create table "prueba1" (
-    "id" serial primary key,
-    "name" varchar(100) not null,
-    "created_At" timestamp default current_timestamp,
-    "updated_At" timestamp default current_timestamp,
-    "isDeleted" boolean default false
-);

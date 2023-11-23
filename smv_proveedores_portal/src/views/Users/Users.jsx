@@ -32,8 +32,7 @@ import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { IoMdEye } from "react-icons/io";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch, MdShoppingCart, MdDelete, MdChecklist } from "react-icons/md";
-
+import { MdAddCircleOutline, MdSearch, MdShoppingCart, MdDelete, MdChecklist } from "react-icons/md";
 import Header from "../../components/header/headerC/Header";
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import useAuth from '../../hooks/useAuth'
@@ -45,6 +44,7 @@ const Users = () => {
   const pvId = auth.ID
   const [isLoading, setIsLoading] = React.useState(true);
   const [users, setUsers] = React.useState([]);
+  const [usersW, setUsersW] = React.useState([]);
   const navigate = useNavigate()
   const [searchName, setSearchName] = React.useState("");
   const [searchPhone, setSearchPhone] = React.useState("");
@@ -74,7 +74,16 @@ const Users = () => {
           });
           setUsers(users);
           setIsLoading(false);
+
+          await axios.get(`/users/waiting/${pvId}`)
+          .then(response => {
+            if (response.data.length > 0) {
+              setUsersW(response.data)
+            }
+          });
+
         } catch (error) {
+          console.log(error);
           setIsLoading(false);
         }
       }
@@ -234,7 +243,6 @@ const Users = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  backgroundColor: "#292831",
                 }}
               >
                 <DropdownSection title="Acciones"
@@ -351,48 +359,53 @@ const Users = () => {
         </ModalContent>
       </Modal>
 
-      <div className="flex justify-between items-center p-4 w-11/12 ml-20">
-        <div className="flex items-center">
-          <div className="flex items-center">
+      <div className="flex p-4 ml-20">
+        <div className="flex items-start justify-start text-start">
             <label className="text-base mr-10">Buscar por:</label>
             <Input
               startContent={<MdSearch />}
-              className="mr-10"
+              className="mr-10 w-1/5"
               placeholder="Nombre del usuario"
               value={searchName}
-              size="large"
-              width="300px"
+              size="small"
+              isClearable
+              onClear={() => setSearchName("")}
               onChange={(e) => setSearchName(e.target.value)}
             />
-          </div>
-          <div className="flex items-center">
             <Input
               startContent={<MdSearch />}
-              className="mr-10"
+              className="mr-10 w-1/5"
               value={searchPhone}
               placeholder="Teléfono"
-              size="large"
-              width="300px"
+              size="small"
+              isClearable
+              onClear={() => setSearchPhone("")}
               onChange={(e) => setSearchPhone(e.target.value)}
             />
-          </div>
-          <div className="flex items-center">
             <Input
               startContent={<MdSearch />}
-              className="mr-10"
+              className="mr-10 w-1/5"
               value={searchCity}
               placeholder="Ciudad"
-              size="large"
+              size="small"
               width="300px"
+              isClearable
+              onClear={() => setSearchCity("")}
               onChange={(e) => setSearchCity(e.target.value)}
             />
-          </div>
         </div>
-        <div className="flex items-center">
+        <div className="flex justify-end text-right items-end">
+          <Button
+            startContent={<MdAddCircleOutline />}
+            className="mr-10"
+            onClick={() => navigate(`/users/Waiting`)}
+          >
+            Agregar
+          </Button>
           <Button
             auto
             startContent={<TbPlus />}
-            className="mr-10 text-inherit bg-primary"
+            className="text-inherit bg-primary"
             size="small"
             variant="success"
             onClick={() => navigate(`/users/New`)}

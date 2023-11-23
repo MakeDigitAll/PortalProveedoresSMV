@@ -4,7 +4,6 @@ const { encryptPassword, verifyPassword } = require('../helpers/hashing');
 const crypto = require('crypto');
 const pool = require('../database');
 const sendEmail = require('../helpers/sendEmail');
-const { profile } = require('console');
 
 //---------------------------------------------------------------------------------------
 //                                       LOGIN
@@ -16,81 +15,81 @@ const auth = async (req, res) => {
   if (!username || !password) return res.status(400).json({ error: 'Se requiere el usuario y la contraseña' });
 
   try {
-  const user = await getAuth(username);
+    const user = await getAuth(username);
 
-  if (user) {
-    const isPasswordMatch = await verifyPassword(password, user.password);
+    if (user) {
+      const isPasswordMatch = await verifyPassword(password, user.password);
 
-    if (isPasswordMatch) {
+      if (isPasswordMatch) {
 
-      const permission = await pool.query('SELECT * FROM "Permissions" WHERE "userId" = $1', [user.userId]);
+        const permission = await pool.query('SELECT * FROM "Permissions" WHERE "userId" = $1', [user.userId]);
 
-      const accessToken = jwt.sign({ username: user.user, roles: permission.rows[0].permission }, token.secretKey, { expiresIn: '1h' });
+        const respRoles = permission.rows[0].permission;
+        const cleanedString = respRoles.replace(/[{}"]/g, '');
+        const rol = cleanedString.split(',');
 
-      const refreshToken = jwt.sign({ username: user.user, roles: permission.rows[0].permission }, token.refreshTokenSecretKey, { expiresIn: '1d' });
+        const accessToken = jwt.sign({ rfc: user.rfc, socialReason: user.socialReason, username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID, status: permission.rows[0].estatus, roles: rol }, token.secretKey, { expiresIn: '10m' });
 
-      res.status(200).json({
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        username: user.user,
-        roles: permission.rows[0].permission,
-        isVerified: user.isVerified,
-        userId: user.userId,
-        ID: user.ID,
-        estatus: permission.rows[0].estatus
-      });
+        const refreshToken = jwt.sign({ rfc: user.rfc, socialReason: user.socialReason, username: user.user, isVerified: user.isVerified, userId: user.userId, ID: user.ID }, token.refreshTokenSecretKey, { expiresIn: '2h' });
 
-    } else {
+        res.status(200).json({
+          accessToken: accessToken,
+          refreshToken: refreshToken
+        });
 
-      res.status(400).json({ error: 'Credenciales inválidas' });
-      console.log("auth credenciales invalidas");
+      } else {
 
+        res.status(400).json({ error: 'Credenciales inválidas' });
+        console.log("auth credenciales invalidas");
+
+      }
     }
-  }
   } catch (error) {
-  res.status(400).json({ error: 'Error al autenticarse' });
-}
+    res.status(400).json({ error: 'Error al autenticarse' });
+  }
 };
 
 
 //---------------------------------------------------------------------------------------
 
 const getAuth = async (username) => {
-   try {
-  const response = await pool.query('SELECT * FROM "userAuth" WHERE "userName" = $1 AND "isDeleted" = $2', [username, false]);
-  if (!response.rows[0]) {
-    throw new Error('Usuario no encontrado');
-  }
+  try {
+    const response = await pool.query('SELECT * FROM "userAuth" WHERE "userName" = $1 AND "isDeleted" = $2', [username, false]);
+    if (!response.rows[0]) {
+      throw new Error('Usuario no encontrado');
+    }
 
-  const Pv = await pool.query('SELECT * FROM "providersProfile" WHERE "providerId" = $1', [response.rows[0].id]);
-  if (!Pv.rows[0]) {
+    const Pv = await pool.query('SELECT * FROM "providersProfile" WHERE "providerId" = $1', [response.rows[0].id]);
+    if (!Pv.rows[0]) {
 
-    const profileUser = await pool.query('SELECT * FROM "UsersProfile" WHERE "profileId" = $1', [response.rows[0].id]);
-    const idProv = await pool.query('SELECT "id" FROM "providersProfile" WHERE "referenceCode" = (SELECT "reference" FROM "Permissions" WHERE "userId" = $1)', [response.rows[0].id]);
+      const profileUser = await pool.query('SELECT * FROM "UsersProfile" WHERE "profileId" = $1', [response.rows[0].id]);
+      const idProv = await pool.query('SELECT "id" FROM "providersProfile" WHERE "referenceCode" = (SELECT "reference" FROM "Permissions" WHERE "userId" = $1)', [response.rows[0].id]);
+      const resp = {
+        user: profileUser.rows[0].profileName,
+        password: response.rows[0].password,
+        isVerified: response.rows[0].isVerified,
+        userId: response.rows[0].id,
+        socialReason: idProv.rows[0].socialReason,
+        rfc: idProv.rows[0].rfc,
+        ID: idProv.rows[0].id
+      };
+
+      return resp;
+    }
+
     const resp = {
-      user: profileUser.rows[0].profileName,
+      user: Pv.rows[0].providerName,
+      socialReason: Pv.rows[0].socialReason,
       password: response.rows[0].password,
       isVerified: response.rows[0].isVerified,
       userId: response.rows[0].id,
-      ID: idProv.rows[0].id 
+      rfc: Pv.rows[0].rfc,
+      ID: Pv.rows[0].id
     };
-
-    console.log(resp);
-
     return resp;
+  } catch (error) {
+    throw new Error('Error al obtener el usuario');
   }
-
-  const resp = {
-    user: Pv.rows[0].providerName,
-    password: response.rows[0].password,
-    isVerified: response.rows[0].isVerified,
-    userId: response.rows[0].id,
-    ID: Pv.rows[0].id
-  };
-  return resp;
-   } catch (error) {
-  throw new Error('Error al obtener el usuario');
-}
 };
 
 
@@ -148,6 +147,17 @@ const deleteAuth = async (req, res) => {
     throw new Error('Error al eliminar el usuario');
   }
 };
+
+const getPermissionsAuth = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await pool.query('SELECT * FROM "Permissions" WHERE "userId" = $1', [id]);
+    return res.status(200).json(response.rows[0]);
+  } catch (error) {
+    throw new Error('Error al obtener el usuario');
+  }
+};
+
 
 
 
@@ -226,5 +236,6 @@ module.exports = {
   updatePasswordAuth,
   deleteAuth,
   verifyEmail,
-  resendVerifyEmail
+  resendVerifyEmail,
+  getPermissionsAuth
 };

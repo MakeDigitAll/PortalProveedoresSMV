@@ -25,6 +25,18 @@ const handleNewUser = async (req, res) => {
         if (!reference) return res.status(400).json({ error: 'Se requiere el codigo de referencia de la empresa' });
 
         try {
+            
+            const randomString = crypto.randomBytes(16).toString('hex');
+            const profileName = username.split('@')[0];
+            const address = `direccion${randomString}`;
+            const col = `col${randomString}`;
+            const city = 'Zacatecas';
+            const state = `Zacatecas`;
+            const postalCode = `98000`;
+            const country = `México`;
+            const contact = `contacto${randomString}`;
+            const phone = `4920000000`;
+            const email = username;
 
 
             //---------------------------------------------------------------------------------------- Creacion de usuario
@@ -33,7 +45,7 @@ const handleNewUser = async (req, res) => {
 
             const hashedPassword = await encryptPassword(password);
             const result = await pool.query('INSERT INTO "userAuth" ("userName", "password", "isPasswordModified") VALUES ($1, $2, $3) RETURNING *', [username, hashedPassword, true]);
-            await pool.query('INSERT INTO "UsersProfile" ("profileId", "profileName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, 'nombreProvisional', 'direccionProvisional', 'colProvisional', 'ciudadProvisional', 'Zacatecas', 'cpProvisional', 'México', 'contactoProvisional', '4920000000', username]);
+            await pool.query('INSERT INTO "UsersProfile" ("profileId", "profileName", "address", "col","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11)', [result.rows[0].id, profileName, address, col, city, state, postalCode, country, contact, phone, email]);
             await pool.query('INSERT INTO "userImages" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
 
             //---------------------------------------------------------------------------------------- Asignacion de permisos
@@ -70,9 +82,22 @@ const handleNewUser = async (req, res) => {
     try {
 
         const hashedPassword = await encryptPassword(password);
+        const randomString = crypto.randomBytes(16).toString('hex');
+        const providerName = username.split('@')[0];
+        const socialReason = providerName;
+        const address = `direccion${randomString}`;
+        const col = `col${randomString}`;
+        const rfc = `rfc${randomString}`;
+        const city = 'Zacatecas';
+        const state = `Zacatecas`;
+        const postalCode = `98000`;
+        const country = `México`;
+        const contact = `contacto${randomString}`;
+        const phone = `4920000000`;
+        const email = username;
 
         const result = await pool.query('INSERT INTO "userAuth" ("userName", "password", "isPasswordModified") VALUES ($1, $2, $3) RETURNING *', [username, hashedPassword, true]);
-        await pool.query('INSERT INTO "providersProfile" ("providerId", "providerName", "socialReason", "address", "col", "rfc","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11, $12, $13)', [result.rows[0].id, 'nombreProvisional', 'razonSocialProvisional', 'direccionProvisional', 'colProvisional', 'rfcProvisional', 'ciudadProvisional', 'Zacatecas', 'cpProvisional', 'México', 'contactoProvisional', '4920000000', username]); 
+        await pool.query('INSERT INTO "providersProfile" ("providerId", "providerName", "socialReason", "address", "col", "rfc","city","state", "postalCode", "country", "contact", "phone", "email") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11, $12, $13)', [result.rows[0].id, providerName, socialReason, address, col, rfc, city, state, postalCode, country, contact, phone, email]);
         await pool.query('INSERT INTO "userImages" ("userId", "image") VALUES ($1, $2)', [result.rows[0].id, null]);
         const role = '{4444}'
 

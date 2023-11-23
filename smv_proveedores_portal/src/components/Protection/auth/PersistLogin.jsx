@@ -1,7 +1,8 @@
 import { Outlet } from "react-router-dom";
-import React ,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import useAuth from '../../../hooks/useAuth';
 import Cookies from "js-cookie";
+import * as jose from 'jose'
 
 
 //1- verificar que exita la cookie makeID
@@ -12,23 +13,28 @@ import Cookies from "js-cookie";
 
 const PersistLogin = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const {setAuth} = useAuth();
-    const ID = localStorage.getItem("ID");
-    const roles = localStorage.getItem("r");
-    const isVerified = localStorage.getItem("iV");
-    const username = localStorage.getItem("username");
-    const accessToken = Cookies.get("aT");
-    const userId = localStorage.getItem("userId");
-
+    const { setAuth } = useAuth();
 
     useEffect(() => {
         let isMounted = true;
+        try {
+            let accessToken = String(Cookies.get("aT"));
+            let decoded = jose.decodeJwt(accessToken);
 
-        if (ID && roles && isVerified && username && accessToken) {
-            setAuth({ ID, roles, isVerified, username, accessToken, userId });
+            setAuth({
+                ID: decoded?.ID,
+                roles: decoded?.roles,
+                isVerified: decoded?.isVerified,
+                username: decoded?.username,
+                accessToken: accessToken,
+                userId: decoded?.userId,
+                socialReason: decoded?.socialReason,
+                rfc: decoded?.rfc,
+            });
             setIsLoading(false);
-        }
-        else {
+
+        } catch (error) {
+            console.log(error);
             setIsLoading(false);
         }
 

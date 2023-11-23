@@ -32,17 +32,11 @@ const useRefreshToken = () => {
                 }
             });
 
-            Cookies.set('aT', response.data.accessToken, { expires: 1 });
+            //Cookies.set('aT', response.data.accessToken, { expires: 1 });
 
             return response.data.accessToken;
             
         } catch (error) {
-            console.log('RT:', error);
-            localStorage.removeItem('r');
-            localStorage.removeItem('ID');
-            localStorage.removeItem('iV');
-            localStorage.removeItem('username');
-            localStorage.removeItem('img');
             Cookies.remove('aT');
             Cookies.remove('rT');
             navigate('/', { replace: true });

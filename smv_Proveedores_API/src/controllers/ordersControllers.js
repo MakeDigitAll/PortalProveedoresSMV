@@ -9,18 +9,27 @@ const getOrders = async (req, res) => {
     } catch (error) { 
         res.status(500).json({ error: error.message }); 
     }
-}    
+}
+
+const getOrderById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const order = await pool.query('SELECT * FROM "pvOrders" WHERE "id" = $1', [id]);
+        res.status(200).json(order.rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
 
 const createOrder = async (req, res) => {
-    try {
-        const { providerId, orderDate, orderType, productsOrder, subTotal, discount, total, orderData, deliveryData, fulfilled, paymentMethod, comments } = req.body;
+   try {
+        const { providerId, orderDate, estimatedDeliveryDate, orderType, productsOrder, subTotal, discount, total, orderData, deliveryData, fulfilled, paymentMethod, comments } = req.body;
         const jsonProducts = JSON.stringify(productsOrder);
         const amountPaid = 0;
         const amountPending = total;
-        await pool.query('INSERT INTO "pvOrders" ("providerId", "orderDate", "orderType", "orderData", "deliveryData", "paymentMethod", "productsOrder", "amountPaid", "amountPending", "discount", "subtotal", "total", "comments", "fulfilled") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14)', [providerId, orderDate, orderType, orderData, deliveryData, paymentMethod, jsonProducts, amountPaid, amountPending, discount, subTotal, total, comments, fulfilled]);
+        await pool.query('INSERT INTO "pvOrders" ("providerId", "orderDate", "estimatedDeliveryDate", "orderType", "productsOrder", "subtotal", "discount", "total", "orderData", "deliveryData", "fulfilled", "paymentMethod", "amountPaid", "amountPending", "comments") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14, $15)', [providerId, orderDate, estimatedDeliveryDate, orderType, jsonProducts, subTotal, discount, total, orderData, deliveryData, fulfilled, paymentMethod, amountPaid, amountPending, comments]);
         res.status(200).json({ message: 'Pedido creado satisfactoriamente' });
-   } 
-    catch (error) {
+   } catch (error) {
          res.status(500).json({ error: error.message });
     }  
 }
@@ -51,12 +60,27 @@ const getProductsOrders = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-} 
+}
+
+const getProductsOrdersById = async (req, res) => {
+    try {
+    const { id } = req.params;
+    const products = await pool.query('SELECT "pvProducts"."manofacturerCode", "pvProducts"."productName", "pvProducts"."price1", "pvProducts"."id", "pvProducts"."model","pvProducts"."brand", "ProductsAvailability"."productStock" AS "existence" FROM "pvProducts" INNER JOIN "ProductsAvailability" ON "pvProducts"."id" = "ProductsAvailability"."productId" WHERE "pvProducts"."id" = $1', [id]);
+    res.status(200).json(products.rows[0]);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}	
+
+
 
  
 module.exports = {
     getOrders,
     createOrder,
     deleteOrder,
-    getProductsOrders 
+    getProductsOrders,
+    getOrderById,
+    getProductsOrdersById
 }  

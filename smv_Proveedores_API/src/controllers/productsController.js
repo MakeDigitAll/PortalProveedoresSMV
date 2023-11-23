@@ -60,6 +60,22 @@ const getImageProduct = async (req, res) => {
     }
 }
 
+const deleteImageProduct = async (req, res) => {
+    try {
+        const { id, position } = req.params;
+        const imageField = `image${position}`;
+        await pool.query(`UPDATE "pvProductsImages" SET "${imageField}" = null WHERE "productId" = $1`, [id]);
+        res.status(200).json({
+            message: 'Imagen eliminada correctamente'
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error al eliminar la imagen'
+        });
+    }
+}
+
+
 //---------------------------------------------------------------------------------------
 
 
@@ -214,6 +230,7 @@ module.exports = {
     deleteProduct, 
     updateImageProducts,
     getImageProduct,
+    deleteImageProduct,
     getDispobility,
     updateDispobility,
     technicalSheet,

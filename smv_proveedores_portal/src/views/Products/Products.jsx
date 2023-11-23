@@ -50,8 +50,8 @@ const Products = () => {
 
   const [products, setProducts] = React.useState([])
   const [searchName, setSearchName] = React.useState("");
-  const [searchCompanyCode, setSearchCompanyCode] = React.useState("");
-  const [searchManofacturerCode, setSearchManofacturerCode] = React.useState("");
+  const [searchModel, setsearchModel] = React.useState("");
+  const [searchBrand, setsearchBrand] = React.useState("");
 
   const [DelItem, setDelItem] = React.useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -96,6 +96,10 @@ const Products = () => {
       label: "Nombre del producto",
     },
     {
+      key: "model",
+      label: "Modelo",
+    },
+    {
       key: "manofacturerCode",
       label: "Codigo del fabricante",
     },
@@ -124,14 +128,14 @@ const Products = () => {
 
   //Funcion para filtrar productos
   const filterProducts = (products) => {
-    if (searchName === "" && searchCompanyCode === "" && searchManofacturerCode === "") {
+    if (searchName === "" && searchModel === "" && searchBrand === "") {
       return products;
     } else {
       return products.filter((product) => {
         return (
           product.productName.toLowerCase().includes(searchName.toLowerCase()) &&
-          product.companyCode.toLowerCase().includes(searchCompanyCode.toLowerCase()) &&
-          product.manofacturerCode.toLowerCase().includes(searchManofacturerCode.toLowerCase())
+          product.model.toLowerCase().includes(searchModel.toLowerCase()) &&
+          product.brand.toLowerCase().includes(searchBrand.toLowerCase())
         );
       });
     }
@@ -368,7 +372,6 @@ const Products = () => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    backgroundColor: "#292831",
                   }}
                 >
                   <DropdownSection title="Acciones"
@@ -583,26 +586,32 @@ const Products = () => {
               size="large"
               width="300px"
               onChange={(e) => setSearchName(e.target.value)}
+              isClearable
+              onClear={() => setSearchName("")}
             />
           </div>
           <div className="flex items-center">
             <Input
               startContent={<MdSearch />}
-              placeholder="Codigo de la empresa"
+              placeholder="Modelo"
               className="mr-10 mb-10 lg:mb-0"
               size="large"
               width="300px"
-              onChange={(e) => setSearchCompanyCode(e.target.value)}
+              onChange={(e) => setsearchModel(e.target.value)}
+              isClearable
+              onClear={() => setsearchModel("")}
             />
           </div>
           <div className="flex items-center">
             <Input
               startContent={<MdSearch />}
-              placeholder='Codigo del fabricante'
+              placeholder='Marca'
               className="mr-10 mb-10 lg:mb-0"
               size="large"
               width="300px"
-              onChange={(e) => setSearchManofacturerCode(e.target.value)}
+              onChange={(e) => setsearchBrand(e.target.value)}
+              isClearable
+              onClear={() => setsearchBrand("")}
             />
           </div>
         </div>
@@ -641,11 +650,8 @@ const Products = () => {
           <TableBody items={filterProducts(products)}
             isLoading={isLoading && !items.length}
             emptyContent={
-              products.length === 0 ? (
                 "No products found"
-              ) : (
-                <Spinner label="Cargando" />
-              )}
+              }
 
           >
             {(item) => (

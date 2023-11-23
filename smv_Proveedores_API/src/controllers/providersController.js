@@ -13,9 +13,9 @@ const getProviderById = async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 }
- //   ------------------------------------------------------------------------
+//   ------------------------------------------------------------------------
 
- const updateProvider = async (req, res) => {
+const updateProvider = async (req, res) => {
   const id = req.params.id;
   const { providerName, socialReason, discountSale, address, col, rfc, city, state, postalCode, country, contact, phone, email } = req.body;
   const responsibleUser = 'admin';
@@ -47,7 +47,7 @@ const getProviderById = async (req, res) => {
 };
 
 
-
+ 
 //---------------------------------------------------------------------------------------
 
 const deleteProvider = async (req, res) => {
@@ -65,9 +65,57 @@ const deleteProvider = async (req, res) => {
 
 
 //---------------------------------------------------------------------------------------
+//                                       Legal Documents
+//---------------------------------------------------------------------------------------
+
+const legalDocuments = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const type = req.params.type;
+    const response = await pool.query('SELECT document FROM "legalDocuments" WHERE "providerId" = $1 and "documentType" = $2', [id, type]);
+    res.send(response.rows[0].document);
+  } catch (error) {
+    res.status(500).json({ error: 'Error en al obtener documentos' });
+  }
+} 
+
+const insertDocument = async (req, res) => {
+  try {
+    const { id, type } = req.params;
+    const file = req.file.buffer; 
+    const response = await pool.query('select * from "legalDocuments" where "providerId" = $1 and "documentType" = $2', [id, type]);
+    if (response.rows.length > 0) {
+      await pool.query('update "legalDocuments" set "document" = $1 where "providerId" = $2 and "documentType" = $3', [file, id, type]);
+      res.status(200).json({ message: 'Documento actualizado correctamente' });
+    } else {
+      await pool.query('insert into "legalDocuments" ("providerId", "documentType", "document") values ($1, $2, $3)', [id, type, file]);
+      res.status(200).json({ message: 'Documento agregado correctamente' });
+    }
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+    console.log(error);
+  }
+}
+
+const deleteDocument = async (req, res) => {
+  try {
+    const { id, type } = req.params;
+    await pool.query('delete from "legalDocuments" where "providerId" = $1 and "documentType" = $2', [id, type]);
+    res.status(200).json({ message: 'Documento eliminado correctamente' });
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+}
+
+//---------------------------------------------------------------------------------------
 
 module.exports = {
   getProviderById,
   updateProvider,
-  deleteProvider
+  deleteProvider,
+  legalDocuments,
+  insertDocument,
+  deleteDocument
 }

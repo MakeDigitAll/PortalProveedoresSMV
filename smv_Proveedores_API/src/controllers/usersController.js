@@ -13,7 +13,7 @@ const getWaitingUsers = async (req, res) => {
   try {
 
     const { pvId } = req.params;
-    const referenceExist = await pool.query('SELECT referenceCode FROM "providersProfile" WHERE "id" = $1', [pvId]);
+    const referenceExist = await pool.query('SELECT "referenceCode" FROM "providersProfile" WHERE "id" = $1', [pvId]);
     const response = await pool.query('SELECT * FROM "Permissions", "UsersProfile" WHERE "Permissions"."userId" = "UsersProfile"."profileId" AND "Permissions"."reference" = $1 AND "Permissions"."estatus" = $2', [referenceExist.rows[0].referenceCode, 'Pendiente']);
     return res.status(200).json(response.rows);
   } catch (error) {

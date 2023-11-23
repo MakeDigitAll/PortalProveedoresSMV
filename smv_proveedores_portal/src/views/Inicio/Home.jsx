@@ -23,8 +23,7 @@ import ba from "../../../public/Blank-Avatar.png";
 const Home = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
-  const r = auth.roles;
-  const permissions = r.split(",");
+  const permissions = auth.roles;
 
   //interfaz principal, del proveedor
   // Se encuentra el menú de opciones, que se despliega al dar click en el botón de opciones
@@ -50,7 +49,7 @@ const Home = () => {
               className="w-full py-10 my-5 text-2xl"
               color="primary"
               onClick={() => navigate("/orders")}
-              disabled={permissions.includes("2002") || permissions.includes("4444") ? false : true}
+              disabled={permissions.includes("2001") || permissions.includes("4444") ? false : true}
             >
               Pedidos
             </Button>
@@ -66,7 +65,7 @@ const Home = () => {
               className="w-full py-10 my-5 text-2xl"
               color="primary"
               onClick={() => navigate("/products")}
-              disabled={permissions.includes("2001") || permissions.includes("4444") ? false : true}
+              disabled={permissions.includes("2003") || permissions.includes("4444") ? false : true}
             >
               Productos
             </Button>
@@ -75,7 +74,7 @@ const Home = () => {
             className="w-full h-5/6 flex"
             whileHover={{ scale: 1.1 }}
           >
-            <Spacer y={1} />
+            <Spacer y={1} /> 
             <Button
               startContent={<PiUserFill />}
               className="w-full py-10 my-5 text-2xl"
@@ -92,43 +91,13 @@ const Home = () => {
           >
             <Spacer y={1} />
             <Button
-              startContent={<BiReceipt />}
-              className="w-full py-10 my-5 text-2xl"
-              color="primary"
-              onClick={() => navigate("/Facturacion")}
-              disabled={permissions.includes("4444") ? false : true}
-            >
-              Facturación
-            </Button>
-          </motion.div>
-          <motion.div
-            className="w-full h-5/6 flex"
-            whileHover={{ scale: 1.1 }}
-          >
-            <Spacer y={1} />
-            <Button
               startContent={<FaDollarSign />}
               className="w-full py-10 my-5 text-2xl"
               color="primary"
-              onClick={() => navigate("/Finanzas")}
-              disabled={permissions.includes("4444") ? false : true}
+              onClick={() => navigate("/Finances")} 
+              disabled={permissions.includes("2002") || permissions.includes("2004")  || permissions.includes("4444")? false : true}
             >
               Finanzas
-            </Button>
-          </motion.div>
-          <motion.div
-            className="w-full h-5/6 flex"
-            whileHover={{ scale: 1.1 }}
-          >
-            <Spacer y={1} />
-            <Button
-              startContent={<FaBalanceScale />}
-              className="w-full py-10 my-5 text-2xl"
-              color="primary"
-              onClick={() => navigate("/Legales")}
-              disabled={permissions.includes("4444") ? false : true}
-            >
-              Legales
             </Button>
           </motion.div>
         </div>
@@ -138,7 +107,7 @@ const Home = () => {
             className="w-full flex-col justify-center items-center hidden lg:flex" 
             whileHover={{ scale: 1.1 }}
           >
-            <Card className="w-5/6 h-5/6">
+            <Card className="w-5/6 ml-20 h-5/6">
               <CardHeader>
                 <h2 className="text-2xl font-bold">Bienvenido al portal de proveedores SMV</h2>
               </CardHeader>
@@ -190,11 +159,11 @@ const Home = () => {
               </CardHeader>
               <CardBody>
                 <div className="flex flex-col">
-                  <p>1. Pedido 1</p>
-                  <p>2. Pedido 2</p>
-                  <p>3. Pedido 3</p>
-                  <p>4. Pedido 4</p>
-                  <p>5. Pedido 5</p>
+                  <p>1. Pedido 1000</p>
+                  <p>2. Pedido 1002</p>
+                  <p>3. Pedido 1003</p>
+                  <p>4. Pedido 1004</p>
+                  <p>5. Pedido 1005</p>
                 </div>
               </CardBody>
             </Card>

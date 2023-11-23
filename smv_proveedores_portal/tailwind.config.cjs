@@ -16,9 +16,9 @@ export default {
       light: {
         layout: {}, // light theme layout tokens
         colors: {
-          foreground: "#333333",
+          foreground: "##FEFCE8",
           background: "#f4f0dd",
-          primary: "#F8F282",
+          primary: "#F9C97C",
           secondary: "#969696",
           accent: "#FF6347",
           highlight: "#0DB3FF",
@@ -35,13 +35,25 @@ export default {
           content3: "#2E2E2E",
           content4: "#1C1C1C",
         }, // light theme colors
+        yellow : {
+          50: "#FEFCE8",
+          100: "#FDEDD3",
+          200: "#FBDBA7",
+          300: "#F9C97C",
+          400: "#F7B750",
+          500: "#F5A524",
+          600: "#C4841D",
+          700: "#936316",
+          800: "#62420E",
+          900: "#312107",
+        },
       },
       dark: {
         layout: {}, // dark theme layout tokens
         colors: {
           foreground: "#FFFFFF",
           background: "#1A1A1A",
-          primary: "#8E7B32",
+          primary: "#F5A524",
           secondary: "#645c3c",
           accent: "#F9F382",
           highlight: "#FF6347",
@@ -58,6 +70,18 @@ export default {
           content3: "#000000",
           content4: "#000000",
         }, // dark theme colors
+        yellow : {
+          50: "#FEFCE8",
+          100: "#FDEDD3",
+          200: "#FBDBA7",
+          300: "#F9C97C",
+          400: "#F7B750",
+          500: "#F5A524",
+          600: "#C4841D",
+          700: "#936316",
+          800: "#62420E",
+          900: "#312107",
+        },
       },
       // ... custom themes
     },
