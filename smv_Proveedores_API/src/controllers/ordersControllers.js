@@ -23,14 +23,15 @@ const getOrderById = async (req, res) => {
 
 const createOrder = async (req, res) => {
    try {
-        const { providerId, orderDate, estimatedDeliveryDate, orderType, productsOrder, subTotal, discount, total, orderData, deliveryData, fulfilled, paymentMethod, comments } = req.body;
+        const { providerId, orderDate, PONumber, estimatedDeliveryDate, orderType, productsOrder, subTotal, discount, total, orderData, deliveryData, fulfilled, paymentMethod, comments } = req.body;
         const jsonProducts = JSON.stringify(productsOrder);
         const amountPaid = 0;
         const amountPending = total;
-        await pool.query('INSERT INTO "pvOrders" ("providerId", "orderDate", "estimatedDeliveryDate", "orderType", "productsOrder", "subtotal", "discount", "total", "orderData", "deliveryData", "fulfilled", "paymentMethod", "amountPaid", "amountPending", "comments") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14, $15)', [providerId, orderDate, estimatedDeliveryDate, orderType, jsonProducts, subTotal, discount, total, orderData, deliveryData, fulfilled, paymentMethod, amountPaid, amountPending, comments]);
+        await pool.query('INSERT INTO "pvOrders" ("providerId", "orderDate", "PONumber", "estimatedDeliveryDate", "orderType", "productsOrder", "subtotal", "discount", "total", "orderData", "deliveryData", "fulfilled", "paymentMethod", "comments", "amountPaid", "amountPending") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14, $15, $16)', [providerId, orderDate, PONumber, estimatedDeliveryDate, orderType, jsonProducts, subTotal, discount, total, orderData, deliveryData, fulfilled, paymentMethod, comments, amountPaid, amountPending]);
         res.status(200).json({ message: 'Pedido creado satisfactoriamente' });
    } catch (error) {
          res.status(500).json({ error: error.message });
+         console.log(error);
     }  
 }
 

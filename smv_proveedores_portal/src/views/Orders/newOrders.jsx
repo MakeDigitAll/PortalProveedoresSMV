@@ -76,6 +76,7 @@ const NewOrders = () => {
         discount: 0,
         total: "",
         orderData: "",
+        PONumber: "",
         deliveryData: "",
         fulfilled: false,
         paymentMethod: "" || "Transferencia/Deposito",
@@ -136,6 +137,17 @@ const NewOrders = () => {
             toast.error("Seleccione la información de envio");
             return;
         }
+
+        if (newOrder.estimatedDeliveryDate === "") {
+            toast.error("Seleccione la fecha de entrega");
+            return;
+        }
+
+        if (newOrder.PONumber === "") {
+            toast.error("Ingrese la referencia de la compra");
+            return;
+        }
+        
 
 
         if (editing) {
@@ -432,6 +444,7 @@ const NewOrders = () => {
                 fulfilled: response.data.fulfilled,
                 total: Number(response.data.total),
                 orderData: response.data.orderData,
+                PONumber: response.data.PONumber,
                 deliveryData: response.data.deliveryData,
                 paymentMethod: response.data.paymentMethod,
                 comments: response.data.comments,
@@ -693,11 +706,11 @@ const NewOrders = () => {
 
                     <div className="flex flex-col lg:flex-row mx-10 mb-5 pr-10 h-full">
                         <div className="flex flex-row lg:w-1/2 mt-10">
-                            <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de compra" label="Fecha de pedido" labelPlacement="outside" value={order.orderDate} onChange={handleOrderChange} name="orderDate" isDisabled={true} />
-                            <Input type='date' className='w-1/3 pl-10' placeholder="Fecha de entrega" label="Fecha de entrega" labelPlacement="outside" value={order.estimatedDeliveryDate} onChange={handleOrderChange} name="estimatedDeliveryDate" isDisabled={isInputDisabled} />
+                            <Input type='date' className='w-1/3 pl-10' label="Fecha de pedido" labelPlacement="outside" value={order.orderDate} onChange={handleOrderChange} name="orderDate" isDisabled={true} />
+                            <Input type='date' className='w-1/3 pl-10' label="Fecha de entrega" labelPlacement="outside" value={order.estimatedDeliveryDate} onChange={handleOrderChange} name="estimatedDeliveryDate" isDisabled={isInputDisabled} />
                             <Dropdown>
                                 <DropdownTrigger>
-                                    <Input className='w-1/3 pl-10 px-10 lg:mt-0' placeholder="Tipo de pedido" label="Tipo de pedido" labelPlacement="outside" value={order.orderType || "Seleccione el tipo de entrega"} name="orderType" isDisabled={isInputDisabled} />
+                                    <Input className='w-1/3 pl-10 px-10 lg:mt-0' label="Tipo de pedido" labelPlacement="outside" value={order.orderType || "Seleccione el tipo de entrega"} name="orderType" isDisabled={isInputDisabled} />
                                 </DropdownTrigger>
                                 <DropdownMenu>
                                     <DropdownItem
@@ -721,10 +734,21 @@ const NewOrders = () => {
                                 Agregar producto
                             </Button>
                         </div>
-                        <div className="flex lg:w-1/2 mt-10 items-end justify-start lg:justify-end">
-                            <div>
+                        <div className="flex flex-col w-full">
+                        <div className="flex flex-row mt-10 place-content-end">
+                            <Input
+                                className='w-1/3'
+                                label="Referencia de la compra"
+                                labelPlacement="outside"
+                                value={order.PONumber}
+                                onChange={handleOrderChange}
+                                name="PONumber"
+                                isDisabled={isInputDisabled}
+                            />
+                        </div>
+                        <div className="flex flex-row mt-10 place-content-end">
                                 <Checkbox
-                                    className='w-full pl-12 mt-3'
+                                    className='mr-10'
                                     checked={order.fulfilled}
                                     onChange={(event) => {
                                         setOrder({ ...order, fulfilled: event.target.checked });
@@ -732,11 +756,9 @@ const NewOrders = () => {
                                 >
                                     Es recurrente
                                 </Checkbox>
-                            </div>
-                            <div>
                                 <Dropdown>
                                     <DropdownTrigger>
-                                        <Input className='w-full px-5 mt-5' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
+                                        <Input className='w-1/4' placeholder="Envio" label="Envio" labelPlacement="outside-left" value={order.orderData || "Seleccione el tipo de envio"} name="orderData" isDisabled={isInputDisabled} />
                                     </DropdownTrigger>
                                     <DropdownMenu>
                                         <DropdownItem
@@ -756,11 +778,9 @@ const NewOrders = () => {
                                         </DropdownItem>
                                     </DropdownMenu>
                                 </Dropdown>
-                            </div>
-                            <div>
                                 <label className="text-sm text-gray-500">Descuento</label>
                                 <Input
-                                    className='w-full'
+                                    className='w-1/4'
                                     type="number"
                                     endContent="%"
                                     placeholder='0 - 100'
@@ -769,7 +789,7 @@ const NewOrders = () => {
                                     name="discount"
                                     isDisabled={isInputDisabled}
                                 />
-                            </div>
+                        </div>
                         </div>
                     </div>
                     <div className="flex flex-col mx-10 mb-5 pl-10 lg:flex-row h-full">
