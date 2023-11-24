@@ -10,8 +10,6 @@ import {
 } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { RadioGroup, Radio } from "@nextui-org/react";
-import { MdOutlineMailOutline } from 'react-icons/md';
-import { RiLockPasswordLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
 import Header from '../../components/header/Header';
@@ -63,7 +61,7 @@ const Register = () => {
         }));
 
 
-        if (user.email === '') {
+        if (user.email === '') return 
             toast.error('El email es requerido', ({
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -74,8 +72,8 @@ const Register = () => {
                 autoClose: 5000,
                 theme: "colored",
             }));
-        }
-        if (!validateEmail(user.email)) {
+
+        if (!validateEmail(user.email)) return 
             toast.error('El email proporcionado no es valido', ({
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -86,8 +84,8 @@ const Register = () => {
                 autoClose: 5000,
                 theme: "colored",
             }));
-        }
-        if (user.password === '') {
+
+        if (user.password === '') return
             toast.error('La contraseña es requerida', ({
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -98,8 +96,8 @@ const Register = () => {
                 autoClose: 5000,
                 theme: "colored",
             }));
-        }
-        if (user.password.length < 8) {
+
+        if (user.password.length < 8) return 
             toast.error('La contraseña debe tener al menos 8 caracteres', ({
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -110,8 +108,8 @@ const Register = () => {
                 autoClose: 5000,
                 theme: "colored",
             }));
-        }
-        if (user.confirmPassword === '') {
+
+        if (user.confirmPassword === '') return 
             toast.error('Confirme la contraseña', ({
                 position: "bottom-right",
                 hideProgressBar: false,
@@ -122,8 +120,8 @@ const Register = () => {
                 autoClose: 5000,
                 theme: "colored",
             }));
-        }
-        if (user.password !== user.confirmPassword) {
+
+        if (user.password !== user.confirmPassword) return 
             toast.error('las contraseñas no coinciden', ({
                 position: "bottom-right",
                 hideProgressBar: false, 
@@ -134,10 +132,9 @@ const Register = () => {
                 autoClose: 5000,
                 theme: "colored",
             }));
-        }
 
         if (typeUser === '2') {
-            if (reference === '') {
+            if (reference === '') return
                 toast.error('la referencia es requerida', ({
                     position: "bottom-right",
                     hideProgressBar: false,
@@ -148,7 +145,7 @@ const Register = () => {
                     autoClose: 5000,
                     theme: "colored",
                 }));
-            }
+
             try {
                 setLoading(true);
                 await axiosInstance.post('/register', dataReference,

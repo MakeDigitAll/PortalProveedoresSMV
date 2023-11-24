@@ -164,6 +164,7 @@ create table "pvOrders" (
     "facture" varchar(50) DEFAULT CONCAT('C-', LPAD(TO_HEX(FLOOR(RANDOM() * 10000000000)::bigint), 10, '0')) UNIQUE,
     "orderStatus" varchar(100) not null default 'Nuevo',
     "orderData" varchar(100),
+    "PONumber" varchar(100),
     "deliveryData" varchar(100) not null,
     "status" varchar(100) not null default 'Nuevo',
     "paymentMethod" varchar(100),
