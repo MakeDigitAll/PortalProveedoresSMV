@@ -64,10 +64,6 @@ const Orders = () => {
             label: "estatus",
         },
         {
-            key: "facture",
-            label: "Factura",
-        },
-        {
             key: "fulfilled",
             label: "Surtido",
         },

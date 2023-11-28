@@ -4,7 +4,9 @@ const multer = require('multer');
 const upload = multer();
 const router =  Router();
 
-const { getProviderById, updateProvider, deleteProvider, legalDocuments, insertDocument, deleteDocument } = require('../controllers/providersController');
+const { getproviders, getProviderById, updateProvider, deleteProvider, legalDocuments, insertDocument, deleteDocument } = require('../controllers/providersController');
+
+router.get('/pv', getproviders);
 
 router.get('/pv/:id', getProviderById);
  

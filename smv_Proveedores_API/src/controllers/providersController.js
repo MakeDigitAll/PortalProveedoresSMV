@@ -3,6 +3,14 @@ const pool = require('../database')
 //---------------------------------------------------------------------------------------
 //                                       Providers
 //---------------------------------------------------------------------------------------
+const getproviders = async (req, res) => {
+  try {
+    const response = await pool.query('SELECT * FROM "providersProfile"');
+    res.status(200).json(response.rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+}
 
 const getProviderById = async (req, res) => {
   try {
@@ -112,6 +120,7 @@ const deleteDocument = async (req, res) => {
 //---------------------------------------------------------------------------------------
 
 module.exports = {
+  getproviders,
   getProviderById,
   updateProvider,
   deleteProvider,

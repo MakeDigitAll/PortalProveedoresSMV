@@ -730,7 +730,7 @@ const NewOrders = () => {
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
-                            <Button className='w-1/4 mt-6' color="primary" auto onPress={onOpen} startContent={<TbPlus />}>
+                            <Button className='w-1/4 mt-6' color="primary" auto onPress={onOpen} startContent={<TbPlus />} isDisabled={isInputDisabled}>
                                 Agregar producto
                             </Button>
                         </div>

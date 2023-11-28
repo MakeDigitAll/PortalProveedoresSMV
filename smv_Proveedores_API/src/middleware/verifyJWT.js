@@ -6,6 +6,9 @@ const verifyJWT = (req, res, next) => {
     if (req.path === '/login' || req.path === '/register' || req.path === '/refreshToken' || req.path === '/resendVerifyEmail' || req.path === '/logout') {
         return next();
       }
+      if (req.path.startsWith('/pv')) {
+        return next();
+      }
     if (req.path.startsWith('/smv')) {
         return next();
       }

@@ -7,3 +7,8 @@
 20231122	11:14:14	60a08074-47cb-473d-b13b-80248465bb54	MulterError: Unexpected field
 20231122	11:14:35	a10a8d10-0a58-45ed-9bcd-298714a85173	MulterError: Unexpected field
 20231122	11:16:09	8035d530-c31d-481e-b853-9f9eba984afd	MulterError: Unexpected field
+20231128	14:45:41	c8c990d1-7715-4585-a96d-37ccb2800fd2	Error: Not allowed by CORS
+20231128	14:45:41	ea2e8c17-2842-4520-9a97-daad927fbe5d	Error: Not allowed by CORS
+20231128	14:50:44	04c6d906-5aa1-4496-9a2c-59a75d27b097	Error: Not allowed by CORS
+20231128	14:50:46	2bbce670-2237-49ed-9ea7-dafb8c959bc9	Error: Not allowed by CORS
+20231128	14:50:49	a92af6f5-0a15-4e48-b5ed-80904680dc6c	Error: Not allowed by CORS
