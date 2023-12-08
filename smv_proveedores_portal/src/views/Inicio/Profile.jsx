@@ -435,22 +435,6 @@ const Profile = () => {
                                 </div>
                             </CardBody>
                             <CardFooter className="flex justify-center">
-                                {isInputDisabled && (
-                                    <div className="flex justify-center mt-4">
-                                        <Button
-                                            auto
-                                            startContent={<MdSave />}
-                                            variant="success"
-                                            className="bg-primary hover:bg-red-700  text-white font-bold p-3 w-72 h-12 mt-10"
-                                            size="sm"
-                                            onClick={handleSubmit}
-                                            disabled={loading}
-                                        >
-                                            Guardar
-                                        </Button>
-                                    </div>
-                                )}
-                                {!isInputDisabled && (
                                     <div className="flex justify-center my-4">
                                         <Button
                                             auto
@@ -465,7 +449,6 @@ const Profile = () => {
                                         </Button>
 
                                     </div>
-                                )}
                             </CardFooter>
                         </Card>
                     </div>

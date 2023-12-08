@@ -10,15 +10,15 @@ create table "providersProfile" ( --checar los not null acorde a la documentacio
     "discountSale" int DEFAULT 0,
     "referenceCode" varchar(11) DEFAULT LPAD(TO_HEX(FLOOR(RANDOM() * 10000000000)::bigint), 10, '0'),
     "address" varchar(100),
-    "col" varchar(100),
-    "rfc" varchar(100) not null,
+    "col" varchar(100), 
+    "rfc" varchar(20) not null,
     "city" varchar(100),
     "state" varchar(100),
-    "postalCode" varchar(100),
+    "postalCode" varchar(10),
     "country" varchar(100),
     "contact" varchar(200) not null,
     "phone" varchar(100),
-    "email" varchar(100) not null,
+    "email" varchar(100) not null,                                          
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false 
@@ -64,7 +64,7 @@ create table "userImages"
     "image" BYTEA,
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
-    "isDeleted" boolean default false 
+    "isDeleted" boolean default false
 );
 
 
@@ -74,7 +74,7 @@ create table "Permissions" (
     "userId" int not null unique,
     "permission" varchar(100) not null,
     "reference" varchar(11),
-    "estatus" varchar(100) not null default 'Activo',
+    "estatus" varchar(50) not null default 'Activo',
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
@@ -93,8 +93,8 @@ create table "verifyToken" (
 create table "pvProducts" (
     "id" serial primary key,
     "providerId" int not null,
-    "productName" varchar(100) not null,
-    "manofacturerCode" varchar(100) not null,
+    "productName" varchar(100) not null unique,
+    "manofacturerCode" varchar(100) not null unique,
     "companyCode" varchar(100),
     "brand" varchar(100),
     "model" varchar(100),
@@ -105,9 +105,9 @@ create table "pvProducts" (
     "rate1" float,
     "rate2" float,
     "rate3" float,
-    "satProductCode" varchar(100) not null,
-    "satUnitCode" varchar(100) not null,
-    "unitMeasurement" varchar(100),
+    "satProductCode" varchar(50) not null,
+    "satUnitCode" varchar(50) not null,
+    "unitMeasurement" varchar(50),
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
@@ -144,10 +144,10 @@ create table "technicalSheetProducts"
 
 create table "ProductsAvailability" (
     "productId" int not null unique,
-    "productStock" int not null,
-    "productMin" int not null,
-    "productMax" int not null,
-    "availabilityCat" varchar(100) not null,
+    "productStock" int,
+    "productMin" int,
+    "productMax" int,
+    "availabilityCat" varchar(100)
     "created_At" timestamp default current_timestamp,
     "updated_At" timestamp default current_timestamp,
     "isDeleted" boolean default false
@@ -157,7 +157,7 @@ create table "ProductsAvailability" (
 create table "pvOrders" (
     "id" serial primary key unique not null,
     "folio" INTEGER not null unique,
-    "providerId" int,
+    "providerId" int not null,
     "orderDate" timestamp,
     "estimatedDeliveryDate" timestamp,
     "orderType" varchar(100),
